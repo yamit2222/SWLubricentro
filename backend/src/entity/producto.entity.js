@@ -6,6 +6,10 @@ export const Producto = sequelize.define("Producto", {
     type: DataTypes.STRING,
     allowNull: false
   },
+  codigoP: {
+    type: DataTypes.FLOAT,
+    allowNull: false
+  },
   descripcion: {
     type: DataTypes.STRING
   },

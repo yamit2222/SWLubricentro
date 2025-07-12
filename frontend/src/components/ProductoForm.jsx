@@ -23,6 +23,7 @@ import Swal from 'sweetalert2';
 const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
   const formik = useFormik({    initialValues: {
       nombre: producto?.nombre || '',
+      codigoP: producto?.codigoP || '',
       descripcion: producto?.descripcion || '',
       precio: producto?.precio || '',
       stock: producto?.stock || '',
@@ -33,6 +34,10 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
         .required('El nombre es requerido')
         .min(3, 'El nombre debe tener al menos 3 caracteres')
         .max(100, 'El nombre no puede tener más de 100 caracteres'),
+      codigoP: Yup.number()
+        .required('El código es requerido')
+        .min(4, 'El código debe tener al menos 4 caracteres')
+        .max(10, 'El código no puede tener más de 10 caracteres'),
       descripcion: Yup.string()
         .required('La descripción es requerida')
         .min(10, 'La descripción debe tener al menos 10 caracteres')
@@ -155,6 +160,20 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
                 onChange={formik.handleChange}
                 error={formik.touched.nombre && Boolean(formik.errors.nombre)}
                 helperText={formik.touched.nombre && formik.errors.nombre}
+                variant="outlined"
+                margin="normal"
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                id="codigoP"
+                name="codigoP"
+                label="codigoP"
+                value={formik.values.codigoP}
+                onChange={formik.handleChange}
+                error={formik.touched.codigoP && Boolean(formik.errors.codigoP)}
+                helperText={formik.touched.codigoP && formik.errors.codigoP}
                 variant="outlined"
                 margin="normal"
               />
