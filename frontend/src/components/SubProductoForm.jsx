@@ -200,13 +200,28 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {
                 label="Precio"
                 type="number"
                 value={formik.values.precio}
-                onChange={formik.handleChange}
+                onKeyDown={(e) => {
+                  if (e.key === 'e' || e.key === 'E' || e.key === '-' || e.key === '+') {
+                    e.preventDefault();
+                  }
+                }}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^\d*\.?\d*$/.test(value) || value === '') {
+                    formik.handleChange(e);
+                  }
+                }}
                 error={formik.touched.precio && Boolean(formik.errors.precio)}
                 helperText={formik.touched.precio && formik.errors.precio}
                 variant="outlined"
                 margin="normal"
                 InputProps={{
                   startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                  inputProps: {
+                    step: "0.01",
+                    min: "0",
+                    inputMode: "decimal"
+                  }
                 }}
               />
             </Grid>
@@ -218,11 +233,27 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {
                 label="Stock"
                 type="number"
                 value={formik.values.stock}
-                onChange={formik.handleChange}
+                onKeyDown={(e) => {
+                  if (e.key === 'e' || e.key === 'E' || e.key === '-' || e.key === '+' || e.key === '.') {
+                    e.preventDefault();
+                  }
+                }}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^\d+$/.test(value) || value === '') {
+                    formik.handleChange(e);
+                  }
+                }}
                 error={formik.touched.stock && Boolean(formik.errors.stock)}
                 helperText={formik.touched.stock && formik.errors.stock}
                 variant="outlined"
                 margin="normal"
+                InputProps={{
+                  inputProps: {
+                    min: "0",
+                    inputMode: "numeric"
+                  }
+                }}
               />
             </Grid>
           </Grid>
