@@ -3,6 +3,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Swal from 'sweetalert2';
 import { deleteProducto } from '../services/producto.service';
+import { deleteSubProducto } from '../services/subproducto.service';
 import useTable from '@hooks/table/useTable.jsx';
 
 export default function Table({ data, columns, filter, dataToFilter, initialSortName, onSelectionChange, onEdit, onDelete }) {
@@ -30,6 +31,16 @@ export default function Table({ data, columns, filter, dataToFilter, initialSort
         );
         onDelete();
       }
+      if (result.isConfirmed) {
+        await deleteSubProducto(id);
+        Swal.fire(
+          '¡Eliminado!',
+          'El subproducto ha sido eliminado.',
+          'success'
+        );
+        onDelete();
+      }
+      
     } catch (error) {
       Swal.fire(
         'Error',

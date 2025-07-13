@@ -7,6 +7,7 @@ import Register from '@pages/Register';
 import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
 import Productos from '@pages/Productos';
+import SubProducto from '@pages/SubProducto';
 import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
 
@@ -35,6 +36,12 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={['administrador']}>
             <Productos />
+          </ProtectedRoute>
+        ),
+      },    {        path: '/subproductos',
+        element: (
+          <ProtectedRoute allowedRoles={['administrador']}>
+            <SubProducto />
           </ProtectedRoute>
         ),
       }
