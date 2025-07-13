@@ -7,7 +7,7 @@ export const SubProducto = sequelize.define("SubProducto", {
     allowNull: false
   },
   codigosubP: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.STRING,
     allowNull: false
   },
   descripcion: {
