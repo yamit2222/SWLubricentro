@@ -8,11 +8,13 @@ import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
 import Productos from '@pages/Productos';
 import SubProducto from '@pages/SubProducto';
+import Vehiculos from '@pages/Vehiculos';
 import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
 
 const router = createBrowserRouter([
-  {    path: '/',
+  {    
+    path: '/',
     element: <Root/>,
     errorElement: <Error404/>,
     children: [
@@ -31,14 +33,25 @@ const router = createBrowserRouter([
             <Users />
           </ProtectedRoute>
         ),
-      },      {
+      },      
+      {
         path: '/productos',
         element: (
           <ProtectedRoute allowedRoles={['administrador']}>
             <Productos />
           </ProtectedRoute>
         ),
-      },    {        path: '/subproductos',
+      },
+      {
+        path: '/vehiculos',
+        element: (
+          <ProtectedRoute allowedRoles={['administrador']}>
+            <Vehiculos />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/subproductos',
         element: (
           <ProtectedRoute allowedRoles={['administrador']}>
             <SubProducto />
