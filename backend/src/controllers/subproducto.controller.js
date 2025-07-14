@@ -50,9 +50,7 @@ export const subproductoController = {
   async modificarSubproducto(req, res) {
     try {
       const { id } = req.params;
-      const data = req.body;
-
-      const { error } = productoValidation().validate(data);
+      const data = req.body;      const { error } = subproductoValidation().validate(data);
       if (error) return handleErrorClient(res, 400, error.details[0].message);
 
       const [subproducto, err] = await subproductoService.modificarSubproducto(id, data);

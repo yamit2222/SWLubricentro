@@ -5,7 +5,7 @@ export const SubProducto = sequelize.define("SubProducto", {
   nombre: {
     type: DataTypes.STRING,
     allowNull: false
-  },  codigosubP: {
+  },    codigoP: {
     type: DataTypes.INTEGER,
     allowNull: false
   },

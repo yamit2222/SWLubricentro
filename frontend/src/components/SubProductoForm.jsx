@@ -20,27 +20,25 @@ import Swal from 'sweetalert2';
 
 
 
-const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {
-  const formik = useFormik({    initialValues: {
-      nombre: subproducto?.nombre || '',
-      codigosubP: subproducto?.codigosubP || '',
-      descripcion: subproducto?.descripcion || '',
-      precio: subproducto?.precio || '',
-      stock: subproducto?.stock || '',
-      marca: subproducto?.marca || '',
-      tipo: subproducto?.tipo || ''
+const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const formik = useFormik({
+    initialValues: {
+      nombre: subproducto?.nombre ?? '',      codigoP: subproducto?.codigoP ?? '',
+      descripcion: subproducto?.descripcion ?? '',
+      precio: subproducto?.precio ?? 0,
+      stock: subproducto?.stock ?? 0,
+      marca: subproducto?.marca ?? '',
+      tipo: subproducto?.tipo ?? ''
     },
     validationSchema: Yup.object({
       nombre: Yup.string()
         .required('El nombre es requerido')
         .min(3, 'El nombre debe tener al menos 3 caracteres')
-        .max(100, 'El nombre no puede tener más de 100 caracteres'),
-      codigosubP: Yup.number()
+        .max(100, 'El nombre no puede tener más de 100 caracteres'),      codigoP: Yup.number()
         .required('El código es requerido')
         .integer('El código debe ser un número entero')
         .positive('El código debe ser positivo')
-        .test('len', 'El código debe tener entre 4 y 10 dígitos', val => 
-          val && val.toString().length >= 4 && val.toString().length <= 10),
+        .test('len', 'El código debe tener entre 2 y 10 dígitos', val => 
+          val && val.toString().length >= 2 && val.toString().length <= 10),
       descripcion: Yup.string()
         .required('La descripción es requerida')
         .max(500, 'La descripción no puede tener más de 500 caracteres'),
@@ -166,12 +164,11 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {
               />
             </Grid>
             <Grid item xs={12} md={6}>              <TextField
-                fullWidth               
-                id="codigosubP"
-                name="codigosubP"
+                fullWidth                 id="codigoP"
+                name="codigoP"
                 label="Código"
                 type="number"
-                value={formik.values.codigosubP}
+                value={formik.values.codigoP}
                 onKeyDown={(e) => {
                   if (!/[\d]/.test(e.key) && 
                       e.key !== 'Backspace' && 
@@ -187,9 +184,8 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {
                   if (/^\d*$/.test(value) || value === '') {
                     formik.handleChange(e);
                   }
-                }}
-                error={formik.touched.codigosubP && Boolean(formik.errors.codigosubP)}
-                helperText={formik.touched.codigosubP && formik.errors.codigosubP}
+                }}                error={formik.touched.codigoP && Boolean(formik.errors.codigoP)}
+                helperText={formik.touched.codigoP && formik.errors.codigoP}
                 variant="outlined"
                 margin="normal"
                 InputProps={{

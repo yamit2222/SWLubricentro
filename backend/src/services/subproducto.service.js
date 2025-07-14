@@ -1,7 +1,7 @@
 import { SubProducto } from "../entity/subproducto.entity.js";
 
 export const subproductoService = {
-  async crearSubProducto(data) {
+  async crearSubproducto(data) {
     try {
       const nuevo = await SubProducto.create(data);
       return [nuevo, null];
