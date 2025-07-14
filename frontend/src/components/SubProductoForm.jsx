@@ -22,7 +22,8 @@ import Swal from 'sweetalert2';
 
 const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const formik = useFormik({
     initialValues: {
-      nombre: subproducto?.nombre ?? '',      codigoP: subproducto?.codigoP ?? '',
+      nombre: subproducto?.nombre ?? '',
+      codigosubP: subproducto?.codigosubP ?? '',
       descripcion: subproducto?.descripcion ?? '',
       precio: subproducto?.precio ?? 0,
       stock: subproducto?.stock ?? 0,
@@ -33,7 +34,8 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
       nombre: Yup.string()
         .required('El nombre es requerido')
         .min(3, 'El nombre debe tener al menos 3 caracteres')
-        .max(100, 'El nombre no puede tener más de 100 caracteres'),      codigoP: Yup.number()
+        .max(100, 'El nombre no puede tener más de 100 caracteres'),
+      codigosubP: Yup.number()
         .required('El código es requerido')
         .integer('El código debe ser un número entero')
         .positive('El código debe ser positivo')
@@ -53,8 +55,14 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
         .max(99999, 'El stock es demasiado alto'),
     }),
     onSubmit: async (values) => {
+      // Forzar codigosubP a número
+      const payload = {
+        ...values,
+        codigosubP: Number(values.codigosubP)
+      };
       try {
-        if (subproducto) {          await updateSubProducto(subproducto.id, values);
+        if (subproducto) {
+          await updateSubProducto(subproducto.id, payload);
           Swal.fire({
             icon: 'success',
             title: '¡Actualizado!',
@@ -63,7 +71,7 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
             timer: 1500
           });
         } else {
-          await createSubProducto(values);
+          await createSubProducto(payload);
           Swal.fire({
             icon: 'success',
             title: '¡Creado!',
@@ -164,11 +172,11 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
               />
             </Grid>
             <Grid item xs={12} md={6}>              <TextField
-                fullWidth                 id="codigoP"
-                name="codigoP"
-                label="Código"
+                fullWidth                 id="codigosubP"
+                name="codigosubP"
+                label="CódigosubP"
                 type="number"
-                value={formik.values.codigoP}
+                value={formik.values.codigosubP}
                 onKeyDown={(e) => {
                   if (!/[\d]/.test(e.key) && 
                       e.key !== 'Backspace' && 
@@ -184,8 +192,8 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
                   if (/^\d*$/.test(value) || value === '') {
                     formik.handleChange(e);
                   }
-                }}                error={formik.touched.codigoP && Boolean(formik.errors.codigoP)}
-                helperText={formik.touched.codigoP && formik.errors.codigoP}
+                }}                error={formik.touched.codigosubP && Boolean(formik.errors.codigosubP)}
+                helperText={formik.touched.codigosubP && formik.errors.codigosubP}
                 variant="outlined"
                 margin="normal"
                 InputProps={{

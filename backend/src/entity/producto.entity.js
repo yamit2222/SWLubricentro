@@ -5,7 +5,8 @@ export const Producto = sequelize.define("Producto", {
   nombre: {
     type: DataTypes.STRING,
     allowNull: false
-  },  codigoP: {
+  },  
+  codigoP: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
