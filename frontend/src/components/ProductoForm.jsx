@@ -33,14 +33,13 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
       nombre: Yup.string()
         .required('El nombre es requerido')
         .min(3, 'El nombre debe tener al menos 3 caracteres')
-        .max(100, 'El nombre no puede tener más de 100 caracteres'),
-      codigoP: Yup.number()
+        .max(100, 'El nombre no puede tener más de 100 caracteres'),      codigoP: Yup.string()
         .required('El código es requerido')
         .min(4, 'El código debe tener al menos 4 caracteres')
-        .max(10, 'El código no puede tener más de 10 caracteres'),
+        .max(10, 'El código no puede tener más de 10 caracteres')
+        .matches(/^\d+$/, 'El código debe contener solo números'),
       descripcion: Yup.string()
         .required('La descripción es requerida')
-        .min(10, 'La descripción debe tener al menos 10 caracteres')
         .max(500, 'La descripción no puede tener más de 500 caracteres'),
       precio: Yup.number()
         .required('El precio es requerido')
@@ -164,18 +163,38 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
                 margin="normal"
               />
             </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
+            <Grid item xs={12} md={6}>              <TextField
                 fullWidth
                 id="codigoP"
                 name="codigoP"
-                label="codigoP"
+                label="Código"
                 value={formik.values.codigoP}
-                onChange={formik.handleChange}
+                onKeyDown={(e) => {
+                  if (!/[\d]/.test(e.key) && 
+                      e.key !== 'Backspace' && 
+                      e.key !== 'Delete' && 
+                      e.key !== 'ArrowLeft' && 
+                      e.key !== 'ArrowRight' && 
+                      e.key !== 'Tab') {
+                    e.preventDefault();
+                  }
+                }}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^\d*$/.test(value) || value === '') {
+                    formik.handleChange(e);
+                  }
+                }}
                 error={formik.touched.codigoP && Boolean(formik.errors.codigoP)}
                 helperText={formik.touched.codigoP && formik.errors.codigoP}
                 variant="outlined"
                 margin="normal"
+                InputProps={{
+                  inputProps: {
+                    inputMode: "numeric",
+                    pattern: "[0-9]*"
+                  }
+                }}
               />
             </Grid>
             <Grid item xs={12}>

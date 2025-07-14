@@ -34,13 +34,13 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {
       nombre: Yup.string()
         .required('El nombre es requerido')
         .min(3, 'El nombre debe tener al menos 3 caracteres')
-        .max(100, 'El nombre no puede tener más de 100 caracteres'),      codigosubP: Yup.number()
+        .max(100, 'El nombre no puede tener más de 100 caracteres'),      
+      codigosubP: Yup.number()
         .required('El código es requerido')
         .min(4, 'El código debe tener al menos 4 caracteres')
         .max(10, 'El código no puede tener más de 10 caracteres'),
       descripcion: Yup.string()
         .required('La descripción es requerida')
-        .min(10, 'La descripción debe tener al menos 10 caracteres')
         .max(500, 'La descripción no puede tener más de 500 caracteres'),
       precio: Yup.number()
         .required('El precio es requerido')
@@ -165,9 +165,10 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {
             </Grid>
             <Grid item xs={12} md={6}>
               <TextField
-                fullWidth                id="codigosubP"
+                fullWidth               
+                id="codigosubP"
                 name="codigosubP"
-                label="Código"
+                label="Codigo"
                 value={formik.values.codigosubP}
                 onChange={formik.handleChange}
                 error={formik.touched.codigosubP && Boolean(formik.errors.codigosubP)}
