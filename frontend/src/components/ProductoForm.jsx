@@ -33,11 +33,12 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
       nombre: Yup.string()
         .required('El nombre es requerido')
         .min(3, 'El nombre debe tener al menos 3 caracteres')
-        .max(100, 'El nombre no puede tener más de 100 caracteres'),      codigoP: Yup.string()
+        .max(100, 'El nombre no puede tener más de 100 caracteres'),      codigoP: Yup.number()
         .required('El código es requerido')
-        .min(4, 'El código debe tener al menos 4 caracteres')
-        .max(10, 'El código no puede tener más de 10 caracteres')
-        .matches(/^\d+$/, 'El código debe contener solo números'),
+        .integer('El código debe ser un número entero')
+        .positive('El código debe ser positivo')
+        .test('len', 'El código debe tener entre 4 y 10 dígitos', val => 
+          val && val.toString().length >= 4 && val.toString().length <= 10),
       descripcion: Yup.string()
         .required('La descripción es requerida')
         .max(500, 'La descripción no puede tener más de 500 caracteres'),
@@ -168,6 +169,7 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
                 id="codigoP"
                 name="codigoP"
                 label="Código"
+                type="number"
                 value={formik.values.codigoP}
                 onKeyDown={(e) => {
                   if (!/[\d]/.test(e.key) && 
