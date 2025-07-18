@@ -1,80 +1,71 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/inventario.css";
+import { getProductos } from "../services/producto.service";
 
 const Inventario = () => {
-  const mueble1 = [
-    "a1",
-    "a2",
-    "a3",
-    "a4",
-    "b1",
-    "b2",
-    "b3",
-    "b4",
-    "c1",
-    "c2",
-    "c3",
-    "c4",
-  ];
-  const mueble2 = [
-    "d1",
-    "d2",
-    "d3",
-    "d4",
-    "e1",
-    "e2",
-    "e3",
-    "e4",
-    "f1",
-    "f2",
-    "f3",
-    "f4",
-  ];
-  const mueble3 = [
-    "g1",
-    "g2",
-    "g3",
-    "g4",
-    "h1",
-    "h2",
-    "h3",
-    "h4",
-    "i1",
-    "i2",
-    "i3",
-    "i4",
-  ];
+  const [productos, setProductos] = useState([]);
+
+  useEffect(() => {
+    const fetchProductos = async () => {
+      try {
+        const response = await getProductos();
+        setProductos(Array.isArray(response.data) ? response.data : response);
+      } catch (error) {
+        setProductos([]);
+      }
+    };
+    fetchProductos();
+  }, []);
+
+  // Filtrar y limitar a 12 productos por categoría
+  const aceites = productos.filter((p) => p.categoria === "aceite").slice(0, 12);
+  const filtros = productos.filter((p) => p.categoria === "filtro").slice(0, 12);
+  const baterias = productos.filter((p) => p.categoria === "bateria").slice(0, 12);
 
   return (
     <div className="inventario-multi">
       <div className="inventario-grid">
-        {mueble1.map((posicion, idx) => (
-          <div key={"inv1-" + idx} className="inventario-item">
-            {posicion}
+        <div style={{ gridColumn: "1 / -1", fontWeight: "bold", marginBottom: 8 }}>Aceites</div>
+        {aceites.map((prod, idx) => (
+          <div key={prod.id || idx} className="inventario-item">
+            <strong>{prod.nombre}</strong>
+            <br />
+            <span style={{ fontSize: "0.9em", color: "#666" }}>Stock: {prod.stock}</span>
           </div>
+        ))}
+        {/* Rellenar los espacios vacíos si hay menos de 12 productos */}
+        {Array.from({ length: 12 - aceites.length }).map((_, idx) => (
+          <div key={"aceite-vacio-" + idx} className="inventario-item" style={{ opacity: 0.3 }}></div>
         ))}
       </div>
       <div className="inventario-grid">
-        {mueble2.map((posicion, idx) => (
-          <div key={"inv2-" + idx} className="inventario-item">
-            {posicion}
+        <div style={{ gridColumn: "1 / -1", fontWeight: "bold", marginBottom: 8 }}>Filtros</div>
+        {filtros.map((prod, idx) => (
+          <div key={prod.id || idx} className="inventario-item">
+            <strong>{prod.nombre}</strong>
+            <br />
+            <span style={{ fontSize: "0.9em", color: "#666" }}>Stock: {prod.stock}</span>
           </div>
+        ))}
+        {Array.from({ length: 12 - filtros.length }).map((_, idx) => (
+          <div key={"filtro-vacio-" + idx} className="inventario-item" style={{ opacity: 0.3 }}></div>
         ))}
       </div>
       <div className="inventario-grid">
-        {mueble3.map((posicion, idx) => (
-          <div key={"inv3-" + idx} className="inventario-item">
-            {posicion}
+        <div style={{ gridColumn: "1 / -1", fontWeight: "bold", marginBottom: 8 }}>Baterías</div>
+        {baterias.map((prod, idx) => (
+          <div key={prod.id || idx} className="inventario-item">
+            <strong>{prod.nombre}</strong>
+            <br />
+            <span style={{ fontSize: "0.9em", color: "#666" }}>Stock: {prod.stock}</span>
           </div>
+        ))}
+        {Array.from({ length: 12 - baterias.length }).map((_, idx) => (
+          <div key={"bateria-vacio-" + idx} className="inventario-item" style={{ opacity: 0.3 }}></div>
         ))}
       </div>
     </div>
   );
-
-
-
-
-  
 };
 
 export default Inventario;

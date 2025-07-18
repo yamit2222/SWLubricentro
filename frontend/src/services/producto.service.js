@@ -13,7 +13,12 @@ export const getProductos = async () => {
   }
 };
 
+// Cambia los valores válidos a singular para coincidir con backend
 export const createProducto = async (productoData) => {
+  const categoriaValida = ["aceite", "filtro", "bateria"];
+  if (!categoriaValida.includes(productoData.categoria)) {
+    return Promise.reject("Categoría inválida. Debe ser aceite, filtro o bateria");
+  }
   try {
     const response = await axios.post(`${API_URL}/productos`, productoData, {
       withCredentials: true
@@ -25,6 +30,10 @@ export const createProducto = async (productoData) => {
 };
 
 export const updateProducto = async (id, productoData) => {
+  const categoriaValida = ["aceite", "filtro", "bateria"];
+  if (!categoriaValida.includes(productoData.categoria)) {
+    return Promise.reject("Categoría inválida. Debe ser aceite, filtro o bateria");
+  }
   try {
     const response = await axios.put(`${API_URL}/productos/${id}`, productoData, {
       withCredentials: true

@@ -258,13 +258,14 @@ const Productos = () => {
                     <CardContent>
                       <Typography variant="h6" component="div" gutterBottom noWrap>
                         {producto.nombre}
-                      </Typography>                    <Typography color="text.secondary" gutterBottom>
-                        Marca: {producto.marca} | Tipo: {producto.tipo}
                       </Typography>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          mb: 2, 
+                      <Typography color="text.secondary" gutterBottom>
+                      Descripcion: {producto.descripcion}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          mb: 2,
                           height: '3em', 
                           overflow: 'hidden', 
                           textOverflow: 'ellipsis',

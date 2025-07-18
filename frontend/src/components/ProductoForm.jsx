@@ -21,19 +21,22 @@ import Swal from 'sweetalert2';
 
 
 const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
-  const formik = useFormik({    initialValues: {
+  const formik = useFormik({
+    initialValues: {
       nombre: producto?.nombre || '',
       codigoP: producto?.codigoP || '',
       descripcion: producto?.descripcion || '',
       precio: producto?.precio || '',
       stock: producto?.stock || '',
       marca: producto?.marca || '',
-      tipo: producto?.tipo || ''
-    },    validationSchema: Yup.object({
+      categoria: producto?.categoria || ''
+    },
+    validationSchema: Yup.object({
       nombre: Yup.string()
         .required('El nombre es requerido')
         .min(3, 'El nombre debe tener al menos 3 caracteres')
-        .max(100, 'El nombre no puede tener más de 100 caracteres'),      codigoP: Yup.number()
+        .max(100, 'El nombre no puede tener más de 100 caracteres'),
+      codigoP: Yup.number()
         .required('El código es requerido')
         .integer('El código debe ser un número entero')
         .positive('El código debe ser positivo')
@@ -51,11 +54,23 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
         .integer('El stock debe ser un número entero')
         .min(0, 'El stock no puede ser negativo')
         .max(99999, 'El stock es demasiado alto'),
+      categoria: Yup.string()
+        .oneOf(['aceite', 'filtro', 'bateria'], 'Selecciona una categoría válida')
+        .required('La categoría es requerida'),
     }),
     onSubmit: async (values) => {
       try {
+        const payload = {
+          nombre: values.nombre,
+          codigoP: values.codigoP,
+          descripcion: values.descripcion,
+          precio: values.precio,
+          stock: values.stock,
+          marca: values.marca,
+          categoria: values.categoria
+        };
         if (producto) {
-          await updateProducto(producto.id, values);
+          await updateProducto(producto.id, payload);
           Swal.fire({
             icon: 'success',
             title: '¡Actualizado!',
@@ -64,7 +79,7 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
             timer: 1500
           });
         } else {
-          await createProducto(values);
+          await createProducto(payload);
           Swal.fire({
             icon: 'success',
             title: '¡Creado!',
@@ -138,17 +153,24 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
             </Grid>
             <Grid item xs={12} md={6}>
               <TextField
+                select
                 fullWidth
-                id="tipo"
-                name="tipo"
-                label="Tipo"
-                value={formik.values.tipo}
+                id="categoria"
+                name="categoria"
+                label="Categoría"
+                value={formik.values.categoria}
                 onChange={formik.handleChange}
-                error={formik.touched.tipo && Boolean(formik.errors.tipo)}
-                helperText={formik.touched.tipo && formik.errors.tipo}
+                error={formik.touched.categoria && Boolean(formik.errors.categoria)}
+                helperText={formik.touched.categoria && formik.errors.categoria}
                 variant="outlined"
                 margin="normal"
-              />
+                SelectProps={{ native: true }}
+              >
+                <option value="">Selecciona una categoría</option>
+                <option value="aceite">Aceite</option>
+                <option value="filtro">Filtro</option>
+                <option value="bateria">Batería</option>
+              </TextField>
             </Grid>
             <Grid item xs={12} md={6}>
               <TextField
