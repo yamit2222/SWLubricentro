@@ -104,6 +104,18 @@ const Navbar = () => {
                                     Inventario
                                 </NavLink>
                             </li>
+                            <li>
+                                <NavLink 
+                                    to="/movimientos" 
+                                    onClick={() => setMenuOpen(false)} 
+                                    className={({ isActive }) => isActive ? 'active' : ''}
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M3 17v2c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-2H3zm0-2h18V7c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v8zm2-8h14v2H5V7z"/>
+                                    </svg>
+                                    Movimientos
+                                </NavLink>
+                            </li>
                         </>
                     )}
                     <li>
