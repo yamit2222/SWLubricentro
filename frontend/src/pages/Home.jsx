@@ -1,51 +1,36 @@
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import fondo from '../assets/imagen/lubricartoon.png';
 
 const Home = () => {
   return (
-    <Box
-      sx={{
-        minHeight: '80vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundImage: `url(${fondo})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        position: 'relative',
-        py: 6,
-      }}
-    >
-      <Box sx={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        bgcolor: 'rgba(255, 255, 255, 0.14)',
-        zIndex: 1,
-      }} />
-      <Box
-        sx={{
-          position: 'relative',
-          zIndex: 2,
-          textAlign: 'center',
-          bgcolor: 'rgba(255, 255, 255, 0.29)',
-          mt: { md: -30 },
-        }}
-      >
-        <Typography variant="h2" component="h1" sx={{ fontWeight: 700, mb: 1, color: '#1A1A1A' }}>
-          El Socio
-        </Typography>
-        <Typography variant="h5" sx={{ color: 'text.secondary' }}>
-          Los Ángeles, Chile
-        </Typography>
-      </Box>
-    </Box>
-  )
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: '#f7f7f7',
+      backgroundImage: `url(${fondo})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      width: '100%'
+    }}>
+      <div style={{
+        background: 'rgba(255,255,255,0.85)',
+        borderRadius: '16px',
+        boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
+        padding: '2.5rem 2rem',
+        textAlign: 'center',
+        maxWidth: 600,
+        margin: '0 auto'
+      }}>
+        <h1 style={{ fontSize: '3.3rem', color: '#222', marginBottom: '1rem' }}>Bienvenido a El Socio</h1>
+        <p style={{ fontSize: '1.2rem', color: '#555', maxWidth: 400, margin: '0 auto' }}>
+          Los Ángeles, Chile.
+        </p>
+      </div>
+    </div>
+  );
 }
 
 export default Home
