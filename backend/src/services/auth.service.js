@@ -1,7 +1,7 @@
 "use strict";
 import User from "../entity/user.entity.js";
 import jwt from "jsonwebtoken";
-import { comparePassword, encryptPassword } from "../helpers/bcrypt.helper.js";
+import { comparePassword } from "../helpers/bcrypt.helper.js";
 import { ACCESS_TOKEN_SECRET } from "../config/configEnv.js";
 
 export async function loginService(user) {
@@ -41,48 +41,6 @@ export async function loginService(user) {
     return [accessToken, null];
   } catch (error) {
     console.error("Error al iniciar sesión:", error);
-    return [null, "Error interno del servidor"];
-  }
-}
-
-export async function registerService(user) {
-  try {
-    const { nombreCompleto, rut, email } = user;
-
-    const createErrorMessage = (dataInfo, message) => ({
-      dataInfo,
-      message
-    });
-
-    const existingEmailUser = await User.findOne({
-      where: {
-        email,
-      },
-    });
-    
-    if (existingEmailUser) return [null, createErrorMessage("email", "Correo electrónico en uso")];
-
-    const existingRutUser = await User.findOne({
-      where: {
-        rut,
-      },
-    });
-
-    if (existingRutUser) return [null, createErrorMessage("rut", "Rut ya asociado a una cuenta")];
-
-    const newUser = await User.create({
-      nombreCompleto,
-      email,
-      rut,
-      password: await encryptPassword(user.password),
-      rol: "usuario",
-    });
-
-    const { password, ...dataUser } = newUser.toJSON();
-
-    return [dataUser, null];
-  } catch (error) {
-    console.error("Error al registrar un usuario", error);
     return [null, "Error interno del servidor"];
   }
 }
