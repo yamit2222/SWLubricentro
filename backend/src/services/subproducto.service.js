@@ -28,6 +28,9 @@ export const subproductoService = {
   },
   async modificarSubproducto(id, data) {
     try {
+      if ('stock' in data) {
+        delete data.stock;
+      }
       const subproducto = await SubProducto.findByPk(id);
       if (!subproducto) return [null, "Subproducto no encontrado"];
       await subproducto.update(data);

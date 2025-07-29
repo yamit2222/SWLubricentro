@@ -31,6 +31,10 @@ export const productoService = {
 
   async modificarProducto(id, data) {
     try {
+      // Evitar que el stock se modifique desde el endpoint
+      if ('stock' in data) {
+        delete data.stock;
+      }
       const producto = await Producto.findByPk(id);
       if (!producto) return [null, "Producto no encontrado"];
       await producto.update(data);
