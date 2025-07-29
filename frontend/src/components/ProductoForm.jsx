@@ -27,7 +27,7 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
       codigoP: producto?.codigoP || '',
       descripcion: producto?.descripcion || '',
       precio: producto?.precio || '',
-      stock: producto?.stock || '',
+      stock: producto?.stock ?? 0,
       marca: producto?.marca || '',
       categoria: producto?.categoria || ''
     },
@@ -278,27 +278,8 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
                 label="Stock"
                 type="number"
                 value={formik.values.stock}
-                onKeyDown={(e) => {
-                  if (e.key === 'e' || e.key === 'E' || e.key === '-' || e.key === '+' || e.key === '.') {
-                    e.preventDefault();
-                  }
-                }}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (/^\d+$/.test(value) || value === '') {
-                    formik.handleChange(e);
-                  }
-                }}
-                error={formik.touched.stock && Boolean(formik.errors.stock)}
-                helperText={formik.touched.stock && formik.errors.stock}
-                variant="outlined"
-                margin="normal"
-                InputProps={{
-                  inputProps: {
-                    min: "0",
-                    inputMode: "numeric"
-                  }
-                }}
+                disabled
+                // ...existing code...
               />
             </Grid>
           </Grid>

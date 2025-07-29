@@ -261,17 +261,18 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
                 label="Stock"
                 type="number"
                 value={formik.values.stock}
-                onKeyDown={(e) => {
-                  if (e.key === 'e' || e.key === 'E' || e.key === '-' || e.key === '+' || e.key === '.') {
-                    e.preventDefault();
-                  }
-                }}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (/^\d+$/.test(value) || value === '') {
-                    formik.handleChange(e);
-                  }
-                }}
+                disabled
+                // onKeyDown={(e) => {
+                //   if (e.key === 'e' || e.key === 'E' || e.key === '-' || e.key === '+' || e.key === '.') {
+                //     e.preventDefault();
+                //   }
+                // }}
+                // onChange={(e) => {
+                //   const value = e.target.value;
+                //   if (/^\d+$/.test(value) || value === '') {
+                //     formik.handleChange(e);
+                //   }
+                // }}
                 error={formik.touched.stock && Boolean(formik.errors.stock)}
                 helperText={formik.touched.stock && formik.errors.stock}
                 variant="outlined"
