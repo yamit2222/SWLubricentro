@@ -9,6 +9,7 @@ import Productos from '@pages/Productos';
 import SubProducto from '@pages/SubProducto';
 import Vehiculos from '@pages/Vehiculos';
 import Inventario from '@pages/Inventario';
+import SubInventario from '@pages/SubInventario';
 import Movimientos from '@pages/Movimientos';
 import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
@@ -64,6 +65,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={['administrador']}>
             <Inventario />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/SubInventario',
+        element: (
+          <ProtectedRoute allowedRoles={['administrador']}>
+            <SubInventario />
           </ProtectedRoute>
         ),
       },

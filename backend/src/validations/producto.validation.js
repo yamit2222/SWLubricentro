@@ -7,5 +7,6 @@ export const productoValidation = () => Joi.object({
   precio: Joi.number().min(0).required(),
   stock: Joi.number().integer().min(0).required(),
   marca: Joi.string().optional(),
-  categoria: Joi.string().valid("aceite", "filtro", "bateria").optional()
+  categoria: Joi.string().valid("aceite", "filtro", "bateria").optional(),
+  subcategoria: Joi.string().valid("auto", "camioneta", "vehiculo comercial", "motocicleta", "maquinaria").required()
 });

@@ -1,18 +1,6 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Button,
-  Box,
-  IconButton,
-  Typography,
-  InputAdornment,
-  Grid
-} from '@mui/material';
+import {Dialog,DialogTitle,DialogContent,DialogActions,TextField,Button,Box,IconButton,Typography,InputAdornment,Grid} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
 import { createSubProducto, updateSubProducto } from '../services/subproducto.service';
@@ -28,7 +16,7 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
       precio: subproducto?.precio ?? 0,
       stock: subproducto?.stock ?? 0,
       marca: subproducto?.marca ?? '',
-      tipo: subproducto?.tipo ?? ''
+      categoria: subproducto?.categoria ?? ''
     },
     validationSchema: Yup.object({
       nombre: Yup.string()
@@ -53,9 +41,11 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
         .integer('El stock debe ser un número entero')
         .min(0, 'El stock no puede ser negativo')
         .max(99999, 'El stock es demasiado alto'),
+      categoria: Yup.string()
+        .oneOf(['repuestos', 'limpieza', 'accesorios externos', 'accesorios eléctricos'], 'Selecciona una categoría válida')
+        .required('La categoría es requerida'),
     }),
     onSubmit: async (values) => {
-      // Forzar codigosubP a número
       const payload = {
         ...values,
         codigosubP: Number(values.codigosubP)
@@ -139,20 +129,6 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
                 onChange={formik.handleChange}
                 error={formik.touched.marca && Boolean(formik.errors.marca)}
                 helperText={formik.touched.marca && formik.errors.marca}
-                variant="outlined"
-                margin="normal"
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                id="tipo"
-                name="tipo"
-                label="Tipo"
-                value={formik.values.tipo}
-                onChange={formik.handleChange}
-                error={formik.touched.tipo && Boolean(formik.errors.tipo)}
-                helperText={formik.touched.tipo && formik.errors.tipo}
                 variant="outlined"
                 margin="normal"
               />
@@ -262,17 +238,6 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
                 type="number"
                 value={formik.values.stock}
                 disabled
-                // onKeyDown={(e) => {
-                //   if (e.key === 'e' || e.key === 'E' || e.key === '-' || e.key === '+' || e.key === '.') {
-                //     e.preventDefault();
-                //   }
-                // }}
-                // onChange={(e) => {
-                //   const value = e.target.value;
-                //   if (/^\d+$/.test(value) || value === '') {
-                //     formik.handleChange(e);
-                //   }
-                // }}
                 error={formik.touched.stock && Boolean(formik.errors.stock)}
                 helperText={formik.touched.stock && formik.errors.stock}
                 variant="outlined"
@@ -284,6 +249,28 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
                   }
                 }}
               />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                select
+                fullWidth
+                id="categoria"
+                name="categoria"
+                label="Categoría"
+                value={formik.values.categoria}
+                onChange={formik.handleChange}
+                error={formik.touched.categoria && Boolean(formik.errors.categoria)}
+                helperText={formik.touched.categoria && formik.errors.categoria}
+                variant="outlined"
+                margin="normal"
+                SelectProps={{ native: true }}
+              >
+                <option value="">Selecciona una categoría</option>
+                <option value="repuestos">Repuestos</option>
+                <option value="limpieza">Limpieza</option>
+                <option value="accesorios externos">Accesorios externos</option>
+                <option value="accesorios eléctricos">Accesorios eléctricos</option>
+              </TextField>
             </Grid>
           </Grid>
         </DialogContent>

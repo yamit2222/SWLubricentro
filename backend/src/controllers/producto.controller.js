@@ -1,11 +1,6 @@
 "use strict";
-
 import { productoService } from "../services/producto.service.js";
-import {
-  handleErrorClient,
-  handleErrorServer,
-  handleSuccess
-} from "../handlers/responseHandlers.js";
+import {handleErrorClient,handleErrorServer,handleSuccess} from "../handlers/responseHandlers.js";
 import { productoValidation } from "../validations/producto.validation.js";
 
 export const productoController = {

@@ -27,5 +27,9 @@ export const Producto = sequelize.define("Producto", {
   categoria: {
     type: DataTypes.ENUM('aceite', 'filtro', 'bateria'),
     allowNull: false
+  },
+  subcategoria: {
+    type: DataTypes.ENUM("auto", "camioneta", "vehiculo comercial", "motocicleta", "maquinaria"),
+    allowNull: false
   }
 });

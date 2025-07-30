@@ -29,7 +29,8 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
       precio: producto?.precio || '',
       stock: producto?.stock ?? 0,
       marca: producto?.marca || '',
-      categoria: producto?.categoria || ''
+      categoria: producto?.categoria || '',
+      subcategoria: producto?.subcategoria || ''
     },
     validationSchema: Yup.object({
       nombre: Yup.string()
@@ -57,17 +58,15 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
       categoria: Yup.string()
         .oneOf(['aceite', 'filtro', 'bateria'], 'Selecciona una categoría válida')
         .required('La categoría es requerida'),
+      subcategoria: Yup.string()
+        .oneOf(['auto', 'camioneta', 'vehiculo comercial', 'motocicleta', 'maquinaria'], 'Selecciona una subcategoría válida')
+        .required('La subcategoría es requerida'),
     }),
     onSubmit: async (values) => {
       try {
         const payload = {
-          nombre: values.nombre,
-          codigoP: values.codigoP,
-          descripcion: values.descripcion,
-          precio: values.precio,
-          stock: values.stock,
-          marca: values.marca,
-          categoria: values.categoria
+          ...values,
+          codigoP: Number(values.codigoP)
         };
         if (producto) {
           await updateProducto(producto.id, payload);
@@ -281,6 +280,29 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
                 disabled
                 // ...existing code...
               />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                select
+                fullWidth
+                id="subcategoria"
+                name="subcategoria"
+                label="Subcategoría"
+                value={formik.values.subcategoria}
+                onChange={formik.handleChange}
+                error={formik.touched.subcategoria && Boolean(formik.errors.subcategoria)}
+                helperText={formik.touched.subcategoria && formik.errors.subcategoria}
+                variant="outlined"
+                margin="normal"
+                SelectProps={{ native: true }}
+              >
+                <option value="">Selecciona una subcategoría</option>
+                <option value="auto">Auto</option>
+                <option value="camioneta">Camioneta</option>
+                <option value="vehiculo comercial">Vehículo comercial</option>
+                <option value="motocicleta">Motocicleta</option>
+                <option value="maquinaria">Maquinaria</option>
+              </TextField>
             </Grid>
           </Grid>
         </DialogContent>

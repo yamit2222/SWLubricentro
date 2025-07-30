@@ -24,7 +24,8 @@ export const SubProducto = sequelize.define("SubProducto", {
   marca: {
     type: DataTypes.STRING
   },
-  tipo: {
-    type: DataTypes.STRING
+  categoria: {
+    type: DataTypes.ENUM("repuestos", "limpieza", "accesorios externos", "accesorios eléctricos"),
+    allowNull: false
   }
 });

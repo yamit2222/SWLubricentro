@@ -1,11 +1,7 @@
 "use strict";
 
 import { subproductoService } from "../services/subproducto.service.js";
-import {
-  handleErrorClient,
-  handleErrorServer,
-  handleSuccess
-} from "../handlers/responseHandlers.js";
+import {handleErrorClient,handleErrorServer,handleSuccess} from "../handlers/responseHandlers.js";
 import { subproductoValidation } from "../validations/subproducto.validation.js";
 
 export const subproductoController = {
