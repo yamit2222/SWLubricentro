@@ -11,6 +11,7 @@ import Vehiculos from '@pages/Vehiculos';
 import Inventario from '@pages/Inventario';
 import SubInventario from '@pages/SubInventario';
 import Movimientos from '@pages/Movimientos';
+import Pedidos from "./pages/Pedidos.jsx";
 import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
 
@@ -81,6 +82,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={['administrador']}>
             <Movimientos />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/pedidos',
+        element: (
+          <ProtectedRoute allowedRoles={['administrador']}>
+            <Pedidos />
           </ProtectedRoute>
         ),
       }

@@ -12,6 +12,7 @@ import { cookieKey, HOST, PORT } from "./config/configEnv.js";
 import { connectDB } from "./config/configDb.js";
 import { createUsers } from "./config/initialSetup.js";
 import { passportJwtSetup } from "./auth/passport.auth.js";
+import { Pedido } from "./entity/pedido.entity.js";
 
 async function setupServer() {
   try {
