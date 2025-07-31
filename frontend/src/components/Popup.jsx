@@ -1,7 +1,7 @@
 import Form from './Form';
 import '@styles/popup.css';
-import CloseIcon from '@assets/XIcon.svg';
-import QuestionIcon from '@assets/QuestionCircleIcon.svg';
+import CloseIcon from '@mui/icons-material/Close';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 export default function Popup({ show, setShow, data, action }) {
     const userData = data && data.length > 0 ? data[0] : {};
@@ -17,7 +17,7 @@ export default function Popup({ show, setShow, data, action }) {
             <div className="bg">
                 <div className="popup">
                     <button className='close' onClick={() => setShow(false)}>
-                        <img src={CloseIcon} />
+                        <CloseIcon />
                     </button>
                     <Form
                         title="Editar usuario"
@@ -75,7 +75,7 @@ export default function Popup({ show, setShow, data, action }) {
                                     <span>
                                         Nueva contraseña
                                         <span className='tooltip-icon'>
-                                            <img src={QuestionIcon} />
+                                            <HelpOutlineIcon />
                                             <span className='tooltip-text'>Este campo es opcional</span>
                                         </span>
                                     </span>

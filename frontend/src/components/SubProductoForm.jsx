@@ -83,42 +83,51 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
     enableReinitialize: true
   });
 
-  return (    <Dialog 
+  return (
+    <Dialog 
       open={open} 
       onClose={onClose}
       maxWidth="md"
       fullWidth
       PaperProps={{
         sx: {
-          borderRadius: 2,
-          p: 1,
-          bgcolor: 'var(--color-fondo-secundario)',
+          borderRadius: 3,
+          p: 2,
+          bgcolor: '#23272F',
+          boxShadow: 4,
           '& .MuiDialogTitle-root': {
-            bgcolor: 'var(--color-fondo-secundario)',
-            color: 'var(--color-texto-principal)'
+            bgcolor: '#23272F',
+            color: '#FFB800',
+            fontWeight: 800,
+            fontSize: '2rem',
+            letterSpacing: 1
           },
           '& .MuiDialogContent-root': {
-            bgcolor: 'var(--color-fondo-secundario)'
+            bgcolor: '#23272F',
+            color: '#F3F4F6',
+            borderRadius: 2
           },
           '& .MuiDialogActions-root': {
-            bgcolor: 'var(--color-fondo-secundario)'
+            bgcolor: '#23272F',
+            borderTop: '1px solid #444',
+            color: '#F3F4F6'
           }
         }
       }}
     >
       <DialogTitle>
         <Box display="flex" alignItems="center" justifyContent="space-between">
-          <Typography variant="h5" component="span">
+          <Typography variant="h5" component="span" sx={{ color: '#FFB800', fontWeight: 800, letterSpacing: 1 }}>
             {subproducto ? 'Editar subProducto' : 'Nuevo subProducto'}
           </Typography>
-          <IconButton onClick={onClose} size="small">
+          <IconButton onClick={onClose} size="small" sx={{ color: '#F3F4F6', bgcolor: '#353945', borderRadius: 2 }}>
             <CloseIcon />
           </IconButton>
         </Box>
       </DialogTitle>
-
       <form onSubmit={formik.handleSubmit}>
-        <DialogContent dividers>          <Grid container spacing={3}>
+        <DialogContent dividers>
+          <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
@@ -131,6 +140,14 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
                 helperText={formik.touched.marca && formik.errors.marca}
                 variant="outlined"
                 margin="normal"
+                InputProps={{
+                  sx: {
+                    bgcolor: '#2C303A',
+                    color: '#F3F4F6',
+                    borderRadius: 2
+                  }
+                }}
+                InputLabelProps={{ sx: { color: '#FFB800' } }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -145,16 +162,26 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
                 helperText={formik.touched.nombre && formik.errors.nombre}
                 variant="outlined"
                 margin="normal"
+                InputProps={{
+                  sx: {
+                    bgcolor: '#2C303A',
+                    color: '#F3F4F6',
+                    borderRadius: 2
+                  }
+                }}
+                InputLabelProps={{ sx: { color: '#FFB800' } }}
               />
             </Grid>
-            <Grid item xs={12} md={6}>              <TextField
-                fullWidth                 id="codigosubP"
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                id="codigosubP"
                 name="codigosubP"
                 label="CódigosubP"
                 type="number"
                 value={formik.values.codigosubP}
                 onKeyDown={(e) => {
-                  if (!/[\d]/.test(e.key) && 
+                  if (!/\d/.test(e.key) && 
                       e.key !== 'Backspace' && 
                       e.key !== 'Delete' && 
                       e.key !== 'ArrowLeft' && 
@@ -168,7 +195,8 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
                   if (/^\d*$/.test(value) || value === '') {
                     formik.handleChange(e);
                   }
-                }}                error={formik.touched.codigosubP && Boolean(formik.errors.codigosubP)}
+                }}
+                error={formik.touched.codigosubP && Boolean(formik.errors.codigosubP)}
                 helperText={formik.touched.codigosubP && formik.errors.codigosubP}
                 variant="outlined"
                 margin="normal"
@@ -176,8 +204,14 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
                   inputProps: {
                     inputMode: "numeric",
                     pattern: "[0-9]*"
+                  },
+                  sx: {
+                    bgcolor: '#2C303A',
+                    color: '#F3F4F6',
+                    borderRadius: 2
                   }
                 }}
+                InputLabelProps={{ sx: { color: '#FFB800' } }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -194,6 +228,14 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
                 helperText={formik.touched.descripcion && formik.errors.descripcion}
                 variant="outlined"
                 margin="normal"
+                InputProps={{
+                  sx: {
+                    bgcolor: '#2C303A',
+                    color: '#F3F4F6',
+                    borderRadius: 2
+                  }
+                }}
+                InputLabelProps={{ sx: { color: '#FFB800' } }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -225,8 +267,14 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
                     step: "0.01",
                     min: "0",
                     inputMode: "decimal"
+                  },
+                  sx: {
+                    bgcolor: '#2C303A',
+                    color: '#F3F4F6',
+                    borderRadius: 2
                   }
                 }}
+                InputLabelProps={{ sx: { color: '#FFB800' } }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -246,8 +294,14 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
                   inputProps: {
                     min: "0",
                     inputMode: "numeric"
+                  },
+                  sx: {
+                    bgcolor: '#2C303A',
+                    color: '#F3F4F6',
+                    borderRadius: 2
                   }
                 }}
+                InputLabelProps={{ sx: { color: '#FFB800' } }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -257,26 +311,27 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
                 id="categoria"
                 name="categoria"
                 label="Categoría"
-                value={formik.values.categoria}
+                value={formik.values.categoria || ''}
                 onChange={formik.handleChange}
                 error={formik.touched.categoria && Boolean(formik.errors.categoria)}
                 helperText={formik.touched.categoria && formik.errors.categoria}
                 variant="outlined"
                 margin="normal"
                 SelectProps={{ native: true }}
+                InputProps={{ sx: { bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2 } }}
+                InputLabelProps={{ sx: { color: '#FFB800' }, shrink: true }}
               >
-                <option value="">Selecciona una categoría</option>
-                <option value="repuestos">Repuestos</option>
-                <option value="limpieza">Limpieza</option>
-                <option value="accesorios externos">Accesorios externos</option>
-                <option value="accesorios eléctricos">Accesorios eléctricos</option>
+                <option value="" style={{ color: '#FFB800', background: '#23272F' }}>Selecciona una categoría</option>
+                <option value="repuestos" style={{ color: '#F3F4F6', background: '#23272F' }}>Repuestos</option>
+                <option value="limpieza" style={{ color: '#F3F4F6', background: '#23272F' }}>Limpieza</option>
+                <option value="accesorios externos" style={{ color: '#F3F4F6', background: '#23272F' }}>Accesorios externos</option>
+                <option value="accesorios eléctricos" style={{ color: '#F3F4F6', background: '#23272F' }}>Accesorios eléctricos</option>
               </TextField>
             </Grid>
           </Grid>
         </DialogContent>
-        
-        <DialogActions sx={{ px: 3, py: 2, gap: 1 }}>
-          <Button onClick={onClose} variant="outlined" color="inherit">
+        <DialogActions sx={{ px: 3, py: 2, gap: 1, bgcolor: '#23272F', borderTop: '1px solid #444' }}>
+          <Button onClick={onClose} variant="outlined" color="inherit" sx={{ borderColor: '#FFB800', color: '#FFB800', bgcolor: '#353945', borderRadius: 2, fontWeight: 700 }}>
             Cancelar
           </Button>
           <Button
@@ -284,7 +339,8 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
             variant="contained"
             color="primary"
             startIcon={<SaveIcon />}
-            disabled={formik.isSubmitting}          >
+            disabled={formik.isSubmitting}
+            sx={{ bgcolor: '#FFB800', color: '#23272F', borderRadius: 2, fontWeight: 700, boxShadow: 2 }}          >
             {subproducto ? 'Actualizar' : 'Crear'}
           </Button>
         </DialogActions>

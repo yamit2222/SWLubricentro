@@ -107,35 +107,43 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
       fullWidth
       PaperProps={{
         sx: {
-          borderRadius: 2,
-          p: 1,
-          bgcolor: 'var(--color-fondo-secundario)',
+          borderRadius: 3,
+          p: 2,
+          bgcolor: '#23272F',
+          boxShadow: 4,
           '& .MuiDialogTitle-root': {
-            bgcolor: 'var(--color-fondo-secundario)',
-            color: 'var(--color-texto-principal)'
+            bgcolor: '#23272F',
+            color: '#FFB800',
+            fontWeight: 800,
+            fontSize: '2rem',
+            letterSpacing: 1
           },
           '& .MuiDialogContent-root': {
-            bgcolor: 'var(--color-fondo-secundario)'
+            bgcolor: '#23272F',
+            color: '#F3F4F6',
+            borderRadius: 2
           },
           '& .MuiDialogActions-root': {
-            bgcolor: 'var(--color-fondo-secundario)'
+            bgcolor: '#23272F',
+            borderTop: '1px solid #444',
+            color: '#F3F4F6'
           }
         }
       }}
     >
       <DialogTitle>
         <Box display="flex" alignItems="center" justifyContent="space-between">
-          <Typography variant="h5" component="span">
+          <Typography variant="h5" component="span" sx={{ color: '#FFB800', fontWeight: 800, letterSpacing: 1 }}>
             {producto ? 'Editar Producto' : 'Nuevo Producto'}
           </Typography>
-          <IconButton onClick={onClose} size="small">
+          <IconButton onClick={onClose} size="small" sx={{ color: '#F3F4F6', bgcolor: '#353945', borderRadius: 2 }}>
             <CloseIcon />
           </IconButton>
         </Box>
       </DialogTitle>
-
       <form onSubmit={formik.handleSubmit}>
-        <DialogContent dividers>          <Grid container spacing={3}>
+        <DialogContent dividers>
+          <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
@@ -148,28 +156,9 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
                 helperText={formik.touched.marca && formik.errors.marca}
                 variant="outlined"
                 margin="normal"
+                InputProps={{ sx: { bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2 } }}
+                InputLabelProps={{ sx: { color: '#FFB800' } }}
               />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                select
-                fullWidth
-                id="categoria"
-                name="categoria"
-                label="Categoría"
-                value={formik.values.categoria}
-                onChange={formik.handleChange}
-                error={formik.touched.categoria && Boolean(formik.errors.categoria)}
-                helperText={formik.touched.categoria && formik.errors.categoria}
-                variant="outlined"
-                margin="normal"
-                SelectProps={{ native: true }}
-              >
-                <option value="">Selecciona una categoría</option>
-                <option value="aceite">Aceite</option>
-                <option value="filtro">Filtro</option>
-                <option value="bateria">Batería</option>
-              </TextField>
             </Grid>
             <Grid item xs={12} md={6}>
               <TextField
@@ -183,9 +172,12 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
                 helperText={formik.touched.nombre && formik.errors.nombre}
                 variant="outlined"
                 margin="normal"
+                InputProps={{ sx: { bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2 } }}
+                InputLabelProps={{ sx: { color: '#FFB800' } }}
               />
             </Grid>
-            <Grid item xs={12} md={6}>              <TextField
+            <Grid item xs={12} md={6}>
+              <TextField
                 fullWidth
                 id="codigoP"
                 name="codigoP"
@@ -212,12 +204,8 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
                 helperText={formik.touched.codigoP && formik.errors.codigoP}
                 variant="outlined"
                 margin="normal"
-                InputProps={{
-                  inputProps: {
-                    inputMode: "numeric",
-                    pattern: "[0-9]*"
-                  }
-                }}
+                InputProps={{ inputProps: { inputMode: 'numeric', pattern: '[0-9]*' }, sx: { bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2 } }}
+                InputLabelProps={{ sx: { color: '#FFB800' } }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -234,6 +222,8 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
                 helperText={formik.touched.descripcion && formik.errors.descripcion}
                 variant="outlined"
                 margin="normal"
+                InputProps={{ sx: { bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2 } }}
+                InputLabelProps={{ sx: { color: '#FFB800' } }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -259,14 +249,8 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
                 helperText={formik.touched.precio && formik.errors.precio}
                 variant="outlined"
                 margin="normal"
-                InputProps={{
-                  startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                  inputProps: {
-                    step: "0.01",
-                    min: "0",
-                    inputMode: "decimal"
-                  }
-                }}
+                InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment>, inputProps: { step: '0.01', min: '0', inputMode: 'decimal' }, sx: { bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2 } }}
+                InputLabelProps={{ sx: { color: '#FFB800' } }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -278,8 +262,37 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
                 type="number"
                 value={formik.values.stock}
                 disabled
-                // ...existing code...
+                error={formik.touched.stock && Boolean(formik.errors.stock)}
+                helperText={formik.touched.stock && formik.errors.stock}
+                variant="outlined"
+                margin="normal"
+                InputProps={{ inputProps: { min: '0', inputMode: 'numeric' }, sx: { bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2 } }}
+                InputLabelProps={{ sx: { color: '#FFB800' } }}
               />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                select
+                required
+                fullWidth
+                id="categoria"
+                name="categoria"
+                label="Categoría"
+                value={formik.values.categoria ? String(formik.values.categoria) : ''}
+                onChange={formik.handleChange}
+                error={formik.touched.categoria && Boolean(formik.errors.categoria)}
+                helperText={formik.touched.categoria && formik.errors.categoria}
+                variant="outlined"
+                margin="normal"
+                SelectProps={{ native: true }}
+                InputProps={{ sx: { bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2 } }}
+                InputLabelProps={{ sx: { color: '#FFB800', fontSize: '0.95em', fontWeight: 500 }, shrink: true }}
+              >
+                <option value="" style={{ color: '#FFB800', background: '#23272F' }}>Selecciona una categoría</option>
+                <option value="aceite" style={{ color: '#F3F4F6', background: '#23272F' }}>Aceite</option>
+                <option value="filtro" style={{ color: '#F3F4F6', background: '#23272F' }}>Filtro</option>
+                <option value="bateria" style={{ color: '#F3F4F6', background: '#23272F' }}>Batería</option>
+              </TextField>
             </Grid>
             <Grid item xs={12} md={6}>
               <TextField
@@ -288,27 +301,28 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
                 id="subcategoria"
                 name="subcategoria"
                 label="Subcategoría"
-                value={formik.values.subcategoria}
+                value={formik.values.subcategoria || ''}
                 onChange={formik.handleChange}
                 error={formik.touched.subcategoria && Boolean(formik.errors.subcategoria)}
                 helperText={formik.touched.subcategoria && formik.errors.subcategoria}
                 variant="outlined"
                 margin="normal"
                 SelectProps={{ native: true }}
+                InputProps={{ sx: { bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2 } }}
+                InputLabelProps={{ sx: { color: '#FFB800' }, shrink: true }}
               >
-                <option value="">Selecciona una subcategoría</option>
-                <option value="auto">Auto</option>
-                <option value="camioneta">Camioneta</option>
-                <option value="vehiculo comercial">Vehículo comercial</option>
-                <option value="motocicleta">Motocicleta</option>
-                <option value="maquinaria">Maquinaria</option>
+                <option value="" style={{ color: '#FFB800', background: '#23272F' }}>Selecciona una subcategoría</option>
+                <option value="auto" style={{ color: '#F3F4F6', background: '#23272F' }}>Auto</option>
+                <option value="camioneta" style={{ color: '#F3F4F6', background: '#23272F' }}>Camioneta</option>
+                <option value="vehiculo comercial" style={{ color: '#F3F4F6', background: '#23272F' }}>Vehículo comercial</option>
+                <option value="motocicleta" style={{ color: '#F3F4F6', background: '#23272F' }}>Motocicleta</option>
+                <option value="maquinaria" style={{ color: '#F3F4F6', background: '#23272F' }}>Maquinaria</option>
               </TextField>
             </Grid>
           </Grid>
         </DialogContent>
-        
-        <DialogActions sx={{ px: 3, py: 2, gap: 1 }}>
-          <Button onClick={onClose} variant="outlined" color="inherit">
+        <DialogActions sx={{ px: 3, py: 2, gap: 1, bgcolor: '#23272F', borderTop: '1px solid #444' }}>
+          <Button onClick={onClose} variant="outlined" color="inherit" sx={{ borderColor: '#FFB800', color: '#FFB800', bgcolor: '#353945', borderRadius: 2, fontWeight: 700 }}>
             Cancelar
           </Button>
           <Button
@@ -317,6 +331,7 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
             color="primary"
             startIcon={<SaveIcon />}
             disabled={formik.isSubmitting}
+            sx={{ bgcolor: '#FFB800', color: '#23272F', borderRadius: 2, fontWeight: 700, boxShadow: 2 }}
           >
             {producto ? 'Actualizar' : 'Crear'}
           </Button>

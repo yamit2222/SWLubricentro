@@ -3,6 +3,18 @@ import { logout } from '@services/auth.service.js';
 import { useAuth } from '@context/AuthContext';
 import '@styles/navbar.css';
 import { useState } from "react";
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
+import InventoryRoundedIcon from '@mui/icons-material/InventoryRounded';
+import CategoryRoundedIcon from '@mui/icons-material/CategoryRounded';
+import DirectionsCarRoundedIcon from '@mui/icons-material/DirectionsCarRounded';
+import ListAltRoundedIcon from '@mui/icons-material/ListAltRounded';
+import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
+import ExitToAppRoundedIcon from '@mui/icons-material/ExitToAppRounded';
+import BuildRoundedIcon from '@mui/icons-material/BuildRounded';
+import MiscellaneousServicesRoundedIcon from '@mui/icons-material/MiscellaneousServicesRounded';
+import SellRoundedIcon from '@mui/icons-material/SellRounded';
+import WarehouseRoundedIcon from '@mui/icons-material/WarehouseRounded';
+import StorageRoundedIcon from '@mui/icons-material/StorageRounded';
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -32,9 +44,7 @@ const Navbar = () => {
                             onClick={() => setMenuOpen(false)} 
                             className={({ isActive }) => isActive ? 'active' : ''}
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/>
-                            </svg>
+                            <HomeRoundedIcon style={{marginRight: '1rem'}} />
                             Inicio
                         </NavLink>
                     </li>
@@ -47,10 +57,8 @@ const Navbar = () => {
                                     onClick={() => setMenuOpen(false)} 
                                     className={({ isActive }) => isActive ? 'active' : ''}
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
-                                    </svg>
-                                    Productos
+                                    <StorageRoundedIcon style={{marginRight: '1rem'}} />
+                                    Producto
                                 </NavLink>
                             </li>                            <li>    
                                 <NavLink 
@@ -58,9 +66,7 @@ const Navbar = () => {
                                     onClick={() => setMenuOpen(false)} 
                                     className={({ isActive }) => isActive ? 'active' : ''}
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
-                                    </svg>
+                                    <StorageRoundedIcon style={{marginRight: '1rem'}} />
                                     SubProductos
                                 </NavLink>
                             </li>
@@ -70,12 +76,7 @@ const Navbar = () => {
                                     onClick={() => setMenuOpen(false)} 
                                     className={({ isActive }) => isActive ? 'active' : ''}
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                        <rect x="3" y="3" width="7" height="7"/>
-                                        <rect x="14" y="3" width="7" height="7"/>
-                                        <rect x="3" y="14" width="7" height="7"/>
-                                        <rect x="14" y="14" width="7" height="7"/>
-                                    </svg>
+                                    <WarehouseRoundedIcon style={{marginRight: '1rem'}} />
                                     Inventario
                                 </NavLink>
                             </li>
@@ -85,9 +86,7 @@ const Navbar = () => {
                                     onClick={() => setMenuOpen(false)} 
                                     className={({ isActive }) => isActive ? 'active' : ''}
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
-                                    </svg>
+                                    <WarehouseRoundedIcon style={{marginRight: '1rem'}} />
                                     SubInventario
                                 </NavLink>
                             </li> 
@@ -97,11 +96,7 @@ const Navbar = () => {
                                     onClick={() => setMenuOpen(false)} 
                                     className={({ isActive }) => isActive ? 'active' : ''}
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.08 3.11H5.77L6.85 7zM19 17H5v-5h14v5z"/>
-                                        <circle cx="7.5" cy="14.5" r="1.5"/>
-                                        <circle cx="16.5" cy="14.5" r="1.5"/>
-                                    </svg>
+                                    <DirectionsCarRoundedIcon style={{marginRight: '1rem'}} />
                                     Vehículos
                                 </NavLink>
                             </li>
@@ -111,9 +106,7 @@ const Navbar = () => {
                                     onClick={() => setMenuOpen(false)} 
                                     className={({ isActive }) => isActive ? 'active' : ''}
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M3 17v2c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-2H3zm0-2h18V7c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v8zm2-8h14v2H5V7z"/>
-                                    </svg>
+                                    <ListAltRoundedIcon style={{marginRight: '1rem'}} />
                                     Movimientos
                                 </NavLink>
                             </li>
@@ -123,9 +116,7 @@ const Navbar = () => {
                                     onClick={() => setMenuOpen(false)} 
                                     className={({ isActive }) => isActive ? 'active' : ''}
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style={{marginRight:6}}>
-                                        <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/>
-                                    </svg>
+                                    <SellRoundedIcon style={{marginRight: '1rem'}} />
                                     Pedidos
                                 </NavLink>
                             </li>
@@ -140,9 +131,7 @@ const Navbar = () => {
                             }} 
                             className={({ isActive }) => isActive ? 'active' : ''}
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
-                            </svg>
+                            <ExitToAppRoundedIcon style={{marginRight: '1rem'}} />
                             Cerrar sesión
                         </NavLink>
                     </li>

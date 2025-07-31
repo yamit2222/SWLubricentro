@@ -1,8 +1,8 @@
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import '@styles/form.css';
-import HideIcon from '../assets/HideIcon.svg';
-import ViewIcon from '../assets/ViewIcon.svg';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 const Form = ({ title, fields, buttonText, onSubmit, footerContent, backgroundColor }) => {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -88,12 +88,12 @@ const Form = ({ title, fields, buttonText, onSubmit, footerContent, backgroundCo
                     )}
                     {field.type === 'password' && field.name === 'password' && (
                         <span className="toggle-password-icon" onClick={togglePasswordVisibility}>
-                            <img src={showPassword ? ViewIcon : HideIcon} />
+                            {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
                         </span>
                     )}
                     {field.type === 'password' && field.name === 'newPassword' && (
                         <span className="toggle-password-icon" onClick={toggleNewPasswordVisibility}>
-                            <img src={showNewPassword ? ViewIcon : HideIcon} />
+                            {showNewPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
                         </span>
                     )}
                     <div className={`error-message ${errors[field.name] || field.errorMessageData ? 'visible' : ''}`}>

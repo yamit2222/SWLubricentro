@@ -17,7 +17,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import DirectionsCarRoundedIcon from '@mui/icons-material/DirectionsCarRounded';
 import { vehiculoService } from '../services/vehiculo.service';
 import Search from '../components/Search';
 import VehiculoForm from '../components/VehiculoForm';
@@ -166,124 +166,129 @@ const Vehiculos = () => {
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <Container maxWidth="lg" sx={{ mt: '12vh', mb: 4 }}>
-        <Paper 
-          elevation={3} 
-          sx={{ 
-            p: 4, 
-            mb: 4, 
-            borderRadius: 2,
-            bgcolor: 'background.paper',
-          }}
-        >
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <DirectionsCarIcon sx={{ fontSize: 40, color: 'primary.main' }} />
-              <Typography variant="h4" component="h1">
-                Gestión de Vehículos
-              </Typography>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(120deg, #23272F 0%, #353945 40%, #4B4F58 70%, #FFB800 100%)', padding: 0, overflow: 'hidden' }}>
+      <ThemeProvider theme={theme}>
+        <Container maxWidth="lg" sx={{ mt: '12vh', mb: 4 }}>
+          <Paper 
+            elevation={3} 
+            sx={{ 
+              p: 4, 
+              mb: 4, 
+              borderRadius: 3,
+              bgcolor: '#23272F',
+              boxShadow: '0 4px 24px rgba(0,0,0,0.18)',
+              border: '2px solid #FFB800',
+            }}
+          >
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <DirectionsCarRoundedIcon sx={{ fontSize: 40, color: '#FFB800' }} />
+                <Typography variant="h4" component="h1" sx={{ color: '#FFB800', fontWeight: 800, letterSpacing: 1 }}>
+                  Gestión de Vehículos
+                </Typography>
+              </Box>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<AddIcon />}
+                onClick={() => {
+                  setSelectedVehiculo(null);
+                  setShowPopup(true);
+                }}
+                size="large"
+                sx={{ bgcolor: '#FFB800', color: '#23272F', borderRadius: 2, fontWeight: 700, boxShadow: 2 }}
+              >
+                Nuevo Vehículo
+              </Button>
             </Box>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<AddIcon />}
-              onClick={() => {
-                setSelectedVehiculo(null);
-                setShowPopup(true);
-              }}
-              size="large"
-            >
-              Nuevo Vehículo
-            </Button>
-          </Box>
 
-          <Search 
-            onSearch={handleSearch} 
-            placeholder="Buscar por marca, modelo o año..." 
-            sx={{ mb: 3 }}
-          />
+            <Search 
+              onSearch={handleSearch} 
+              placeholder="Buscar por marca, modelo o año..." 
+              sx={{ mb: 3 }}
+            />
 
-          <Grid container spacing={3}>
-            {filteredVehiculos.length === 0 ? (
-              <Grid item xs={12}>
-                <Box sx={{ textAlign: 'center', mt: 4 }}>
-                  <Typography variant="h6" color="text.secondary">
-                    No hay vehículos disponibles
-                  </Typography>
-                </Box>
-              </Grid>
-            ) : (
-              filteredVehiculos.map((vehiculo) => (
-                <Grid item xs={12} sm={6} md={4} key={vehiculo.id}>
-                  <Card elevation={2}>
-                    <CardContent>
-                      <Typography variant="h6" component="div" gutterBottom>
-                        {vehiculo.Marca} {vehiculo.Modelo}
-                      </Typography>
-                      <Typography color="text.secondary" gutterBottom>
-                        Año: {vehiculo.Año}
-                      </Typography>
-                      <Typography variant="body2" gutterBottom>
-                        <strong>Filtro de aire:</strong> {vehiculo.Filtro_de_aire}
-                      </Typography>
-                      <Typography variant="body2" gutterBottom>
-                        <strong>Filtro de aceite:</strong> {vehiculo.Filtro_de_aceite}
-                      </Typography>
-                      <Typography variant="body2" gutterBottom>
-                        <strong>Filtro de combustible:</strong> {vehiculo.Filtro_de_combustible}
-                      </Typography>
-                      {vehiculo.Bateria && (
-                        <Typography variant="body2" gutterBottom>
-                          <strong>Batería:</strong> {vehiculo.Bateria}
-                        </Typography>
-                      )}
-                      <Typography variant="body2">
-                        <strong>Posición:</strong> {vehiculo.Posicion}
-                      </Typography>
-                    </CardContent>
-                    <CardActions sx={{ justifyContent: 'flex-end' }}>
-                      <Tooltip title="Editar">
-                        <IconButton 
-                          onClick={() => {
-                            setSelectedVehiculo(vehiculo);
-                            setShowPopup(true);
-                          }}
-                          color="primary"
-                          size="small"
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Eliminar">
-                        <IconButton 
-                          onClick={() => handleDelete(vehiculo.id)}
-                          color="error"
-                          size="small"
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </CardActions>
-                  </Card>
+            <Grid container spacing={3}>
+              {filteredVehiculos.length === 0 ? (
+                <Grid item xs={12}>
+                  <Box sx={{ textAlign: 'center', mt: 4 }}>
+                    <Typography variant="h6" color="text.secondary">
+                      No hay vehículos disponibles
+                    </Typography>
+                  </Box>
                 </Grid>
-              ))
-            )}
-          </Grid>
-        </Paper>
+              ) : (
+                filteredVehiculos.map((vehiculo) => (
+                  <Grid item xs={12} sm={6} md={4} key={vehiculo.id}>
+                    <Card elevation={2}>
+                      <CardContent>
+                        <Typography variant="h6" component="div" gutterBottom>
+                          {vehiculo.Marca} {vehiculo.Modelo}
+                        </Typography>
+                        <Typography color="text.secondary" gutterBottom>
+                          Año: {vehiculo.Año}
+                        </Typography>
+                        <Typography variant="body2" gutterBottom>
+                          <strong>Filtro de aire:</strong> {vehiculo.Filtro_de_aire}
+                        </Typography>
+                        <Typography variant="body2" gutterBottom>
+                          <strong>Filtro de aceite:</strong> {vehiculo.Filtro_de_aceite}
+                        </Typography>
+                        <Typography variant="body2" gutterBottom>
+                          <strong>Filtro de combustible:</strong> {vehiculo.Filtro_de_combustible}
+                        </Typography>
+                        {vehiculo.Bateria && (
+                          <Typography variant="body2" gutterBottom>
+                            <strong>Batería:</strong> {vehiculo.Bateria}
+                          </Typography>
+                        )}
+                        <Typography variant="body2">
+                          <strong>Posición:</strong> {vehiculo.Posicion}
+                        </Typography>
+                      </CardContent>
+                      <CardActions sx={{ justifyContent: 'flex-end' }}>
+                        <Tooltip title="Editar">
+                          <IconButton 
+                            onClick={() => {
+                              setSelectedVehiculo(vehiculo);
+                              setShowPopup(true);
+                            }}
+                            color="primary"
+                            size="small"
+                          >
+                            <EditIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Eliminar">
+                          <IconButton 
+                            onClick={() => handleDelete(vehiculo.id)}
+                            color="error"
+                            size="small"
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </CardActions>
+                    </Card>
+                  </Grid>
+                ))
+              )}
+            </Grid>
+          </Paper>
 
-        <VehiculoForm
-          open={showPopup}
-          onClose={() => setShowPopup(false)}
-          onSubmit={() => {
-            setShowPopup(false);
-            loadVehiculos();
-          }}
-          vehiculo={selectedVehiculo}
-          onSuccess={loadVehiculos}
-        />
-      </Container>
-    </ThemeProvider>
+          <VehiculoForm
+            open={showPopup}
+            onClose={() => setShowPopup(false)}
+            onSubmit={() => {
+              setShowPopup(false);
+              loadVehiculos();
+            }}
+            vehiculo={selectedVehiculo}
+            onSuccess={loadVehiculos}
+          />
+        </Container>
+      </ThemeProvider>
+    </div>
   );
 };
 

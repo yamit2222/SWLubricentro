@@ -18,12 +18,15 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import InventoryIcon from '@mui/icons-material/Inventory';
+import StorageRoundedIcon from '@mui/icons-material/StorageRounded';
+import ViewModuleIcon from '@mui/icons-material/ViewModule';
+import ViewListIcon from '@mui/icons-material/ViewList';
 import { getProductos, deleteProducto } from '../services/producto.service';
 import Search from '../components/Search';
 import ProductoForm from '../components/ProductoForm';
 import Swal from 'sweetalert2';
 import '@styles/colors.css';
+import Popup from '../components/Popup';
 
 // Crear un tema personalizado con los colores del proyecto
 const theme = createTheme({
@@ -103,6 +106,7 @@ const Productos = () => {
   const [selectedProducto, setSelectedProducto] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' o 'list'
 
   useEffect(() => {
     loadProductos();
@@ -204,130 +208,219 @@ const Productos = () => {
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <Container maxWidth="lg" sx={{ mt: '12vh', mb: 4 }}>
-        <Paper 
-          elevation={3} 
-          sx={{ 
-            p: 4, 
-            mb: 4, 
-            borderRadius: 2,
-            bgcolor: 'background.paper',
-          }}
-        >
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <InventoryIcon sx={{ fontSize: 40, color: 'primary.main' }} />
-              <Typography variant="h4" component="h1">
-                Gestión de Productos
-              </Typography>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(120deg, #23272F 0%, #353945 40%, #4B4F58 70%, #FFB800 100%)', padding: 0, overflow: 'hidden' }}>
+      <ThemeProvider theme={theme}>
+        <Container maxWidth="lg" sx={{ mt: '12vh', mb: 4 }}>
+          <Paper 
+            elevation={3} 
+            sx={{ 
+              p: 4, 
+              mb: 4, 
+              borderRadius: 3,
+              bgcolor: '#23272F',
+              boxShadow: '0 4px 24px rgba(0,0,0,0.18)',
+              border: '2px solid #FFB800',
+            }}
+          >
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <StorageRoundedIcon sx={{ fontSize: 40, color: '#FFB800' }} />
+                <Typography variant="h4" component="h1" sx={{ color: '#FFB800', fontWeight: 800, letterSpacing: 1 }}>
+                  Gestión de Productos
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', gap: 2 }}>
+                <Button
+                  variant={viewMode === 'grid' ? 'contained' : 'outlined'}
+                  color="primary"
+                  startIcon={<ViewModuleIcon />}
+                  onClick={() => setViewMode('grid')}
+                  sx={{ borderRadius: 2, bgcolor: viewMode === 'grid' ? '#23272F' : undefined, color: viewMode === 'grid' ? '#F3F4F6CC' : '#FFB800', border: viewMode === 'grid' ? '2px solid #FFB800' : undefined }}
+                >
+                  Cuadrado
+                </Button>
+                <Button
+                  variant={viewMode === 'list' ? 'contained' : 'outlined'}
+                  color="primary"
+                  startIcon={<ViewListIcon />}
+                  onClick={() => setViewMode('list')}
+                  sx={{ borderRadius: 2, bgcolor: viewMode === 'list' ? '#23272F' : undefined, color: viewMode === 'list' ? '#F3F4F6CC' : '#FFB800', border: viewMode === 'list' ? '2px solid #FFB800' : undefined }}
+                >
+                  Lista
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<AddIcon />}
+                  onClick={() => {
+                    setSelectedProducto(null);
+                    setIsFormOpen(true);
+                  }}
+                  size="large"
+                  sx={{ bgcolor: '#FFB800', color: '#23272F', borderRadius: 2, fontWeight: 700, boxShadow: 2 }}
+                >
+                  Nuevo Producto
+                </Button>
+              </Box>
             </Box>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<AddIcon />}
-              onClick={() => {
-                setSelectedProducto(null);
-                setIsFormOpen(true);
-              }}
-              size="large"
-            >
-              Nuevo Producto
-            </Button>
-          </Box>
 
-          <Search 
-            onSearch={handleSearch} 
-            placeholder="Buscar por nombre, código o descripción..." 
-            sx={{ mb: 3 }}
-          />
+            <Search 
+              onSearch={handleSearch} 
+              placeholder="Buscar por nombre, código o descripción..." 
+              sx={{ mb: 3 }}
+            />
 
-          <Grid container spacing={3}>
-            {!Array.isArray(filteredProductos) || filteredProductos.length === 0 ? (
-              <Grid item xs={12}>
-                <Box sx={{ textAlign: 'center', mt: 4 }}>
-                  <Typography variant="h6" color="text.secondary">
-                    No hay productos disponibles
-                  </Typography>
-                </Box>
+            {viewMode === 'grid' ? (
+              <Grid container spacing={3}>
+                {!Array.isArray(filteredProductos) || filteredProductos.length === 0 ? (
+                  <Grid item xs={12}>
+                    <Box sx={{ textAlign: 'center', mt: 4 }}>
+                      <Typography variant="h6" color="text.secondary">
+                        No hay productos disponibles
+                      </Typography>
+                    </Box>
+                  </Grid>
+                ) : (
+                  filteredProductos.map((producto) => (
+                    <Grid item xs={12} sm={6} md={4} key={producto.id}>
+                      <Card elevation={2} sx={{ cursor: 'pointer' }} onClick={() => setSelectedProducto(producto)}>
+                        <CardContent>
+                          <Typography variant="h6" component="div" gutterBottom noWrap>
+                            {producto.nombre}
+                          </Typography>
+                          <Typography color="text.secondary" gutterBottom>
+                            Categoría: {producto.categoria}
+                          </Typography>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant="h6" color="primary">
+                              ${producto.precio?.toLocaleString() ?? '0'}
+                            </Typography>
+                            <Chip
+                              label={`Stock: ${producto.stock ?? 0}`}
+                              color={getStockColor(producto.stock)}
+                              size="small"
+                            />
+                          </Box>
+                        </CardContent>
+                        <CardActions sx={{ justifyContent: 'flex-end' }}>
+                          <Tooltip title="Editar">
+                            <IconButton
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedProducto(producto);
+                                setIsFormOpen(true);
+                              }}
+                              color="primary"
+                              size="small"
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Eliminar">
+                            <IconButton
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(producto.id);
+                              }}
+                              color="error"
+                              size="small"
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </CardActions>
+                      </Card>
+                    </Grid>
+                  ))
+                )}
               </Grid>
             ) : (
-              filteredProductos.map((producto) => (
-                <Grid item xs={12} sm={6} md={4} key={producto.id}>
-                  <Card elevation={2}>
-                    <CardContent>
-                      <Typography variant="h6" component="div" gutterBottom noWrap>
-                        {producto.nombre}
-                      </Typography>
-                      <Typography color="text.secondary" gutterBottom>
-                      Descripcion: {producto.descripcion}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          mb: 2,
-                          height: '3em', 
-                          overflow: 'hidden', 
-                          textOverflow: 'ellipsis',
-                          display: '-webkit-box',
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: 'vertical'
-                        }}
-                      >
-                        {producto.descripcion}
-                      </Typography>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Typography variant="h6" color="primary">
-                          ${producto.precio?.toLocaleString() ?? '0'}
-                        </Typography>
-                        <Chip 
-                          label={`Stock: ${producto.stock ?? 0}`}
-                          color={getStockColor(producto.stock)}
-                          size="small"
-                        />
-                      </Box>
-                    </CardContent>
-                    <CardActions sx={{ justifyContent: 'flex-end' }}>
-                      <Tooltip title="Editar">
-                        <IconButton 
-                          onClick={() => {
-                            setSelectedProducto(producto);
-                            setIsFormOpen(true);
-                          }}
-                          color="primary"
-                          size="small"
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Eliminar">
-                        <IconButton 
-                          onClick={() => handleDelete(producto.id)}
-                          color="error"
-                          size="small"
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              ))
+              <Paper sx={{ mt: 2, bgcolor: '#23272F', color: '#F3F4F6', borderRadius: 2 }}>
+                <Box sx={{ width: '100%', overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', color: '#F3F4F6' }}>
+                    <thead>
+                      <tr style={{ background: '#353945', color: '#FFB800' }}>
+                        <th style={{ padding: 8, textAlign: 'left' }}>Nombre</th>
+                        <th style={{ padding: 8, textAlign: 'left' }}>Categoría</th>
+                        <th style={{ padding: 8, textAlign: 'left' }}>Descripción</th>
+                        <th style={{ padding: 8, textAlign: 'left' }}>Precio</th>
+                        <th style={{ padding: 8, textAlign: 'left' }}>Stock</th>
+                        <th style={{ padding: 8, textAlign: 'left' }}>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredProductos.map((producto) => (
+                        <tr key={producto.id} style={{ borderBottom: '1px solid #353945', cursor: 'pointer' }} onClick={() => setSelectedProducto(producto)}>
+                          <td style={{ padding: 8 }}>{producto.nombre}</td>
+                          <td style={{ padding: 8 }}>{producto.categoria}</td>
+                          <td style={{ padding: 8, maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{producto.descripcion}</td>
+                          <td style={{ padding: 8 }}>${producto.precio?.toLocaleString() ?? '0'}</td>
+                          <td style={{ padding: 8 }}>{producto.stock ?? 0}</td>
+                          <td style={{ padding: 8 }}>
+                            <Tooltip title="Editar">
+                              <IconButton
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedProducto(producto);
+                                  setIsFormOpen(true);
+                                }}
+                                color="primary"
+                                size="small"
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Eliminar">
+                              <IconButton
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDelete(producto.id);
+                                }}
+                                color="error"
+                                size="small"
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Tooltip>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Box>
+              </Paper>
             )}
-          </Grid>
-        </Paper>
+          </Paper>
 
-        <ProductoForm
-          open={isFormOpen}
-          onClose={() => {
-            setIsFormOpen(false);
-            setSelectedProducto(null);
-          }}
-          producto={selectedProducto}
-          onSuccess={loadProductos}
-        />
-      </Container>
-    </ThemeProvider>
+          <ProductoForm
+            open={isFormOpen}
+            onClose={() => {
+              setIsFormOpen(false);
+              setSelectedProducto(null);
+            }}
+            producto={selectedProducto}
+            onSuccess={loadProductos}
+          />
+
+          {/* Modal para ver detalles */}
+          {selectedProducto && (
+            <Popup
+              open={!!selectedProducto}
+              onClose={() => setSelectedProducto(null)}
+              title={selectedProducto.nombre}
+            >
+              <Box sx={{ p: 2 }}>
+                <Typography variant="subtitle1" sx={{ mb: 1 }}>Categoría: {selectedProducto.categoria}</Typography>
+                <Typography variant="subtitle1" sx={{ mb: 1 }}>Descripción: {selectedProducto.descripcion}</Typography>
+                <Typography variant="subtitle1" sx={{ mb: 1 }}>Precio: ${selectedProducto.precio?.toLocaleString() ?? '0'}</Typography>
+                <Typography variant="subtitle1" sx={{ mb: 1 }}>Stock: {selectedProducto.stock ?? 0}</Typography>
+                {/* Agrega más detalles si es necesario */}
+              </Box>
+            </Popup>
+          )}
+        </Container>
+      </ThemeProvider>
+    </div>
   );
 };
 

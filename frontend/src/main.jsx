@@ -13,7 +13,11 @@ import SubInventario from '@pages/SubInventario';
 import Movimientos from '@pages/Movimientos';
 import Pedidos from "./pages/Pedidos.jsx";
 import ProtectedRoute from '@components/ProtectedRoute';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import theme from './styles/theme';
 import '@styles/styles.css';
+import './styles/global.css';
 
 const router = createBrowserRouter([
   {    
@@ -102,5 +106,8 @@ const router = createBrowserRouter([
 ])
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <RouterProvider router={router}/>
+  <ThemeProvider theme={theme}>
+    <CssBaseline />
+    <RouterProvider router={router}/>
+  </ThemeProvider>
 )

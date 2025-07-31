@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "../styles/inventario.css";
 import { getSubProductos } from "../services/subproducto.service";
+import { Box, Typography } from "@mui/material";
 
 const SubInventario = () => {
   const [subproductos, setSubProductos] = useState([]);
   const [expandedId, setExpandedId] = useState(null);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const fetchSubProductos = async () => {
@@ -26,57 +28,94 @@ const SubInventario = () => {
     "accesorios eléctricos"
   ];
 
-  // Agrupar subproductos por categoría
+  // Filtrar subproductos por búsqueda
+  const subproductosFiltrados = subproductos.filter((p) => {
+    if (!search.trim()) return true;
+    const texto = `${p.nombre} ${p.descripcion} ${p.marca}`.toLowerCase();
+    return texto.includes(search.toLowerCase());
+  });
+
+  // Agrupar subproductos filtrados por categoría
   const subproductosPorCategoria = categorias.map(cat => ({
     nombre: cat.charAt(0).toUpperCase() + cat.slice(1),
-    items: subproductos.filter(p => p.categoria === cat)
+    items: subproductosFiltrados.filter(p => p.categoria === cat)
   }));
 
   return (
-    <div className="inventario-multi">
-      {subproductosPorCategoria.map((catObj, idx) => (
-        <div className="inventario-card" key={catObj.nombre} style={{ minWidth: 320, boxShadow: "0 2px 12px #0002", borderRadius: 16, padding: 20, background: "#fff", flex: "1 1 340px", marginBottom: 24 }}>
-          <div style={{ fontWeight: "bold", fontSize: 20, marginBottom: 12, letterSpacing: 1 }}>{catObj.nombre}</div>
-          <select
-            style={{ width: "100%", marginBottom: 12, padding: "8px", borderRadius: 8, border: "1px solid #ccc" }}
-            value={expandedId || ""}
-            onChange={e => setExpandedId(e.target.value)}
-          >
-            <option value="">Selecciona un subproducto...</option>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(120deg, #23272F 0%, #353945 40%, #4B4F58 70%,rgba(255, 183, 0, 0.82) 100%)', padding: 0, overflow: 'hidden' }}>
+      <Box sx={{ mb: 0, mt: 0, p: 2, bgcolor: '#23272F', borderRadius: 2, boxShadow: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Typography variant="h3" component="h2" color="#F3F4F6" fontWeight={800} letterSpacing={1}>
+          SubInventario
+        </Typography>
+      </Box>
+      <div style={{ height: 24 }} />
+      <div style={{ marginBottom: 24 }}>
+        <input
+          type="text"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Buscar subproducto, marca o descripción..."
+          style={{
+            width: "100%",
+            maxWidth: 400,
+            padding: "10px 16px",
+            fontSize: 16,
+            borderRadius: 8,
+            border: "1px solid #444",
+            background: "#23272F",
+            color: "#F3F4F6",
+            boxShadow: "0 1px 4px #0002",
+            outline: "none",
+            margin: "0 auto",
+            display: "block"
+          }}
+        />
+      </div>
+      <div className="inventario-multi" style={{ display: "flex", flexDirection: "row", gap: 8, flexWrap: "nowrap", overflowX: "auto", paddingBottom: 0, justifyContent: "flex-start", alignItems: "flex-start", paddingLeft: 32 }}>
+        {subproductosPorCategoria.map((catObj, idx) => (
+          <div className="inventario-card" key={catObj.nombre} style={{ minWidth: 320, maxWidth: 340, boxShadow: "0 2px 12px #0004", borderRadius: 16, padding: 20, background: "#2C303A", flex: "0 0 340px", marginRight: 4, border: "1px solid #444", height: "100%" }}>
+            <div style={{ fontWeight: "bold", fontSize: 20, marginBottom: 12, letterSpacing: 1, color: '#F3F4F6' }}>{catObj.nombre}</div>
+            <select
+              style={{ width: "100%", marginBottom: 12, padding: "8px", borderRadius: 8, border: "1px solid #444", background: "#23272F", color: "#F3F4F6" }}
+              value={expandedId || ""}
+              onChange={e => setExpandedId(e.target.value)}
+            >
+              <option value="">Selecciona un subproducto...</option>
+              {catObj.items.map((prod) => (
+                <option key={prod.id} value={prod.id}>{prod.nombre} (Stock: {prod.stock})</option>
+              ))}
+            </select>
             {catObj.items.map((prod) => (
-              <option key={prod.id} value={prod.id}>{prod.nombre} (Stock: {prod.stock})</option>
-            ))}
-          </select>
-          {catObj.items.map((prod) => (
-            expandedId === String(prod.id) ? (
-              <div key={prod.id} className="inventario-item">
-                <button
-                  style={{
-                    width: '100%',
-                    textAlign: 'left',
-                    background: 'none',
-                    border: 'none',
-                    padding: '12px',
-                    fontSize: '1rem',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    color: '#333',
-                    borderBottom: '1px solid #FFB800',
-                  }}
-                  onClick={() => setExpandedId(null)}
-                >
-                  {prod.nombre} <span style={{ float: 'right', color: '#666', fontWeight: 'normal' }}>Stock: {prod.stock}</span>
-                </button>
-                <div style={{ padding: '12px', background: '#fafafa', borderRadius: '0 0 8px 8px', borderTop: '1px solid #eee' }}>
-                  <p><strong>Marca:</strong> {prod.marca}</p>
-                  <p><strong>Descripción:</strong> {prod.descripcion}</p>
-                  <p><strong>Precio:</strong> ${prod.precio?.toLocaleString() ?? '0'}</p>
+              expandedId === String(prod.id) ? (
+                <div key={prod.id} className="inventario-item">
+                  <button
+                    style={{
+                      width: '100%',
+                      textAlign: 'left',
+                      background: 'none',
+                      border: 'none',
+                      padding: '12px',
+                      fontSize: '1rem',
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                      color: '#F3F4F6',
+                      borderBottom: '1px solid #FFB800',
+                    }}
+                    onClick={() => setExpandedId(null)}
+                  >
+                    {prod.nombre} <span style={{ float: 'right', color: '#B0B3B8', fontWeight: 'normal' }}>Stock: {prod.stock}</span>
+                  </button>
+                  <div style={{ padding: '12px', background: '#23272F', borderRadius: '0 0 8px 8px', borderTop: '1px solid #444', color: '#F3F4F6' }}>
+                    <p><strong>Marca:</strong> {prod.marca}</p>
+                    <p><strong>Descripción:</strong> {prod.descripcion}</p>
+                    <p><strong>Precio:</strong> ${prod.precio?.toLocaleString() ?? '0'}</p>
+                  </div>
                 </div>
-              </div>
-            ) : null
-          ))}
-        </div>
-      ))}
+              ) : null
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

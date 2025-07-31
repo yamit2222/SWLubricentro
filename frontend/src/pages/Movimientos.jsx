@@ -42,55 +42,81 @@ const Movimientos = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 900, mx: 'auto', mt: 6 }}>
-      <Typography variant="h4" mb={2}>Movimientos de Stock</Typography>
-      <Paper sx={{ p: 2, mb: 4 }}>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
-          <FormControl sx={{ minWidth: 180 }} size="small">
-            <InputLabel>Producto</InputLabel>
-            <Select name="productoId" value={form.productoId} label="Producto" onChange={handleChange} required>
-              {productos.map((p) => (
-                <MenuItem key={p.id} value={p.id}>{p.nombre}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl sx={{ minWidth: 120 }} size="small">
-            <InputLabel>Tipo</InputLabel>
-            <Select name="tipo" value={form.tipo} label="Tipo" onChange={handleChange} required>
-              <MenuItem value="entrada">Entrada</MenuItem>
-              <MenuItem value="salida">Salida</MenuItem>
-            </Select>
-          </FormControl>
-          <TextField name="cantidad" label="Cantidad" type="number" size="small" value={form.cantidad} onChange={handleChange} required sx={{ width: 100 }} />
-          <TextField name="observacion" label="Observación" size="small" value={form.observacion} onChange={handleChange} sx={{ width: 200 }} />
-          <Button type="submit" variant="contained" color="primary">Registrar</Button>
-        </form>
-      </Paper>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Fecha</TableCell>
-              <TableCell>Producto</TableCell>
-              <TableCell>Tipo</TableCell>
-              <TableCell>Cantidad</TableCell>
-              <TableCell>Observación</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {movimientos.map((mov) => (
-              <TableRow key={mov.id}>
-                <TableCell>{new Date(mov.createdAt).toLocaleString()}</TableCell>
-                <TableCell>{mov.Producto?.nombre}</TableCell>
-                <TableCell>{mov.tipo}</TableCell>
-                <TableCell>{mov.cantidad}</TableCell>
-                <TableCell>{mov.observacion}</TableCell>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(120deg, #23272F 0%, #353945 40%, #4B4F58 70%, #FFB800 100%)', padding: 0, overflow: 'hidden' }}>
+      <Box sx={{ maxWidth: 900, mx: 'auto', mt: 6 }}>
+        <Typography variant="h4" mb={2}>Movimientos de Stock</Typography>
+        <Paper sx={{ p: 2, mb: 4, bgcolor: '#23272F', color: '#F3F4F6', borderRadius: 3 }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', background: '#23272F', color: '#F3F4F6', borderRadius: 8, padding: 8 }}>
+            <FormControl sx={{ minWidth: 180, bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2 }} size="small">
+              <InputLabel sx={{ color: '#FFB800' }}>Producto</InputLabel>
+              <Select name="productoId" value={form.productoId} label="Producto" onChange={handleChange} required sx={{ bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2 }}>
+                {productos.map((p) => (
+                  <MenuItem key={p.id} value={p.id} sx={{ bgcolor: '#23272F', color: '#F3F4F6' }}>{p.nombre}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl sx={{ minWidth: 120, bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2 }} size="small">
+              <InputLabel sx={{ color: '#FFB800' }}>Tipo</InputLabel>
+              <Select
+                name="tipo"
+                value={form.tipo}
+                label="Tipo"
+                onChange={handleChange}
+                required
+                sx={{ bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2, '& .MuiSelect-select': { color: '#F3F4F6' } }}
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      bgcolor: '#23272F',
+                      color: '#F3F4F6',
+                    },
+                  },
+                }}
+              >
+                <MenuItem value="entrada" sx={{ bgcolor: '#23272F', color: '#F3F4F6' }}>Entrada</MenuItem>
+                <MenuItem value="salida" sx={{ bgcolor: '#23272F', color: '#F3F4F6' }}>Salida</MenuItem>
+              </Select>
+            </FormControl>
+            <TextField name="cantidad" label="Cantidad" type="number" size="small" value={form.cantidad} onChange={handleChange} required sx={{ width: 100, bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2 }} InputLabelProps={{ sx: { color: '#FFB800' } }} />
+            <TextField
+              name="observacion"
+              label="Observación"
+              size="small"
+              value={form.observacion}
+              onChange={handleChange}
+              sx={{ width: 200, bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2 }}
+              InputLabelProps={{ sx: { color: '#FFB800' } }}
+              InputProps={{ sx: { color: '#F3F4F6' } }}
+            />
+            <Button type="submit" variant="contained" color="primary" sx={{ bgcolor: '#FFB800', color: '#23272F', borderRadius: 2, fontWeight: 700 }}>Registrar</Button>
+          </form>
+        </Paper>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Fecha</TableCell>
+                <TableCell>Producto</TableCell>
+                <TableCell>Tipo</TableCell>
+                <TableCell>Cantidad</TableCell>
+                <TableCell>Observación</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Box>
+            </TableHead>
+            <TableBody>
+              {movimientos.map((mov) => (
+                <TableRow key={mov.id}>
+                  <TableCell>{new Date(mov.createdAt).toLocaleString()}</TableCell>
+                  <TableCell>{mov.Producto?.nombre}</TableCell>
+                  <TableCell>{mov.tipo}</TableCell>
+                  <TableCell>{mov.cantidad}</TableCell>
+                  <TableCell>{mov.observacion}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+    </div>
   );
 };
 
