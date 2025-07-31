@@ -1,6 +1,12 @@
 "use strict";
 import User from "../entity/user.entity.js";
 import { encryptPassword } from "../helpers/bcrypt.helper.js";
+import { Producto } from '../entity/producto.entity.js';
+import { SubProducto } from '../entity/subproducto.entity.js';
+import { Vehiculo } from '../entity/vehiculo.entity.js';
+import productosEjemplo from '../entity/ejemplo.productos.js';
+import subproductosEjemplo from '../entity/ejemplo.subproductos.js';
+import vehiculosEjemplo from '../entity/ejemplo.vehiculos.js';
 
 async function createUsers() {
   try {
@@ -22,4 +28,37 @@ async function createUsers() {
   }
 }
 
-export { createUsers };
+async function createProductos() {
+  try {
+    const count = await Producto.count();
+    if (count > 0) return;
+    await Producto.bulkCreate(productosEjemplo);
+    console.log('* => Productos creados exitosamente');
+  } catch (error) {
+    console.error('Error al crear productos:', error);
+  }
+}
+
+async function createSubProductos() {
+  try {
+    const count = await SubProducto.count();
+    if (count > 0) return;
+    await SubProducto.bulkCreate(subproductosEjemplo);
+    console.log('* => Subproductos creados exitosamente');
+  } catch (error) {
+    console.error('Error al crear subproductos:', error);
+  }
+}
+
+async function createVehiculos() {
+  try {
+    const count = await Vehiculo.count();
+    if (count > 0) return;
+    await Vehiculo.bulkCreate(vehiculosEjemplo);
+    console.log('* => Vehículos creados exitosamente');
+  } catch (error) {
+    console.error('Error al crear vehículos:', error);
+  }
+}
+
+export { createUsers, createProductos, createSubProductos, createVehiculos };

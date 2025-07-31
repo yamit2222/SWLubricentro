@@ -22,7 +22,8 @@ export const Producto = sequelize.define("Producto", {
     allowNull: false
   },
   marca: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
+    allowNull: false,
   },
   categoria: {
     type: DataTypes.ENUM('aceite', 'filtro', 'bateria'),

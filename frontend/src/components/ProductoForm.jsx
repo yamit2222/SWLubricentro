@@ -61,6 +61,10 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
       subcategoria: Yup.string()
         .oneOf(['auto', 'camioneta', 'vehiculo comercial', 'motocicleta', 'maquinaria'], 'Selecciona una subcategoría válida')
         .required('La subcategoría es requerida'),
+      marca: Yup.string()
+        .required('La marca es requerida')
+        .min(2, 'La marca debe tener al menos 3 caracteres')
+        .max(15, 'La marca no puede tener más de 15 caracteres'),
     }),
     onSubmit: async (values) => {
       try {

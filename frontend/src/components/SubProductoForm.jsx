@@ -41,6 +41,10 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {  const 
         .integer('El stock debe ser un número entero')
         .min(0, 'El stock no puede ser negativo')
         .max(99999, 'El stock es demasiado alto'),
+      marca: Yup.string()
+        .required('La marca es requerida')
+        .min(2, 'La marca debe tener al menos 3 caracteres')
+        .max(15, 'La marca no puede tener más de 15 caracteres'),
       categoria: Yup.string()
         .oneOf(['repuestos', 'limpieza', 'accesorios externos', 'accesorios eléctricos'], 'Selecciona una categoría válida')
         .required('La categoría es requerida'),
