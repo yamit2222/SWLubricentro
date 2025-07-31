@@ -5,7 +5,6 @@ import { Box, Typography } from "@mui/material";
 
 const SubInventario = () => {
   const [subproductos, setSubProductos] = useState([]);
-  const [expandedId, setExpandedId] = useState(null);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
@@ -75,44 +74,27 @@ const SubInventario = () => {
         {subproductosPorCategoria.map((catObj, idx) => (
           <div className="inventario-card" key={catObj.nombre} style={{ minWidth: 320, maxWidth: 340, boxShadow: "0 2px 12px #0004", borderRadius: 16, padding: 20, background: "#2C303A", flex: "0 0 340px", marginRight: 4, border: "1px solid #444", height: "100%" }}>
             <div style={{ fontWeight: "bold", fontSize: 20, marginBottom: 12, letterSpacing: 1, color: '#F3F4F6' }}>{catObj.nombre}</div>
-            <select
-              style={{ width: "100%", marginBottom: 12, padding: "8px", borderRadius: 8, border: "1px solid #444", background: "#23272F", color: "#F3F4F6" }}
-              value={expandedId || ""}
-              onChange={e => setExpandedId(e.target.value)}
-            >
-              <option value="">Selecciona un subproducto...</option>
-              {catObj.items.map((prod) => (
-                <option key={prod.id} value={prod.id}>{prod.nombre} (Stock: {prod.stock})</option>
-              ))}
-            </select>
-            {catObj.items.map((prod) => (
-              expandedId === String(prod.id) ? (
-                <div key={prod.id} className="inventario-item">
-                  <button
-                    style={{
-                      width: '100%',
-                      textAlign: 'left',
-                      background: 'none',
-                      border: 'none',
-                      padding: '12px',
-                      fontSize: '1rem',
-                      fontWeight: 'bold',
-                      cursor: 'pointer',
-                      color: '#F3F4F6',
-                      borderBottom: '1px solid #FFB800',
-                    }}
-                    onClick={() => setExpandedId(null)}
-                  >
-                    {prod.nombre} <span style={{ float: 'right', color: '#B0B3B8', fontWeight: 'normal' }}>Stock: {prod.stock}</span>
-                  </button>
-                  <div style={{ padding: '12px', background: '#23272F', borderRadius: '0 0 8px 8px', borderTop: '1px solid #444', color: '#F3F4F6' }}>
-                    <p><strong>Marca:</strong> {prod.marca}</p>
-                    <p><strong>Descripción:</strong> {prod.descripcion}</p>
-                    <p><strong>Precio:</strong> ${prod.precio?.toLocaleString() ?? '0'}</p>
-                  </div>
-                </div>
-              ) : null
-            ))}
+            <details open>
+              <summary style={{ fontWeight: 600, color: '#FFB800', fontSize: 16, cursor: 'pointer', marginBottom: 8 }}>Ver subproductos</summary>
+              <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+                {catObj.items.length === 0 ? (
+                  <li style={{ color: "#888", fontStyle: "italic", padding: "4px 0 4px 12px" }}>Sin subproductos</li>
+                ) : (
+                  catObj.items
+                    .filter(prod => {
+                      if (!search.trim()) return true;
+                      const texto = `${prod.nombre} ${prod.descripcion} ${prod.marca}`.toLowerCase();
+                      return texto.includes(search.toLowerCase());
+                    })
+                    .map((prod) => (
+                      <li key={prod.id} style={{ padding: "6px 0 6px 12px", borderRadius: 6, marginBottom: 2, background: "#23272F", boxShadow: "0 1px 4px #0002", display: "flex", justifyContent: "space-between", alignItems: "center", color: '#F3F4F6' }}>
+                        <span style={{ fontWeight: 500 }}>{prod.nombre}</span>
+                        <span style={{ fontSize: "0.95em", color: "#B0B3B8" }}>Stock: {prod.stock}</span>
+                      </li>
+                    ))
+                )}
+              </ul>
+            </details>
           </div>
         ))}
       </div>

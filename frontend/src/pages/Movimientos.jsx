@@ -49,7 +49,22 @@ const Movimientos = () => {
           <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', background: '#23272F', color: '#F3F4F6', borderRadius: 8, padding: 8 }}>
             <FormControl sx={{ minWidth: 180, bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2 }} size="small">
               <InputLabel sx={{ color: '#FFB800' }}>Producto</InputLabel>
-              <Select name="productoId" value={form.productoId} label="Producto" onChange={handleChange} required sx={{ bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2 }}>
+              <Select
+                name="productoId"
+                value={form.productoId}
+                label="Producto"
+                onChange={handleChange}
+                required
+                sx={{ bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2, '& .MuiSelect-select': { color: '#F3F4F6' } }}
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      bgcolor: '#23272F',
+                      color: '#F3F4F6',
+                    },
+                  },
+                }}
+              >
                 {productos.map((p) => (
                   <MenuItem key={p.id} value={p.id} sx={{ bgcolor: '#23272F', color: '#F3F4F6' }}>{p.nombre}</MenuItem>
                 ))}
@@ -77,7 +92,7 @@ const Movimientos = () => {
                 <MenuItem value="salida" sx={{ bgcolor: '#23272F', color: '#F3F4F6' }}>Salida</MenuItem>
               </Select>
             </FormControl>
-            <TextField name="cantidad" label="Cantidad" type="number" size="small" value={form.cantidad} onChange={handleChange} required sx={{ width: 100, bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2 }} InputLabelProps={{ sx: { color: '#FFB800' } }} />
+            <TextField name="cantidad" label="Cantidad" type="number" size="small" value={form.cantidad} onChange={handleChange} required sx={{ width: 100, bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2, input: { color: '#F3F4F6', background: '#2C303A' } }} InputLabelProps={{ sx: { color: '#FFB800' } }} InputProps={{ sx: { color: '#F3F4F6' } }} />
             <TextField
               name="observacion"
               label="Observación"

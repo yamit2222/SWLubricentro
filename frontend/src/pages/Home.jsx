@@ -25,7 +25,9 @@ const Home = () => {
         margin: '0 auto',
         border: '2px solid #FFB800'
       }}>
-        <h1 style={{ fontSize: '3.3rem', color: '#FFB800', marginBottom: '1rem', fontWeight: 800, letterSpacing: 1 }}>Bienvenido a El Socio</h1>
+        <h1 style={{ fontSize: '3.3rem', color: '#FFB800', marginBottom: '1rem', fontWeight: 800, letterSpacing: 1 }}>
+          Bienvenido a <br />"El Socio"
+        </h1>
         <p style={{ fontSize: '1.2rem', color: '#F3F4F6', maxWidth: 400, margin: '0 auto' }}>
           Los Ángeles, Chile.
         </p>
