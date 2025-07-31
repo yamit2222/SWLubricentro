@@ -21,7 +21,7 @@ services:
       - /app/node_modules
     command: npm run dev
     environment:
-      - HOST=localhost
+      - HOST=0.0.0.0
       - PORT=3000
       - DB_USERNAME=root
       - PASSWORD=rootpass
