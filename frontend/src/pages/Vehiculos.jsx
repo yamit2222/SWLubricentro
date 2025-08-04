@@ -24,27 +24,27 @@ import VehiculoForm from '../components/VehiculoForm';
 import { showSuccessAlert, showErrorAlert, showConfirmAlert } from '../helpers/sweetAlert';
 import '@styles/colors.css';
 
-// Crear un tema personalizado con los colores del proyecto
+
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#FFB800', // --amarillo-potente
-      contrastText: '#1A1A1A', // --negro-profundo
+      main: '#FFB800',
+      contrastText: '#1A1A1A', 
     },
     secondary: {
-      main: '#1A1A1A', // --negro-profundo
-      contrastText: '#FFB800', // --amarillo-potente
+      main: '#1A1A1A', 
+      contrastText: '#FFB800',
     },
     error: {
-      main: '#D72638', // --rojo-energia
+      main: '#D72638',
     },
     background: {
-      default: '#D9D9D9', // --acero-claro
+      default: '#D9D9D9', 
       paper: '#FFFFFF',
     },
     text: {
-      primary: '#1A1A1A', // --negro-profundo
-      secondary: '#4E4E4E', // --gris-mecanico
+      primary: '#1A1A1A', 
+      secondary: '#4E4E4E', 
     },
   },
   components: {

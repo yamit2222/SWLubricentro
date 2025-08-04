@@ -11,7 +11,7 @@ const CATEGORIAS = [
 
 const Inventario = () => {
   const [productos, setProductos] = useState([]);
-  const [open, setOpen] = useState({}); // { categoria: { subcategoria: bool } }
+  const [open, setOpen] = useState({});
   const [search, setSearch] = useState("");
 
   useEffect(() => {
@@ -26,16 +26,13 @@ const Inventario = () => {
     fetchProductos();
   }, []);
 
-  // Filtrar productos por búsqueda
   const productosFiltrados = productos.filter((p) => {
     if (!search.trim()) return true;
     const texto = `${p.nombre} ${p.descripcion} ${p.marca} ${p.subcategoria}`.toLowerCase();
     return texto.includes(search.toLowerCase());
   });
 
-  // Obtener subcategorías dinámicamente desde los productos filtrados
   const getSubcategorias = (categoria) => {
-    // Filtra productos por categoría y obtiene subcategorías únicas
     const subs = productosFiltrados
       .filter((p) => p.categoria === categoria)
       .map((p) => p.subcategoria)
@@ -43,7 +40,6 @@ const Inventario = () => {
     return subs.length > 0 ? subs : ["Sin subcategoría"];
   };
 
-  // Agrupar productos filtrados por categoria y subcategoria
   const grouped = {};
   CATEGORIAS.forEach(({ key }) => {
     grouped[key] = {};

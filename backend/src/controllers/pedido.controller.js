@@ -19,7 +19,7 @@ export const pedidoController = {
       if (!comentario || !producto || !cantidad) {
         return handleErrorClient(res, 400, "Todos los campos son obligatorios");
       }
-      // Buscar el producto y descontar stock
+       
       const prod = await import('../entity/producto.entity.js').then(m => m.Producto.findByPk(producto));
       if (!prod) {
         return handleErrorClient(res, 404, "Producto no encontrado");
@@ -78,7 +78,7 @@ export const pedidoController = {
           }
         }
       }
-      // Actualizar pedido con los campos recibidos
+      
       await pedido.update({
         comentario: comentario ?? pedido.comentario,
         producto: producto ?? pedido.producto,

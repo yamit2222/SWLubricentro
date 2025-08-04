@@ -9,7 +9,7 @@ import {
   NODE_ENV
 } from "./configEnv.js";
 
-// Configuración de Sequelize para MySQL
+
 export const sequelize = new Sequelize(
   DATABASE,
   DB_USERNAME,

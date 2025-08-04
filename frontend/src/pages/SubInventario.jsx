@@ -19,7 +19,6 @@ const SubInventario = () => {
     fetchSubProductos();
   }, []);
 
-  // Categorías según el modelo
   const categorias = [
     "repuestos",
     "limpieza",
@@ -27,14 +26,12 @@ const SubInventario = () => {
     "accesorios eléctricos"
   ];
 
-  // Filtrar subproductos por búsqueda
   const subproductosFiltrados = subproductos.filter((p) => {
     if (!search.trim()) return true;
     const texto = `${p.nombre} ${p.descripcion} ${p.marca}`.toLowerCase();
     return texto.includes(search.toLowerCase());
   });
 
-  // Agrupar subproductos filtrados por categoría
   const subproductosPorCategoria = categorias.map(cat => ({
     nombre: cat.charAt(0).toUpperCase() + cat.slice(1),
     items: subproductosFiltrados.filter(p => p.categoria === cat)
@@ -71,7 +68,7 @@ const SubInventario = () => {
         />
       </div>
       <div className="inventario-multi" style={{ display: "flex", flexDirection: "row", gap: 8, flexWrap: "nowrap", overflowX: "auto", paddingBottom: 0, justifyContent: "flex-start", alignItems: "flex-start", paddingLeft: 32 }}>
-        {subproductosPorCategoria.map((catObj, idx) => (
+        {subproductosPorCategoria.map((catObj) => (
           <div className="inventario-card" key={catObj.nombre} style={{ minWidth: 320, maxWidth: 340, boxShadow: "0 2px 12px #0004", borderRadius: 16, padding: 20, background: "#2C303A", flex: "0 0 340px", marginRight: 4, border: "1px solid #444", height: "100%" }}>
             <div style={{ fontWeight: "bold", fontSize: 20, marginBottom: 12, letterSpacing: 1, color: '#F3F4F6' }}>{catObj.nombre}</div>
             <details open>
@@ -80,18 +77,12 @@ const SubInventario = () => {
                 {catObj.items.length === 0 ? (
                   <li style={{ color: "#888", fontStyle: "italic", padding: "4px 0 4px 12px" }}>Sin subproductos</li>
                 ) : (
-                  catObj.items
-                    .filter(prod => {
-                      if (!search.trim()) return true;
-                      const texto = `${prod.nombre} ${prod.descripcion} ${prod.marca}`.toLowerCase();
-                      return texto.includes(search.toLowerCase());
-                    })
-                    .map((prod) => (
-                      <li key={prod.id} style={{ padding: "6px 0 6px 12px", borderRadius: 6, marginBottom: 2, background: "#23272F", boxShadow: "0 1px 4px #0002", display: "flex", justifyContent: "space-between", alignItems: "center", color: '#F3F4F6' }}>
-                        <span style={{ fontWeight: 500 }}>{prod.nombre}</span>
-                        <span style={{ fontSize: "0.95em", color: "#B0B3B8" }}>Stock: {prod.stock}</span>
-                      </li>
-                    ))
+                  catObj.items.map((prod) => (
+                    <li key={prod.id} style={{ padding: "6px 0 6px 12px", borderRadius: 6, marginBottom: 2, background: "#23272F", boxShadow: "0 1px 4px #0002", display: "flex", justifyContent: "space-between", alignItems: "center", color: '#F3F4F6' }}>
+                      <span style={{ fontWeight: 500 }}>{prod.nombre}</span>
+                      <span style={{ fontSize: "0.95em", color: "#B0B3B8" }}>Stock: {prod.stock}</span>
+                    </li>
+                  ))
                 )}
               </ul>
             </details>

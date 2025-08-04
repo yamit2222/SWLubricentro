@@ -61,7 +61,7 @@ async function setupServer() {
 
     passportJwtSetup();
 
-    // Montar todas las rutas del proyecto, incluyendo productos
+    
     app.use("/api", indexRoutes);
 
     app.listen(PORT, () => {
@@ -80,7 +80,7 @@ async function setupAPI() {
     await createUsers();
     await createProductos();
     await createSubProductos();
-    await createVehiculos(); // Inicializa los vehículos de ejemplo
+    await createVehiculos(); 
   } catch (error) {
     console.log("Error en index.js -> setupAPI(), el error es: ", error);
   }
