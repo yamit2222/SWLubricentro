@@ -9,9 +9,8 @@ export const Vehiculo = sequelize.define("Vehiculo", {
   Modelo: {
     type: DataTypes.STRING,
     allowNull: false
-  },
-  Año: {
-    type: DataTypes.FLOAT,
+  },  Año: {
+    type: DataTypes.INTEGER,
     allowNull: false
   },
   Filtro_de_aire: {

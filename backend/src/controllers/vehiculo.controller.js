@@ -1,11 +1,6 @@
 "use strict";
-
 import { vehiculoService } from "../services/vehiculo.service.js";
-import {
-  handleErrorClient,
-  handleErrorServer,
-  handleSuccess
-} from "../handlers/responseHandlers.js";
+import {handleErrorClient,handleErrorServer,handleSuccess} from "../handlers/responseHandlers.js";
 import { vehiculoValidation } from "../validations/vehiculo.validation.js";
 
 export const vehiculoController = {
@@ -23,33 +18,31 @@ export const vehiculoController = {
         return handleErrorClient(res, 400, "Error de validación", errors);
       }
 
-      const [vehiculo, err] = await vehiculoService.crearVehiculo(data);
-      if (err) return handleErrorClient(res, 400, err);
-
+      const vehiculo = await vehiculoService.crearVehiculo(data);
       handleSuccess(res, 201, "vehiculo habitual creado correctamente", vehiculo);
     } catch (error) {
       handleErrorServer(res, 500, error.message);
     }
   },
+
   async obtenerVehiculos(req, res) {
     try {
-      const [vehiculos, err] = await vehiculoService.obtenerVehiculos();
-      if (err) return handleErrorClient(res, 500, err);
-
+      const vehiculos = await vehiculoService.obtenerVehiculos();
       handleSuccess(res, 200, "Vehículos obtenidos correctamente", vehiculos);
     } catch (error) {
       handleErrorServer(res, 500, error.message);
     }
   },
-
   async obtenerVehiculoPorId(req, res) {
     try {
       const { id } = req.params;
-      const [vehiculo, err] = await vehiculoService.obtenerVehiculoPorId(id);
-      if (err) return handleErrorClient(res, 404, err);
-
+      const vehiculo = await vehiculoService.obtenerVehiculoPorId(id);
       handleSuccess(res, 200, "vehiculo habitual obtenido correctamente", vehiculo);
     } catch (error) {
+      const statusCode = error.statusCode || 500;
+      if (statusCode === 404) {
+        return handleErrorClient(res, 404, error.message);
+      }
       handleErrorServer(res, 500, error.message);
     }
   },
@@ -69,11 +62,13 @@ export const vehiculoController = {
         return handleErrorClient(res, 400, "Error de validación", errors);
       }
 
-      const [vehiculo, err] = await vehiculoService.modificarVehiculo(id, data);
-      if (err) return handleErrorClient(res, 400, err);
-
+      const vehiculo = await vehiculoService.modificarVehiculo(id, data);
       handleSuccess(res, 200, "Vehículo actualizado correctamente", vehiculo);
     } catch (error) {
+      const statusCode = error.statusCode || 500;
+      if (statusCode === 404) {
+        return handleErrorClient(res, 404, error.message);
+      }
       handleErrorServer(res, 500, error.message);
     }
   },
@@ -81,11 +76,13 @@ export const vehiculoController = {
   async eliminarVehiculo(req, res) {
     try {
       const { id } = req.params;
-      const [_, err] = await vehiculoService.eliminarVehiculo(id);
-      if (err) return handleErrorClient(res, 404, err);
-
+      await vehiculoService.eliminarVehiculo(id);
       handleSuccess(res, 200, "vehiculo habitual eliminado correctamente");
     } catch (error) {
+      const statusCode = error.statusCode || 500;
+      if (statusCode === 404) {
+        return handleErrorClient(res, 404, error.message);
+      }
       handleErrorServer(res, 500, error.message);
     }
   }

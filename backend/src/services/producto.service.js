@@ -2,56 +2,58 @@ import { Producto } from "../entity/producto.entity.js";
 
 export const productoService = {
   async crearProducto(data) {
-    try {
-      const nuevo = await Producto.create(data);
-      return [nuevo, null];
-    } catch (err) {
-      return [null, err.message];
-    }
+    const nuevo = await Producto.create(data);
+    return nuevo;
   },
 
   async obtenerProductos() {
-    try {
-      const productos = await Producto.findAll();
-      return [productos, null];
-    } catch (err) {
-      return [null, err.message];
-    }
+    const productos = await Producto.findAll();
+    return productos;
   },
 
   async obtenerProductoPorId(id) {
-    try {
-      const producto = await Producto.findByPk(id);
-      if (!producto) return [null, "Producto no encontrado"];
-      return [producto, null];
-    } catch (err) {
-      return [null, err.message];
+    const producto = await Producto.findByPk(id);
+    if (!producto) {
+      const error = new Error("Producto no encontrado");
+      error.statusCode = 404;
+      throw error;
     }
+    return producto;
   },
 
   async modificarProducto(id, data) {
-    try {
-      // Evitar que el stock se modifique desde el endpoint
-      if ('stock' in data) {
-        delete data.stock;
-      }
-      const producto = await Producto.findByPk(id);
-      if (!producto) return [null, "Producto no encontrado"];
-      await producto.update(data);
-      return [producto, null];
-    } catch (err) {
-      return [null, err.message];
+    if ('stock' in data) {
+      delete data.stock;
     }
+    const producto = await Producto.findByPk(id);
+    if (!producto) {
+      const error = new Error("Producto no encontrado");
+      error.statusCode = 404;
+      throw error;
+    }
+    await producto.update(data);
+    return producto;
   },
 
   async eliminarProducto(id) {
-    try {
-      const producto = await Producto.findByPk(id);
-      if (!producto) return [null, "Producto no encontrado"];
-      await producto.destroy();
-      return [true, null];
-    } catch (err) {
-      return [null, err.message];
+    const producto = await Producto.findByPk(id);
+    if (!producto) {
+      const error = new Error("Producto no encontrado");
+      error.statusCode = 404;
+      throw error;
     }
+    await producto.destroy();
+    return true;
+  },
+
+  async actualizarStock(id, nuevoStock) {
+    const producto = await Producto.findByPk(id);
+    if (!producto) {
+      const error = new Error("Producto no encontrado");
+      error.statusCode = 404;
+      throw error;
+    }
+    await producto.update({ stock: nuevoStock });
+    return producto;
   }
 };

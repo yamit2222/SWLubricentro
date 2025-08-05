@@ -19,9 +19,7 @@ export const subproductoController = {
         return handleErrorClient(res, 400, "Error de validación", errors);
       }
 
-      const [subproducto, err] = await subproductoService.crearSubproducto(data);
-      if (err) return handleErrorClient(res, 400, err);
-
+      const subproducto = await subproductoService.crearSubproducto(data);
       handleSuccess(res, 201, "Subproducto creado correctamente", subproducto);
     } catch (error) {
       handleErrorServer(res, 500, error.message);
@@ -30,9 +28,7 @@ export const subproductoController = {
 
   async obtenerSubproductos(req, res) {
     try {
-      const [subproductos, err] = await subproductoService.obtenerSubproductos();
-      if (err) return handleErrorClient(res, 500, err);
-
+      const subproductos = await subproductoService.obtenerSubproductos();
       handleSuccess(res, 200, "Subproductos obtenidos correctamente", subproductos);
     } catch (error) {
       handleErrorServer(res, 500, error.message);
@@ -42,11 +38,13 @@ export const subproductoController = {
   async obtenerSubproductoPorId(req, res) {
     try {
       const { id } = req.params;
-      const [subproducto, err] = await subproductoService.obtenerSubproductoPorId(id);
-      if (err) return handleErrorClient(res, 404, err);
-
+      const subproducto = await subproductoService.obtenerSubproductoPorId(id);
       handleSuccess(res, 200, "Subproducto obtenido correctamente", subproducto);
     } catch (error) {
+      const statusCode = error.statusCode || 500;
+      if (statusCode === 404) {
+        return handleErrorClient(res, 404, error.message);
+      }
       handleErrorServer(res, 500, error.message);
     }
   },
@@ -65,11 +63,13 @@ export const subproductoController = {
         return handleErrorClient(res, 400, "Error de validación", errors);
       }
 
-      const [subproducto, err] = await subproductoService.modificarSubproducto(id, data);
-      if (err) return handleErrorClient(res, 400, err);
-
+      const subproducto = await subproductoService.modificarSubproducto(id, data);
       handleSuccess(res, 200, "Subproducto actualizado correctamente", subproducto);
     } catch (error) {
+      const statusCode = error.statusCode || 500;
+      if (statusCode === 404) {
+        return handleErrorClient(res, 404, error.message);
+      }
       handleErrorServer(res, 500, error.message);
     }
   },
@@ -77,11 +77,13 @@ export const subproductoController = {
   async eliminarSubproducto(req, res) {
     try {
       const { id } = req.params;
-      const [_, err] = await subproductoService.eliminarSubproducto(id);
-      if (err) return handleErrorClient(res, 404, err);
-
+      await subproductoService.eliminarSubproducto(id);
       handleSuccess(res, 200, "Subproducto eliminado correctamente");
     } catch (error) {
+      const statusCode = error.statusCode || 500;
+      if (statusCode === 404) {
+        return handleErrorClient(res, 404, error.message);
+      }
       handleErrorServer(res, 500, error.message);
     }
   }

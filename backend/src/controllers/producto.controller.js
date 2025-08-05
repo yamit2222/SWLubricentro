@@ -10,7 +10,6 @@ export const productoController = {
 
       const { error } = productoValidation().validate(data, { abortEarly: false });
       if (error) {
-        // Mapear errores Joi a objeto { campo: mensaje }
         const errors = {};
         error.details.forEach((err) => {
           const field = err.path[0];
@@ -19,9 +18,7 @@ export const productoController = {
         return handleErrorClient(res, 400, "Error de validación", errors);
       }
 
-      const [producto, err] = await productoService.crearProducto(data);
-      if (err) return handleErrorClient(res, 400, err);
-
+      const producto = await productoService.crearProducto(data);
       handleSuccess(res, 201, "Producto creado correctamente", producto);
     } catch (error) {
       handleErrorServer(res, 500, error.message);
@@ -30,9 +27,7 @@ export const productoController = {
 
   async obtenerProductos(req, res) {
     try {
-      const [productos, err] = await productoService.obtenerProductos();
-      if (err) return handleErrorClient(res, 500, err);
-
+      const productos = await productoService.obtenerProductos();
       handleSuccess(res, 200, "Productos obtenidos correctamente", productos);
     } catch (error) {
       handleErrorServer(res, 500, error.message);
@@ -42,11 +37,13 @@ export const productoController = {
   async obtenerProductoPorId(req, res) {
     try {
       const { id } = req.params;
-      const [producto, err] = await productoService.obtenerProductoPorId(id);
-      if (err) return handleErrorClient(res, 404, err);
-
+      const producto = await productoService.obtenerProductoPorId(id);
       handleSuccess(res, 200, "Producto obtenido correctamente", producto);
     } catch (error) {
+      const statusCode = error.statusCode || 500;
+      if (statusCode === 404) {
+        return handleErrorClient(res, 404, error.message);
+      }
       handleErrorServer(res, 500, error.message);
     }
   },
@@ -66,11 +63,13 @@ export const productoController = {
         return handleErrorClient(res, 400, "Error de validación", errors);
       }
 
-      const [producto, err] = await productoService.modificarProducto(id, data);
-      if (err) return handleErrorClient(res, 400, err);
-
+      const producto = await productoService.modificarProducto(id, data);
       handleSuccess(res, 200, "Producto actualizado correctamente", producto);
     } catch (error) {
+      const statusCode = error.statusCode || 500;
+      if (statusCode === 404) {
+        return handleErrorClient(res, 404, error.message);
+      }
       handleErrorServer(res, 500, error.message);
     }
   },
@@ -78,11 +77,13 @@ export const productoController = {
   async eliminarProducto(req, res) {
     try {
       const { id } = req.params;
-      const [_, err] = await productoService.eliminarProducto(id);
-      if (err) return handleErrorClient(res, 404, err);
-
+      await productoService.eliminarProducto(id);
       handleSuccess(res, 200, "Producto eliminado correctamente");
     } catch (error) {
+      const statusCode = error.statusCode || 500;
+      if (statusCode === 404) {
+        return handleErrorClient(res, 404, error.message);
+      }
       handleErrorServer(res, 500, error.message);
     }
   }

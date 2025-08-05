@@ -2,51 +2,47 @@ import { SubProducto } from "../entity/subproducto.entity.js";
 
 export const subproductoService = {
   async crearSubproducto(data) {
-    try {
-      const nuevo = await SubProducto.create(data);
-      return [nuevo, null];
-    } catch (err) {
-      return [null, err.message];
-    }
+    const nuevo = await SubProducto.create(data);
+    return nuevo;
   },
+
   async obtenerSubproductos() {
-    try {
-      const subproductos = await SubProducto.findAll();
-      return [subproductos, null];
-    } catch (err) {
-      return [null, err.message];
-    }
+    const subproductos = await SubProducto.findAll();
+    return subproductos;
   },
+
   async obtenerSubproductoPorId(id) {
-    try {
-      const subproducto = await SubProducto.findByPk(id);
-      if (!subproducto) return [null, "Subproducto no encontrado"];
-      return [subproducto, null];
-    } catch (err) {
-      return [null, err.message];
+    const subproducto = await SubProducto.findByPk(id);
+    if (!subproducto) {
+      const error = new Error("Subproducto no encontrado");
+      error.statusCode = 404;
+      throw error;
     }
+    return subproducto;
   },
+
   async modificarSubproducto(id, data) {
-    try {
-      if ('stock' in data) {
-        delete data.stock;
-      }
-      const subproducto = await SubProducto.findByPk(id);
-      if (!subproducto) return [null, "Subproducto no encontrado"];
-      await subproducto.update(data);
-      return [subproducto, null];
-    } catch (err) {
-      return [null, err.message];
+    if ('stock' in data) {
+      delete data.stock;
     }
+    const subproducto = await SubProducto.findByPk(id);
+    if (!subproducto) {
+      const error = new Error("Subproducto no encontrado");
+      error.statusCode = 404;
+      throw error;
+    }
+    await subproducto.update(data);
+    return subproducto;
   },
+
   async eliminarSubproducto(id) {
-    try {
-      const subproducto = await SubProducto.findByPk(id);
-      if (!subproducto) return [null, "Subproducto no encontrado"];
-      await subproducto.destroy();
-      return [true, null];
-    } catch (err) {
-      return [null, err.message];
+    const subproducto = await SubProducto.findByPk(id);
+    if (!subproducto) {
+      const error = new Error("Subproducto no encontrado");
+      error.statusCode = 404;
+      throw error;
     }
+    await subproducto.destroy();
+    return true;
   }
 };

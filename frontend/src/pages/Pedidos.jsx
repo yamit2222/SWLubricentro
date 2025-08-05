@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getPedidosDelDia, createPedido, updatePedido, deletePedido } from "../services/pedido.service";
+import { getPedidos, createPedido, updatePedido, deletePedido } from "../services/pedido.service";
 import Swal from "sweetalert2";
 
 const Pedidos = () => {
@@ -7,24 +7,21 @@ const Pedidos = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [form, setForm] = useState({ comentario: "", producto: "", cantidad: 1 });
+  const [form, setForm] = useState({ comentario: "", productoId: "", cantidad: 1, estado: "en proceso" });
   const [productos, setProductos] = useState([]);
   const [productoSearch, setProductoSearch] = useState("");
-
   useEffect(() => {
     const fetchPedidos = async () => {
       try {
-        const response = await getPedidosDelDia();
+        const response = await getPedidos();
         setPedidos(Array.isArray(response.data) ? response.data : response);
       } catch (err) {
-        setError("No se pudieron cargar los pedidos del día");
+        setError("No se pudieron cargar los pedidos");
       } finally {
         setLoading(false);
       }
-    };
-    fetchPedidos();
+    };fetchPedidos();
 
-    // Cargar productos para el select
     const fetchProductos = async () => {
       try {
         const response = await import("../services/producto.service");
@@ -36,36 +33,27 @@ const Pedidos = () => {
     };
     fetchProductos();
   }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      // Agregar fecha y hora actual al pedido
-      const now = new Date();
-      const fecha = now.toLocaleDateString();
-      const hora = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      await createPedido({ ...form, fecha, hora, estado: form.estado || 'en proceso' });
+    try {      await createPedido({
+        comentario: form.comentario,
+        productoId: parseInt(form.productoId),
+        cantidad: parseInt(form.cantidad),
+        estado: form.estado || 'en proceso' 
+      });
       Swal.fire({ icon: "success", title: "Pedido creado", timer: 1200, showConfirmButton: false });
-      setIsFormOpen(false);
-      setForm({ comentario: "", producto: "", cantidad: 1 });
-      // Recargar pedidos
-      const response = await getPedidosDelDia();
+      setIsFormOpen(false);      setForm({ comentario: "", productoId: "", cantidad: 1, estado: "en proceso" });
+      const response = await getPedidos();
       setPedidos(Array.isArray(response.data) ? response.data : response);
     } catch (err) {
       Swal.fire({ icon: "error", title: "Error", text: err.message === "Stock insuficiente" ? "No hay suficiente stock para este pedido" : (err.message || "No se pudo crear el pedido") });
-    }
-  };
-
-  // Manejador para seleccionar producto del datalist
+    }  };
   const handleProductoChange = (e) => {
-    const nombreSeleccionado = e.target.value;
-    setProductoSearch(nombreSeleccionado);
-    // Buscar el producto por nombre
-    const productoObj = productos.find(p => p.nombre === nombreSeleccionado);
-    if (productoObj) {
-      setForm({ ...form, producto: productoObj.id }); // Guardar el ID
+    const nombreSeleccionado = e.target.value;    setProductoSearch(nombreSeleccionado);
+    const productoObj = productos.find(p => p.nombre === nombreSeleccionado);    if (productoObj) {
+      setForm({ ...form, productoId: productoObj.id });
     } else {
-      setForm({ ...form, producto: "" });
+      setForm({ ...form, productoId: "" });
     }
   };
 
@@ -123,12 +111,10 @@ const Pedidos = () => {
                   .filter(p => p.nombre.toLowerCase().includes(productoSearch.toLowerCase()))
                   .map((p) => (
                     <option key={p.id} value={p.nombre}>{p.nombre} (Stock: {p.stock})</option>
-                  ))}
-              </datalist>
-              {/* Mostrar detalles del producto seleccionado */}
-              {form.producto && productos.find(p => p.id === form.producto) && (
+                  ))}              </datalist>
+              {form.productoId && productos.find(p => p.id === form.productoId) && (
                 <div style={{ fontSize: 14, color: '#555', marginTop: 4 }}>
-                  <strong>Marca:</strong> {productos.find(p => p.id === form.producto).marca} | <strong>Stock:</strong> {productos.find(p => p.id === form.producto).stock}
+                  <strong>Marca:</strong> {productos.find(p => p.id === form.productoId).marca} | <strong>Stock:</strong> {productos.find(p => p.id === form.productoId).stock}
                 </div>
               )}
             </div>
@@ -179,7 +165,7 @@ const Pedidos = () => {
               {pedidos.map((pedido) => (
                 <tr key={pedido.id} style={{ borderBottom: '1px solid #eee' }}>
                   <td style={{ padding: '10px' }}>{pedido.comentario}</td>
-                  <td style={{ padding: '10px' }}>{pedido.producto}</td>
+                  <td style={{ padding: '10px' }}>{pedido.Producto?.nombre || 'Producto no encontrado'}</td>
                   <td style={{ padding: '10px' }}>{pedido.cantidad}</td>
                   <td style={{ padding: '10px' }}>{pedido.hora}</td>
                   <td style={{ padding: '10px' }}>{pedido.estado || 'en proceso'}</td>
@@ -200,10 +186,9 @@ const Pedidos = () => {
                           cancelButtonText: 'Cancelar'
                         });
                         if (estado) {
-                          try {
-                            await updatePedido(pedido.id, { estado });
+                          try {                            await updatePedido(pedido.id, { estado });
                             Swal.fire('Actualizado', 'El estado se actualizó correctamente', 'success');
-                            const response = await getPedidosDelDia();
+                            const response = await getPedidos();
                             setPedidos(Array.isArray(response.data) ? response.data : response);
                           } catch (err) {
                             Swal.fire('Error', 'No se pudo actualizar el estado', 'error');
@@ -225,10 +210,9 @@ const Pedidos = () => {
                           cancelButtonText: 'Cancelar'
                         });
                         if (result.isConfirmed) {
-                          try {
-                            await deletePedido(pedido.id);
+                          try {                            await deletePedido(pedido.id);
                             Swal.fire('Eliminado', 'El pedido ha sido eliminado', 'success');
-                            const response = await getPedidosDelDia();
+                            const response = await getPedidos();
                             setPedidos(Array.isArray(response.data) ? response.data : response);
                           } catch (err) {
                             Swal.fire('Error', 'No se pudo eliminar el pedido', 'error');

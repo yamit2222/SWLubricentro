@@ -16,9 +16,8 @@ export async function login(req, res) {
     if (error) {
       return handleErrorClient(res, 400, "Error de validación", error.message);
     }
-    const [accessToken, errorToken] = await loginService(body);
-
-    if (errorToken) return handleErrorClient(res, 400, "Error iniciando sesión", errorToken);
+    
+    const accessToken = await loginService(body);
 
     res.cookie("jwt", accessToken, {
       httpOnly: true,
@@ -27,6 +26,11 @@ export async function login(req, res) {
 
     handleSuccess(res, 200, "Inicio de sesión exitoso", { token: accessToken });
   } catch (error) {
+    const statusCode = error.statusCode || 500;
+    if (statusCode === 400) {
+      const errorData = error.dataInfo ? { [error.dataInfo]: error.message } : error.message;
+      return handleErrorClient(res, 400, "Error iniciando sesión", errorData);
+    }
     handleErrorServer(res, 500, error.message);
   }
 }

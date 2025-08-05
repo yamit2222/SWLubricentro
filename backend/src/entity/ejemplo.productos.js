@@ -19,14 +19,13 @@ export default [
     precio: 3500,
     codigoP: 1002,
     subcategoria: 'auto'
-  },
-  {
-    nombre: 'Refrigerante',
-    descripcion: 'Refrigerante universal para radiador',
-    marca: 'Prestone',
+  },  {
+    nombre: 'Batería 12V',
+    descripcion: 'Batería de 12V para automóviles',
+    marca: 'Bosch',
     categoria: 'bateria',
     stock: 20,
-    precio: 8000,
+    precio: 85000,
     codigoP: 1003,
     subcategoria: 'auto'
   }

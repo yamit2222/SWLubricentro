@@ -2,9 +2,9 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_BASE_URL;
 
-export const getPedidosDelDia = async () => {
+export const getPedidos = async () => {
   try {
-    const response = await axios.get(`${API_URL}/pedidos/del-dia`, {
+    const response = await axios.get(`${API_URL}/pedidos`, {
       withCredentials: true
     });
     return response.data;

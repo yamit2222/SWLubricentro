@@ -8,12 +8,11 @@ const Movimientos = () => {
   const [productos, setProductos] = useState([]);
   const [form, setForm] = useState({ productoId: '', tipo: 'entrada', cantidad: '', observacion: '' });
   const [loading, setLoading] = useState(false);
-
   const loadMovimientos = async () => {
     setLoading(true);
     try {
-      const data = await getMovimientos();
-      setMovimientos(data);
+      const response = await getMovimientos();
+      setMovimientos(Array.isArray(response) ? response : (response.data || []));
     } finally {
       setLoading(false);
     }
@@ -116,9 +115,8 @@ const Movimientos = () => {
                 <TableCell>Cantidad</TableCell>
                 <TableCell>Observación</TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {movimientos.map((mov) => (
+            </TableHead>            <TableBody>
+              {Array.isArray(movimientos) && movimientos.map((mov) => (
                 <TableRow key={mov.id}>
                   <TableCell>{new Date(mov.createdAt).toLocaleString()}</TableCell>
                   <TableCell>{mov.Producto?.nombre}</TableCell>

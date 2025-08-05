@@ -13,7 +13,6 @@ export const getProductos = async () => {
   }
 };
 
-// Cambia los valores válidos a singular para coincidir con backend
 export const createProducto = async (productoData) => {
   const categoriaValida = ["aceite", "filtro", "bateria"];
   if (!categoriaValida.includes(productoData.categoria)) {
