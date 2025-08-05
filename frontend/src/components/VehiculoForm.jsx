@@ -1,5 +1,4 @@
 import { useFormik } from "formik";
-import * as Yup from "yup";
 import {
   Dialog,
   DialogTitle,
@@ -29,30 +28,6 @@ const VehiculoForm = ({ open, onClose, vehiculo, onSuccess }) => {
       Bateria: vehiculo?.Bateria || "",
       Posicion: vehiculo?.Posicion || "",
     },
-    validationSchema: Yup.object({
-      Marca: Yup.string()
-        .required("La marca es requerida")
-        .min(2, "La marca debe tener al menos 2 caracteres")
-        .max(50, "La marca no puede tener más de 50 caracteres"),
-      Modelo: Yup.string()
-        .required("El modelo es requerido")
-        .min(2, "El modelo debe tener al menos 2 caracteres")
-        .max(50, "El modelo no puede tener más de 50 caracteres"),
-      Año: Yup.number()
-        .required("El año es requerido")
-        .min(1900, "El año no puede ser menor a 1900")
-        .max(
-          new Date().getFullYear() + 1,
-          "El año no puede ser mayor al próximo año"
-        ),
-      Filtro_de_aire: Yup.string().required("El filtro de aire es requerido"),
-      Filtro_de_aceite: Yup.string().required("El filtro de aceite es requerido"),
-      Filtro_de_combustible: Yup.string().required(
-        "El filtro de combustible es requerido"
-      ),
-      Bateria: Yup.string(),
-      Posicion: Yup.string().required("La posición es requerida"),
-    }),
     onSubmit: async (values) => {
       try {
         let response;
@@ -61,7 +36,6 @@ const VehiculoForm = ({ open, onClose, vehiculo, onSuccess }) => {
         } else {
           response = await vehiculoService.crear(values);
         }
-
         if (response.status === "Success") {
           showSuccessAlert(
             vehiculo ? "¡Actualizado!" : "¡Creado!",
@@ -69,14 +43,20 @@ const VehiculoForm = ({ open, onClose, vehiculo, onSuccess }) => {
           );
           onSuccess();
           onClose();
+        } else if (response.details && typeof response.details === 'object') {
+          formik.setErrors(response.details);
         } else {
           showErrorAlert("Error", response.message);
         }
       } catch (error) {
-        showErrorAlert(
-          "Error",
-          error.message || "Hubo un error al procesar la solicitud"
-        );
+        if (error?.details && typeof error.details === 'object') {
+          formik.setErrors(error.details);
+        } else {
+          showErrorAlert(
+            "Error",
+            error.message || "Hubo un error al procesar la solicitud"
+          );
+        }
       }
     },
     enableReinitialize: true,
@@ -151,8 +131,6 @@ const VehiculoForm = ({ open, onClose, vehiculo, onSuccess }) => {
                 label="Marca"
                 value={formik.values.Marca}
                 onChange={formik.handleChange}
-                error={formik.touched.Marca && Boolean(formik.errors.Marca)}
-                helperText={formik.touched.Marca && formik.errors.Marca}
                 variant="outlined"
                 margin="normal"
                 InputProps={{
@@ -163,6 +141,8 @@ const VehiculoForm = ({ open, onClose, vehiculo, onSuccess }) => {
                   },
                 }}
                 InputLabelProps={{ sx: { color: "#FFB800" } }}
+                error={Boolean(formik.errors.Marca)}
+                helperText={formik.errors.Marca}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -173,8 +153,6 @@ const VehiculoForm = ({ open, onClose, vehiculo, onSuccess }) => {
                 label="Modelo"
                 value={formik.values.Modelo}
                 onChange={formik.handleChange}
-                error={formik.touched.Modelo && Boolean(formik.errors.Modelo)}
-                helperText={formik.touched.Modelo && formik.errors.Modelo}
                 variant="outlined"
                 margin="normal"
                 InputProps={{
@@ -185,6 +163,8 @@ const VehiculoForm = ({ open, onClose, vehiculo, onSuccess }) => {
                   },
                 }}
                 InputLabelProps={{ sx: { color: "#FFB800" } }}
+                error={Boolean(formik.errors.Modelo)}
+                helperText={formik.errors.Modelo}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -196,8 +176,6 @@ const VehiculoForm = ({ open, onClose, vehiculo, onSuccess }) => {
                 type="number"
                 value={formik.values.Año}
                 onChange={formik.handleChange}
-                error={formik.touched.Año && Boolean(formik.errors.Año)}
-                helperText={formik.touched.Año && formik.errors.Año}
                 variant="outlined"
                 margin="normal"
                 inputProps={{
@@ -213,6 +191,8 @@ const VehiculoForm = ({ open, onClose, vehiculo, onSuccess }) => {
                   },
                 }}
                 InputLabelProps={{ sx: { color: "#FFB800" } }}
+                error={Boolean(formik.errors.Año)}
+                helperText={formik.errors.Año}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -223,13 +203,6 @@ const VehiculoForm = ({ open, onClose, vehiculo, onSuccess }) => {
                 label="Filtro de aire"
                 value={formik.values.Filtro_de_aire}
                 onChange={formik.handleChange}
-                error={
-                  formik.touched.Filtro_de_aire &&
-                  Boolean(formik.errors.Filtro_de_aire)
-                }
-                helperText={
-                  formik.touched.Filtro_de_aire && formik.errors.Filtro_de_aire
-                }
                 variant="outlined"
                 margin="normal"
                 InputProps={{
@@ -240,6 +213,8 @@ const VehiculoForm = ({ open, onClose, vehiculo, onSuccess }) => {
                   },
                 }}
                 InputLabelProps={{ sx: { color: "#FFB800" } }}
+                error={Boolean(formik.errors.Filtro_de_aire)}
+                helperText={formik.errors.Filtro_de_aire}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -250,13 +225,6 @@ const VehiculoForm = ({ open, onClose, vehiculo, onSuccess }) => {
                 label="Filtro de aceite"
                 value={formik.values.Filtro_de_aceite}
                 onChange={formik.handleChange}
-                error={
-                  formik.touched.Filtro_de_aceite &&
-                  Boolean(formik.errors.Filtro_de_aceite)
-                }
-                helperText={
-                  formik.touched.Filtro_de_aceite && formik.errors.Filtro_de_aceite
-                }
                 variant="outlined"
                 margin="normal"
                 InputProps={{
@@ -267,6 +235,8 @@ const VehiculoForm = ({ open, onClose, vehiculo, onSuccess }) => {
                   },
                 }}
                 InputLabelProps={{ sx: { color: "#FFB800" } }}
+                error={Boolean(formik.errors.Filtro_de_aceite)}
+                helperText={formik.errors.Filtro_de_aceite}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -277,14 +247,6 @@ const VehiculoForm = ({ open, onClose, vehiculo, onSuccess }) => {
                 label="Filtro de combustible"
                 value={formik.values.Filtro_de_combustible}
                 onChange={formik.handleChange}
-                error={
-                  formik.touched.Filtro_de_combustible &&
-                  Boolean(formik.errors.Filtro_de_combustible)
-                }
-                helperText={
-                  formik.touched.Filtro_de_combustible &&
-                  formik.errors.Filtro_de_combustible
-                }
                 variant="outlined"
                 margin="normal"
                 InputProps={{
@@ -295,6 +257,8 @@ const VehiculoForm = ({ open, onClose, vehiculo, onSuccess }) => {
                   },
                 }}
                 InputLabelProps={{ sx: { color: "#FFB800" } }}
+                error={Boolean(formik.errors.Filtro_de_combustible)}
+                helperText={formik.errors.Filtro_de_combustible}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -305,8 +269,6 @@ const VehiculoForm = ({ open, onClose, vehiculo, onSuccess }) => {
                 label="Batería"
                 value={formik.values.Bateria}
                 onChange={formik.handleChange}
-                error={formik.touched.Bateria && Boolean(formik.errors.Bateria)}
-                helperText={formik.touched.Bateria && formik.errors.Bateria}
                 variant="outlined"
                 margin="normal"
                 InputProps={{
@@ -317,6 +279,8 @@ const VehiculoForm = ({ open, onClose, vehiculo, onSuccess }) => {
                   },
                 }}
                 InputLabelProps={{ sx: { color: "#FFB800" } }}
+                error={Boolean(formik.errors.Bateria)}
+                helperText={formik.errors.Bateria}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -327,8 +291,6 @@ const VehiculoForm = ({ open, onClose, vehiculo, onSuccess }) => {
                 label="Posición"
                 value={formik.values.Posicion}
                 onChange={formik.handleChange}
-                error={formik.touched.Posicion && Boolean(formik.errors.Posicion)}
-                helperText={formik.touched.Posicion && formik.errors.Posicion}
                 variant="outlined"
                 margin="normal"
                 InputProps={{
@@ -339,6 +301,8 @@ const VehiculoForm = ({ open, onClose, vehiculo, onSuccess }) => {
                   },
                 }}
                 InputLabelProps={{ sx: { color: "#FFB800" } }}
+                error={Boolean(formik.errors.Posicion)}
+                helperText={formik.errors.Posicion}
               />
             </Grid>
           </Grid>

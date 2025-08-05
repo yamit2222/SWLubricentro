@@ -63,6 +63,21 @@ export async function updateUser(req, res) {
     });
 
     if (queryError) {
+      // Si hay múltiples errores de Joi
+      if (queryError.details) {
+        const errors = {};
+        queryError.details.forEach((err) => {
+          if (err.path && err.path.length > 0) {
+            errors[err.path[0]] = err.message;
+          }
+        });
+        return handleErrorClient(
+          res,
+          400,
+          "Error de validación en la consulta",
+          errors
+        );
+      }
       return handleErrorClient(
         res,
         400,
@@ -71,15 +86,23 @@ export async function updateUser(req, res) {
       );
     }
 
-    const { error: bodyError } = userBodyValidation.validate(body);
+    const { error: bodyError } = userBodyValidation.validate(body, { abortEarly: false });
 
-    if (bodyError)
+    if (bodyError) {
+      // Mapear todos los errores de Joi a un objeto { campo: mensaje }
+      const errors = {};
+      bodyError.details.forEach((err) => {
+        if (err.path && err.path.length > 0) {
+          errors[err.path[0]] = err.message;
+        }
+      });
       return handleErrorClient(
         res,
         400,
         "Error de validación en los datos enviados",
-        bodyError.message,
+        errors
       );
+    }
 
     const [user, userError] = await updateUserService({ rut, id, email }, body);
 

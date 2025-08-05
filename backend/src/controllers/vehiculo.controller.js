@@ -13,8 +13,15 @@ export const vehiculoController = {
     try {
       const data = req.body;
 
-      const { error } = vehiculoValidation().validate(data);
-      if (error) return handleErrorClient(res, 400, error.details[0].message);
+      const { error } = vehiculoValidation().validate(data, { abortEarly: false });
+      if (error) {
+        const errors = {};
+        error.details.forEach((err) => {
+          const field = err.path[0];
+          if (!errors[field]) errors[field] = err.message;
+        });
+        return handleErrorClient(res, 400, "Error de validación", errors);
+      }
 
       const [vehiculo, err] = await vehiculoService.crearVehiculo(data);
       if (err) return handleErrorClient(res, 400, err);
@@ -52,8 +59,15 @@ export const vehiculoController = {
       const { id } = req.params;
       const data = req.body;
 
-      const { error } = vehiculoValidation().validate(data);
-      if (error) return handleErrorClient(res, 400, error.details[0].message);
+      const { error } = vehiculoValidation().validate(data, { abortEarly: false });
+      if (error) {
+        const errors = {};
+        error.details.forEach((err) => {
+          const field = err.path[0];
+          if (!errors[field]) errors[field] = err.message;
+        });
+        return handleErrorClient(res, 400, "Error de validación", errors);
+      }
 
       const [vehiculo, err] = await vehiculoService.modificarVehiculo(id, data);
       if (err) return handleErrorClient(res, 400, err);

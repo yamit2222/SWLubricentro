@@ -11,7 +11,8 @@ export const SubProducto = sequelize.define("SubProducto", {
     allowNull: false
   },
   descripcion: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
+    allowNull: false
   },
   precio: {
     type: DataTypes.FLOAT,

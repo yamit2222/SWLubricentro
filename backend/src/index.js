@@ -1,18 +1,16 @@
 "use strict";
-
 import cors from "cors";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import passport from "passport";
 import express, { json, urlencoded } from "express";
-
 import indexRoutes from "./routes/index.routes.js";
 import { cookieKey, HOST, PORT } from "./config/configEnv.js";
 import { connectDB } from "./config/configDb.js";
 import { createUsers, createProductos, createSubProductos, createVehiculos } from "./config/initialSetup.js";
 import { passportJwtSetup } from "./auth/passport.auth.js";
-import { Pedido } from "./entity/pedido.entity.js";
+
 
 async function setupServer() {
   try {

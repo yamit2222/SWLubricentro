@@ -1,1 +1,0 @@
-// Este archivo ha sido eliminado. El registro de usuario ya no está disponible.

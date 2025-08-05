@@ -12,15 +12,6 @@ export function formatUserData(user) {
     };
 }
 
-export function convertirMinusculas(obj) {
-    for (let key in obj) {
-        if (typeof obj[key] === 'string') {
-            obj[key] = obj[key].toLowerCase();
-        }
-    }
-    return obj;
-}
-
 export function formatPostUpdate(user) {
     return {
         nombreCompleto: startCase(user.nombreCompleto),

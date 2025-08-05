@@ -5,11 +5,19 @@ import {handleErrorClient,handleErrorServer,handleSuccess} from "../handlers/res
 import { subproductoValidation } from "../validations/subproducto.validation.js";
 
 export const subproductoController = {
-  async crearSubproducto(req, res) {    try {
+  async crearSubproducto(req, res) {
+    try {
       const data = req.body;
 
-      const { error } = subproductoValidation().validate(data);
-      if (error) return handleErrorClient(res, 400, error.details[0].message);
+      const { error } = subproductoValidation().validate(data, { abortEarly: false });
+      if (error) {
+        const errors = {};
+        error.details.forEach((err) => {
+          const field = err.path[0];
+          if (!errors[field]) errors[field] = err.message;
+        });
+        return handleErrorClient(res, 400, "Error de validación", errors);
+      }
 
       const [subproducto, err] = await subproductoService.crearSubproducto(data);
       if (err) return handleErrorClient(res, 400, err);
@@ -46,8 +54,16 @@ export const subproductoController = {
   async modificarSubproducto(req, res) {
     try {
       const { id } = req.params;
-      const data = req.body;      const { error } = subproductoValidation().validate(data);
-      if (error) return handleErrorClient(res, 400, error.details[0].message);
+      const data = req.body;
+      const { error } = subproductoValidation().validate(data, { abortEarly: false });
+      if (error) {
+        const errors = {};
+        error.details.forEach((err) => {
+          const field = err.path[0];
+          if (!errors[field]) errors[field] = err.message;
+        });
+        return handleErrorClient(res, 400, "Error de validación", errors);
+      }
 
       const [subproducto, err] = await subproductoService.modificarSubproducto(id, data);
       if (err) return handleErrorClient(res, 400, err);

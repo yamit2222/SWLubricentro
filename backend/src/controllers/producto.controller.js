@@ -8,8 +8,16 @@ export const productoController = {
     try {
       const data = req.body;
 
-      const { error } = productoValidation().validate(data);
-      if (error) return handleErrorClient(res, 400, error.details[0].message);
+      const { error } = productoValidation().validate(data, { abortEarly: false });
+      if (error) {
+        // Mapear errores Joi a objeto { campo: mensaje }
+        const errors = {};
+        error.details.forEach((err) => {
+          const field = err.path[0];
+          if (!errors[field]) errors[field] = err.message;
+        });
+        return handleErrorClient(res, 400, "Error de validación", errors);
+      }
 
       const [producto, err] = await productoService.crearProducto(data);
       if (err) return handleErrorClient(res, 400, err);
@@ -48,8 +56,15 @@ export const productoController = {
       const { id } = req.params;
       const data = req.body;
 
-      const { error } = productoValidation().validate(data);
-      if (error) return handleErrorClient(res, 400, error.details[0].message);
+      const { error } = productoValidation().validate(data, { abortEarly: false });
+      if (error) {
+        const errors = {};
+        error.details.forEach((err) => {
+          const field = err.path[0];
+          if (!errors[field]) errors[field] = err.message;
+        });
+        return handleErrorClient(res, 400, "Error de validación", errors);
+      }
 
       const [producto, err] = await productoService.modificarProducto(id, data);
       if (err) return handleErrorClient(res, 400, err);
