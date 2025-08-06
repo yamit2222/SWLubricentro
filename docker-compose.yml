@@ -15,14 +15,14 @@ services:
   backend:
     build: ./backend
     ports:
-      - "3000:3000"
+      - "80:80"
     volumes:
       - ./backend:/app
       - /app/node_modules
     command: npm run dev
     environment:
-      - HOST=localhost
-      - PORT=3000
+      - HOST=146.83.198.35
+      - PORT=80
       - DB_USERNAME=root
       - PASSWORD=rootpass
       - DATABASE=lubricentro
