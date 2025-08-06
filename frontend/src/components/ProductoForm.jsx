@@ -13,17 +13,17 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
       nombre: producto?.nombre || '',
       codigoP: producto?.codigoP || '',
       descripcion: producto?.descripcion || '',
-      precio: producto?.precio || '',
+      precio: producto?.precio || 0,
       stock: producto?.stock ?? 0,
       marca: producto?.marca || '',
       categoria: producto?.categoria || '',
       subcategoria: producto?.subcategoria || ''
     },
     onSubmit: async (values) => {
-      try {
-        const payload = {
+      try {        const payload = {
           ...values,
-          codigoP: Number(values.codigoP)
+          codigoP: Number(values.codigoP),
+          precio: Number(values.precio)
         };
         if (producto) {
           await updateProducto(producto.id, payload);
@@ -188,8 +188,7 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
                 helperText={formik.errors.descripcion}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
+            <Grid item xs={12} md={6}>              <TextField
                 fullWidth
                 id="precio"
                 name="precio"
@@ -197,19 +196,18 @@ const ProductoForm = ({ open, onClose, producto, onSuccess }) => {
                 type="number"
                 value={formik.values.precio}
                 onKeyDown={(e) => {
-                  if (e.key === 'e' || e.key === 'E' || e.key === '-' || e.key === '+') {
+                  if (e.key === 'e' || e.key === 'E' || e.key === '-' || e.key === '+' || e.key === '.') {
                     e.preventDefault();
                   }
-                }}
-                onChange={(e) => {
+                }}                onChange={(e) => {
                   const value = e.target.value;
-                  if (/^\d*\.?\d*$/.test(value) || value === '') {
+                  if (/^\d*$/.test(value) || value === '') {
                     formik.handleChange(e);
                   }
                 }}
                 variant="outlined"
                 margin="normal"
-                InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment>, inputProps: { step: '0.01', min: '0', inputMode: 'decimal' }, sx: { bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2 } }}
+                InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment>, inputProps: { min: '0', step: '1', inputMode: 'numeric', pattern: '[0-9]*' }, sx: { bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2 } }}
                 InputLabelProps={{ sx: { color: '#FFB800' } }}
                 error={Boolean(formik.errors.precio)}
                 helperText={formik.errors.precio}

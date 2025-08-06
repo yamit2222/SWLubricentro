@@ -9,7 +9,7 @@ export const pedidoValidation = {
         "any.required": "El comentario es obligatorio"
       }),
     productoId: Joi.number().integer().positive().required().messages({
-        "number.base": "El producto debe ser un número",
+        "number.base": "El producto debe ser uno existente",
         "number.integer": "El producto debe ser un número entero",
         "number.positive": "El producto debe ser un número positivo",
         "any.required": "El producto es obligatorio"

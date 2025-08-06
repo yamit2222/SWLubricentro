@@ -28,15 +28,24 @@ const Movimientos = () => {
     loadMovimientos();
     loadProductos();
   }, []);
-
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    
+    if (name === 'cantidad') {
+      // Solo permitir números enteros positivos
+      const intValue = value.replace(/[^0-9]/g, '');
+      setForm({ ...form, [name]: intValue });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.productoId || !form.cantidad) return;
-    await createMovimiento({ ...form, cantidad: Number(form.cantidad) });
+    await createMovimiento({ 
+      ...form, 
+      cantidad: parseInt(form.cantidad, 10) 
+    });
     setForm({ productoId: '', tipo: 'entrada', cantidad: '', observacion: '' });
     loadMovimientos();
   };
@@ -97,7 +106,29 @@ const Movimientos = () => {
                 <MenuItem value="salida" sx={{ bgcolor: '#23272F', color: '#F3F4F6' }}>Salida</MenuItem>
               </Select>
             </FormControl>
-            <TextField name="cantidad" label="Cantidad" type="number" size="small" value={form.cantidad} onChange={handleChange} required sx={{ width: 100, bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2, input: { color: '#F3F4F6', background: '#2C303A' } }} InputLabelProps={{ sx: { color: '#FFB800' } }} InputProps={{ sx: { color: '#F3F4F6' } }} />
+            <TextField 
+              name="cantidad" 
+              label="Cantidad" 
+              type="number" 
+              size="small" 
+              value={form.cantidad} 
+              onChange={handleChange} 
+              required 
+              inputProps={{ 
+                min: 1, 
+                step: 1,
+                pattern: "[0-9]*" 
+              }}
+              sx={{ 
+                width: 100, 
+                bgcolor: '#2C303A', 
+                color: '#F3F4F6', 
+                borderRadius: 2, 
+                input: { color: '#F3F4F6', background: '#2C303A' } 
+              }} 
+              InputLabelProps={{ sx: { color: '#FFB800' } }} 
+              InputProps={{ sx: { color: '#F3F4F6' } }} 
+            />
             <TextField
               name="observacion"
               label="Observación"

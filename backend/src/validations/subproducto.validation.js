@@ -19,8 +19,8 @@ export const subproductoValidation = () => Joi.object({
     'string.max': 'La descripción no puede exceder 300 caracteres',
     'any.required': 'La descripción es obligatoria',
     'string.empty': 'La descripción no puede estar vacía'
-  }),
-  precio: Joi.number().positive().min(1).max(9999999).required().messages({
+  }),  precio: Joi.number().integer().positive().min(1).max(9999999).required().messages({
+    'number.integer': 'El precio debe ser un número entero',
     'number.positive': 'El precio debe ser un número positivo',
     'number.min': 'El precio debe ser mayor a 0',
     'number.max': 'El precio no puede exceder 9,999,999',

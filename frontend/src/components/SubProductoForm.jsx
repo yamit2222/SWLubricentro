@@ -16,10 +16,10 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {
       marca: subproducto?.marca ?? '',
       categoria: subproducto?.categoria ?? ''
     },
-    onSubmit: async (values, { setErrors }) => {
-      const payload = {
+    onSubmit: async (values, { setErrors }) => {      const payload = {
         ...values,
-        codigosubP: Number(values.codigosubP)
+        codigosubP: Number(values.codigosubP),
+        precio: Number(values.precio)
       };
       try {
         if (subproducto) {
@@ -214,8 +214,7 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {
                 helperText={formik.errors.descripcion}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
+            <Grid item xs={12} md={6}>              <TextField
                 fullWidth
                 id="precio"
                 name="precio"
@@ -223,13 +222,13 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {
                 type="number"
                 value={formik.values.precio}
                 onKeyDown={(e) => {
-                  if (e.key === 'e' || e.key === 'E' || e.key === '-' || e.key === '+') {
+                  if (e.key === 'e' || e.key === 'E' || e.key === '-' || e.key === '+' || e.key === '.') {
                     e.preventDefault();
                   }
                 }}
                 onChange={(e) => {
                   const value = e.target.value;
-                  if (/^\d*\.?\d*$/.test(value) || value === '') {
+                  if (/^\d*$/.test(value) || value === '') {
                     formik.handleChange(e);
                   }
                 }}
@@ -238,9 +237,10 @@ const SubProductoForm = ({ open, onClose, subproducto, onSuccess }) => {
                 InputProps={{
                   startAdornment: <InputAdornment position="start">$</InputAdornment>,
                   inputProps: {
-                    step: "0.01",
+                    step: "1",
                     min: "0",
-                    inputMode: "decimal"
+                    inputMode: "numeric",
+                    pattern: "[0-9]*"
                   },
                   sx: {
                     bgcolor: '#2C303A',
