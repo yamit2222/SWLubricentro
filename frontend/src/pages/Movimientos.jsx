@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { getMovimientos, createMovimiento } from '../services/movimientoStock.service';
 import { getProductos } from '../services/producto.service';
-import { Box, Typography, Button, TextField, MenuItem, Select, InputLabel, FormControl, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Box, Typography, Button, TextField, MenuItem, Select, InputLabel, FormControl, Paper } from '@mui/material';
+import ListAltRoundedIcon from '@mui/icons-material/ListAltRounded';
 
 const Movimientos = () => {
   const [movimientos, setMovimientos] = useState([]);
@@ -43,7 +44,12 @@ const Movimientos = () => {
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(120deg, #23272F 0%, #353945 40%, #4B4F58 70%, #FFB800 100%)', padding: 0, overflow: 'hidden' }}>
       <Box sx={{ maxWidth: 900, mx: 'auto', mt: 6 }}>
-        <Typography variant="h4" mb={2}>Movimientos de Stock</Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2, justifyContent: 'center', textAlign: 'center' }}>
+          <ListAltRoundedIcon sx={{ fontSize: 40, color: '#FFB800' }} />
+          <Typography variant="h4" sx={{ color: '#FFB800', fontWeight: 800, letterSpacing: 1, textAlign: 'center' }}>
+            Movimientos de Stock
+          </Typography>
+        </Box>
         <Paper sx={{ p: 2, mb: 4, bgcolor: '#23272F', color: '#F3F4F6', borderRadius: 3 }}>
           <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', background: '#23272F', color: '#F3F4F6', borderRadius: 8, padding: 8 }}>
             <FormControl sx={{ minWidth: 180, bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2 }} size="small">
@@ -105,29 +111,32 @@ const Movimientos = () => {
             <Button type="submit" variant="contained" color="primary" sx={{ bgcolor: '#FFB800', color: '#23272F', borderRadius: 2, fontWeight: 700 }}>Registrar</Button>
           </form>
         </Paper>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Fecha</TableCell>
-                <TableCell>Producto</TableCell>
-                <TableCell>Tipo</TableCell>
-                <TableCell>Cantidad</TableCell>
-                <TableCell>Observación</TableCell>
-              </TableRow>
-            </TableHead>            <TableBody>
-              {Array.isArray(movimientos) && movimientos.map((mov) => (
-                <TableRow key={mov.id}>
-                  <TableCell>{new Date(mov.createdAt).toLocaleString()}</TableCell>
-                  <TableCell>{mov.Producto?.nombre}</TableCell>
-                  <TableCell>{mov.tipo}</TableCell>
-                  <TableCell>{mov.cantidad}</TableCell>
-                  <TableCell>{mov.observacion}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <Paper sx={{ mt: 2, bgcolor: '#23272F', color: '#F3F4F6', borderRadius: 2 }}>
+          <Box sx={{ width: '100%', overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', color: '#F3F4F6' }}>
+              <thead>
+                <tr style={{ background: '#353945', color: '#FFB800' }}>
+                  <th style={{ padding: 8, textAlign: 'left' }}>Fecha</th>
+                  <th style={{ padding: 8, textAlign: 'left' }}>Producto</th>
+                  <th style={{ padding: 8, textAlign: 'left' }}>Tipo</th>
+                  <th style={{ padding: 8, textAlign: 'left' }}>Cantidad</th>
+                  <th style={{ padding: 8, textAlign: 'left' }}>Observación</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.isArray(movimientos) && movimientos.map((mov) => (
+                  <tr key={mov.id} style={{ borderBottom: '1px solid #353945' }}>
+                    <td style={{ padding: 8 }}>{new Date(mov.createdAt).toLocaleString()}</td>
+                    <td style={{ padding: 8 }}>{mov.Producto?.nombre}</td>
+                    <td style={{ padding: 8 }}>{mov.tipo}</td>
+                    <td style={{ padding: 8 }}>{mov.cantidad}</td>
+                    <td style={{ padding: 8 }}>{mov.observacion}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Box>
+        </Paper>
       </Box>
     </div>
   );
