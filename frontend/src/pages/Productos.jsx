@@ -106,7 +106,7 @@ const Productos = () => {
   const [selectedProducto, setSelectedProducto] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' o 'list'
+  const [viewMode, setViewMode] = useState('list'); // 'grid' o 'list'
 
   useEffect(() => {
     loadProductos();

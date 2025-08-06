@@ -102,10 +102,9 @@ const theme = createTheme({
 const SubProductos = () => {
   const [subproductos, setSubProductos] = useState([]);  const [filteredSubProductos, setFilteredSubProductos] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [selectedsubProducto, setSelectedsubProducto] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [selectedsubProducto, setSelectedsubProducto] = useState(null);  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' o 'list'
+  const [viewMode, setViewMode] = useState('list'); // 'grid' o 'list'
 
   useEffect(() => {
     loadsubProductos();
