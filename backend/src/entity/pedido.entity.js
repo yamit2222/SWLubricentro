@@ -31,6 +31,5 @@ export const Pedido = sequelize.define("Pedido", {
   timestamps: true
 });
 
-// Definir relaciones
 Producto.hasMany(Pedido, { foreignKey: 'productoId' });
 Pedido.belongsTo(Producto, { foreignKey: 'productoId' });

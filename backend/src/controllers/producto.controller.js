@@ -24,10 +24,13 @@ export const productoController = {
       handleErrorServer(res, 500, error.message);
     }
   },
-
   async obtenerProductos(req, res) {
     try {
-      const productos = await productoService.obtenerProductos();
+      const { page = 1, limit = 20 } = req.query;
+      const productos = await productoService.obtenerProductos({ 
+        page: parseInt(page), 
+        limit: parseInt(limit) 
+      });
       handleSuccess(res, 200, "Productos obtenidos correctamente", productos);
     } catch (error) {
       handleErrorServer(res, 500, error.message);

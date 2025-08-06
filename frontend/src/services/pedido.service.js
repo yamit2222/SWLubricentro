@@ -1,12 +1,8 @@
-import axios from "axios";
-
-const API_URL = import.meta.env.VITE_BASE_URL;
+import axios from "./root.service.js";
 
 export const getPedidos = async () => {
   try {
-    const response = await axios.get(`${API_URL}/pedidos`, {
-      withCredentials: true
-    });
+    const response = await axios.get('/pedidos');
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -15,9 +11,7 @@ export const getPedidos = async () => {
 
 export const createPedido = async (pedidoData) => {
   try {
-    const response = await axios.post(`${API_URL}/pedidos`, pedidoData, {
-      withCredentials: true
-    });
+    const response = await axios.post('/pedidos', pedidoData);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -26,7 +20,7 @@ export const createPedido = async (pedidoData) => {
 
 export const getPedidoById = async (id) => {
   try {
-    const response = await axios.get(`${API_URL}/pedidos/${id}`, { withCredentials: true });
+    const response = await axios.get(`/pedidos/${id}`);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -35,7 +29,7 @@ export const getPedidoById = async (id) => {
 
 export const updatePedido = async (id, pedidoData) => {
   try {
-    const response = await axios.put(`${API_URL}/pedidos/${id}`, pedidoData, { withCredentials: true });
+    const response = await axios.put(`/pedidos/${id}`, pedidoData);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -44,7 +38,7 @@ export const updatePedido = async (id, pedidoData) => {
 
 export const deletePedido = async (id) => {
   try {
-    const response = await axios.delete(`${API_URL}/pedidos/${id}`, { withCredentials: true });
+    const response = await axios.delete(`/pedidos/${id}`);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

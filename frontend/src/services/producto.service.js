@@ -1,12 +1,8 @@
-import axios from 'axios';
-
-const API_URL = import.meta.env.VITE_BASE_URL;
+import axios from './root.service.js';
 
 export const getProductos = async () => {
   try {
-    const response = await axios.get(`${API_URL}/productos`, {
-      withCredentials: true
-    });
+    const response = await axios.get('/productos');
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -19,12 +15,9 @@ export const createProducto = async (productoData) => {
     return Promise.reject("Categoría inválida. Debe ser aceite, filtro o bateria");
   }
   try {
-    const response = await axios.post(`${API_URL}/productos`, productoData, {
-      withCredentials: true
-    });
+    const response = await axios.post('/productos', productoData);
     return response.data;
-  } catch (error) {
-    throw error.response?.data || error.message;
+  } catch (error) {    throw error.response?.data || error.message;
   }
 };
 
@@ -34,9 +27,7 @@ export const updateProducto = async (id, productoData) => {
     return Promise.reject("Categoría inválida. Debe ser aceite, filtro o bateria");
   }
   try {
-    const response = await axios.put(`${API_URL}/productos/${id}`, productoData, {
-      withCredentials: true
-    });
+    const response = await axios.put(`/productos/${id}`, productoData);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -45,9 +36,7 @@ export const updateProducto = async (id, productoData) => {
 
 export const deleteProducto = async (id) => {
   try {
-    const response = await axios.delete(`${API_URL}/productos/${id}`, {
-      withCredentials: true
-    });
+    const response = await axios.delete(`/productos/${id}`);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

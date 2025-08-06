@@ -63,7 +63,6 @@ export async function updateUser(req, res) {
     });
 
     if (queryError) {
-      // Si hay múltiples errores de Joi
       if (queryError.details) {
         const errors = {};
         queryError.details.forEach((err) => {

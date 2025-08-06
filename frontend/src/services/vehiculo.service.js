@@ -1,16 +1,11 @@
-import axios from "axios";
+import axios from "./root.service.js";
 
 const API_URL = import.meta.env.VITE_BASE_URL;
 
 export const vehiculoService = {
   crear: async (vehiculo) => {
     try {
-      const response = await axios.post(`${API_URL}/vehiculos`, vehiculo, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await axios.post("/vehiculos", vehiculo);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -19,9 +14,7 @@ export const vehiculoService = {
 
   obtenerTodos: async () => {
     try {
-      const response = await axios.get(`${API_URL}/vehiculos`, {
-        withCredentials: true,
-      });
+      const response = await axios.get("/vehiculos");
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -30,9 +23,7 @@ export const vehiculoService = {
 
   obtenerPorId: async (id) => {
     try {
-      const response = await axios.get(`${API_URL}/vehiculos/${id}`, {
-        withCredentials: true,
-      });
+      const response = await axios.get(`/vehiculos/${id}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -41,9 +32,7 @@ export const vehiculoService = {
 
   actualizar: async (id, vehiculo) => {
     try {
-      const response = await axios.put(`${API_URL}/vehiculos/${id}`, vehiculo, {
-        withCredentials: true,
-      });
+      const response = await axios.put(`/vehiculos/${id}`, vehiculo);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -52,9 +41,7 @@ export const vehiculoService = {
 
   eliminar: async (id) => {
     try {
-      const response = await axios.delete(`${API_URL}/vehiculos/${id}`, {
-        withCredentials: true,
-      });
+      const response = await axios.delete(`/vehiculos/${id}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
