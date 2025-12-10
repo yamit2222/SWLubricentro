@@ -253,7 +253,6 @@ const Productos = () => {
                 <Button
                   variant="outlined"
                   color="primary"
-                  startIcon={<span>📊</span>}
                   onClick={() => setIsImportModalOpen(true)}
                   sx={{ 
                     color: '#FFB800', 

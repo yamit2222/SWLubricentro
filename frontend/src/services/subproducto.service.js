@@ -27,8 +27,25 @@ export const updateSubProducto = async (id, subproductoData) => {
   }
 };
 
-export const deleteSubProducto = async (id) => {  try {
+export const deleteSubProducto = async (id) => {
+  try {
     const response = await axios.delete(`/subproductos/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const importarSubproductosExcel = async (file) => {
+  try {
+    const formData = new FormData();
+    formData.append('excel', file);
+    
+    const response = await axios.post('/subproductos/importar-excel', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

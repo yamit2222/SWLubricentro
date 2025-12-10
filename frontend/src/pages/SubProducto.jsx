@@ -24,6 +24,7 @@ import ViewListIcon from '@mui/icons-material/ViewList';
 import { getSubProductos, deleteSubProducto } from '../services/subproducto.service';
 import Search from '../components/Search';
 import SubProductoForm from '../components/SubProductoForm';
+import SubProductoExcelImport from '../components/SubProductoExcelImport';
 import Swal from 'sweetalert2';
 import '@styles/colors.css';
 import Popup from '../components/Popup';
@@ -100,11 +101,14 @@ const theme = createTheme({
 });
 
 const SubProductos = () => {
-  const [subproductos, setSubProductos] = useState([]);  const [filteredSubProductos, setFilteredSubProductos] = useState([]);
+  const [subproductos, setSubProductos] = useState([]);
+  const [filteredSubProductos, setFilteredSubProductos] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [selectedsubProducto, setSelectedsubProducto] = useState(null);  const [loading, setLoading] = useState(true);
+  const [selectedsubProducto, setSelectedsubProducto] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState('list'); // 'grid' o 'list'
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   useEffect(() => {
     loadsubProductos();
@@ -169,6 +173,12 @@ const SubProductos = () => {
       subproducto.descripcion?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredSubProductos(filtered);
+  };
+
+  const handleImportSuccess = (resultado) => {
+    console.log('Importación completada:', resultado);
+    setIsImportModalOpen(false);
+    loadsubProductos(); // Recargar la lista de subproductos
   };
 
   const getStockColor = (stock) => {
@@ -241,6 +251,23 @@ const SubProductos = () => {
                   sx={{ borderRadius: 2, bgcolor: viewMode === 'list' ? '#23272F' : undefined, color: viewMode === 'list' ? '#F3F4F6CC' : '#FFB800', border: viewMode === 'list' ? '2px solid #FFB800' : undefined }}
                 >
                   Lista
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => setIsImportModalOpen(true)}
+                  sx={{ 
+                    color: '#FFB800', 
+                    borderColor: '#FFB800', 
+                    borderRadius: 2, 
+                    fontWeight: 600,
+                    '&:hover': { 
+                      borderColor: '#FFB800', 
+                      bgcolor: 'rgba(255, 184, 0, 0.1)' 
+                    }
+                  }}
+                >
+                  Importar Excel
                 </Button>
                 <Button
                   variant="contained"
@@ -393,7 +420,9 @@ const SubProductos = () => {
                 </Box>
               </Paper>
             )}
-          </Paper>        <SubProductoForm
+          </Paper>
+
+          <SubProductoForm
             open={isFormOpen}
             onClose={() => {
               setIsFormOpen(false);
@@ -402,6 +431,14 @@ const SubProductos = () => {
             subproducto={selectedsubProducto}
             onSuccess={loadsubProductos}
           />
+
+          {/* Modal para importar Excel */}
+          <SubProductoExcelImport 
+            open={isImportModalOpen}
+            onClose={() => setIsImportModalOpen(false)}
+            onImportSuccess={handleImportSuccess}
+          />
+
           {/* Modal para ver detalles */}
           {selectedsubProducto && (
             <Popup
