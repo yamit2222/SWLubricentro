@@ -6,7 +6,7 @@ import {
   Paper
 } from "@mui/material";
 import WarehouseRoundedIcon from '@mui/icons-material/WarehouseRounded';
-import { getProductos } from "../services/producto.service";
+import { getAllProductos } from "../services/producto.service";
 
 const CATEGORIAS = [
   { key: "aceite", label: "Aceites" },
@@ -22,8 +22,17 @@ const Inventario = () => {
   useEffect(() => {
     const fetchProductos = async () => {
       try {
-        const response = await getProductos();
-        setProductos(Array.isArray(response.data) ? response.data : response);
+        const response = await getAllProductos();
+        // Manejar la nueva estructura de respuesta con paginación
+        if (response.data && response.data.productos) {
+          setProductos(response.data.productos);
+        } else if (Array.isArray(response.data)) {
+          setProductos(response.data);
+        } else if (Array.isArray(response)) {
+          setProductos(response);
+        } else {
+          setProductos([]);
+        }
       } catch (error) {
         setProductos([]);
       }

@@ -12,7 +12,9 @@ import {
   IconButton,
   Tooltip,
   Chip,
-  CircularProgress
+  CircularProgress,
+  Pagination,
+  Stack
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
@@ -109,19 +111,28 @@ const Productos = () => {
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState('list'); // 'grid' o 'list'
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  
+  // Estados de paginación
+  const [paginaActual, setPaginaActual] = useState(1);
+  const [totalPaginas, setTotalPaginas] = useState(0);
+  const [totalProductos, setTotalProductos] = useState(0);
+  const limite = 10;
 
   useEffect(() => {
     loadProductos();
-  }, []);
+  }, [paginaActual]);
 
   const loadProductos = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await getProductos();
-      const data = Array.isArray(response.data) ? response.data : [];
-      setProductos(data);
-      setFilteredProductos(data);
+      const response = await getProductos(paginaActual, limite);
+      
+      // La respuesta ahora incluye datos de paginación
+      setProductos(response.data.productos || []);
+      setFilteredProductos(response.data.productos || []);
+      setTotalPaginas(response.data.totalPaginas || 0);
+      setTotalProductos(response.data.totalProductos || 0);
     } catch (error) {
       console.error('Error al cargar productos:', error);
       setError('No se pudieron cargar los productos');
@@ -176,6 +187,10 @@ const Productos = () => {
       producto.descripcion?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredProductos(filtered);
+  };
+
+  const handlePageChange = (event, value) => {
+    setPaginaActual(value);
   };
 
   const getStockColor = (stock) => {
@@ -438,6 +453,52 @@ const Productos = () => {
                 {}
               </Box>
             </Popup>
+          )}
+
+          {/* Componente de paginación */}
+          {totalPaginas > 1 && (
+            <Paper 
+              elevation={3} 
+              sx={{ 
+                p: 3, 
+                mt: 3,
+                borderRadius: 3,
+                bgcolor: '#23272F',
+                boxShadow: '0 4px 24px rgba(0,0,0,0.18)',
+                border: '2px solid #FFB800',
+              }}
+            >
+              <Stack spacing={2} alignItems="center">
+                <Typography variant="body2" sx={{ color: '#FFB800' }}>
+                  Mostrando {productos.length} de {totalProductos} productos
+                </Typography>
+                <Pagination 
+                  count={totalPaginas} 
+                  page={paginaActual} 
+                  onChange={handlePageChange}
+                  color="primary"
+                  size="large"
+                  showFirstButton 
+                  showLastButton
+                  sx={{
+                    '& .MuiPaginationItem-root': {
+                      color: '#FFB800',
+                      borderColor: '#FFB800',
+                      '&.Mui-selected': {
+                        backgroundColor: '#FFB800',
+                        color: '#23272F',
+                        '&:hover': {
+                          backgroundColor: '#FFB800',
+                        },
+                      },
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 184, 0, 0.1)',
+                      },
+                    },
+                  }}
+                />
+              </Stack>
+            </Paper>
           )}
 
           {/* Modal para importar Excel */}

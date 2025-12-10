@@ -1,8 +1,18 @@
 import axios from './root.service.js';
 
-export const getProductos = async () => {
+export const getProductos = async (pagina = 1, limite = 10) => {
   try {
-    const response = await axios.get('/productos');
+    const response = await axios.get(`/productos?pagina=${pagina}&limite=${limite}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+// Función auxiliar para obtener todos los productos (sin paginación)
+export const getAllProductos = async () => {
+  try {
+    const response = await axios.get('/productos?limite=1000'); // Límite alto para obtener todos
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

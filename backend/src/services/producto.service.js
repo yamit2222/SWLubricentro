@@ -7,9 +7,22 @@ export const productoService = {
     return nuevo;
   },
 
-  async obtenerProductos() {
-    const productos = await Producto.findAll();
-    return productos;
+  async obtenerProductos(pagina = 1, limite = 10) {
+    const offset = (pagina - 1) * limite;
+    
+    const { count, rows: productos } = await Producto.findAndCountAll({
+      limit: parseInt(limite),
+      offset: offset,
+      order: [['id', 'DESC']] // Mostrar los más recientes primero
+    });
+
+    return {
+      productos,
+      totalProductos: count,
+      totalPaginas: Math.ceil(count / limite),
+      paginaActual: parseInt(pagina),
+      limite: parseInt(limite)
+    };
   },
 
   async obtenerProductoPorId(id) {
@@ -83,8 +96,8 @@ export const productoService = {
         // Validar el producto
         const { error } = productoExcelValidation().validate(productoLimpio);
         if (error) {
-          console.log(`❌ Error validación fila ${fila}:`, error.details.map(err => err.message));
-          console.log(`📝 Datos originales:`, producto);
+          console.log(`Error validación fila ${fila}:`, error.details.map(err => err.message));
+          console.log(`Datos originales:`, producto);
           console.log(`Datos procesados:`, productoLimpio);
           errores.push({
             fila,
@@ -101,10 +114,9 @@ export const productoService = {
         });
 
         if (productoExistente) {
-          console.log(`⚠️ Código duplicado fila ${fila}: ${productoLimpio.codigoP} ya existe (ID: ${productoExistente.id})`);
           errores.push({
             fila,
-            errores: [`Ya existe un producto con el código ${productoLimpio.codigoP}`],
+            errores: [`El código ${productoLimpio.codigoP} ya existe en la base de datos`],
             datos: producto,
             datosLimpios: productoLimpio
           });
@@ -118,8 +130,8 @@ export const productoService = {
         productosCreados.push(nuevoProducto);
 
       } catch (error) {
-        console.log(`💥 Error creando producto fila ${fila}:`, error.message);
-        console.log(`📝 Stack trace:`, error.stack);
+        console.log(`Error creando producto fila ${fila}:`, error.message);
+        console.log(`Stack trace:`, error.stack);
         errores.push({
           fila,
           errores: [error.message || 'Error desconocido'],

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getMovimientos, createMovimiento } from '../services/movimientoStock.service';
-import { getProductos } from '../services/producto.service';
+import { getAllProductos } from '../services/producto.service';
 import { Box, Typography, Button, TextField, MenuItem, Select, InputLabel, FormControl, Paper } from '@mui/material';
 import ListAltRoundedIcon from '@mui/icons-material/ListAltRounded';
 
@@ -20,8 +20,17 @@ const Movimientos = () => {
   };
 
   const loadProductos = async () => {
-    const data = await getProductos();
-    setProductos(Array.isArray(data) ? data : (Array.isArray(data.data) ? data.data : []));
+    const data = await getAllProductos();
+    // Manejar la nueva estructura de respuesta con paginación
+    if (data.data && data.data.productos) {
+      setProductos(data.data.productos);
+    } else if (Array.isArray(data.data)) {
+      setProductos(data.data);
+    } else if (Array.isArray(data)) {
+      setProductos(data);
+    } else {
+      setProductos([]);
+    }
   };
 
   useEffect(() => {

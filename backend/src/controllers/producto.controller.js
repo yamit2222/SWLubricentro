@@ -27,12 +27,12 @@ export const productoController = {
   },
   async obtenerProductos(req, res) {
     try {
-      const { page = 1, limit = 20 } = req.query;
-      const productos = await productoService.obtenerProductos({ 
-        page: parseInt(page), 
-        limit: parseInt(limit) 
-      });
-      handleSuccess(res, 200, "Productos obtenidos correctamente", productos);
+      const { pagina = 1, limite = 10 } = req.query;
+      const resultado = await productoService.obtenerProductos(
+        parseInt(pagina), 
+        parseInt(limite)
+      );
+      handleSuccess(res, 200, "Productos obtenidos correctamente", resultado);
     } catch (error) {
       handleErrorServer(res, 500, error.message);
     }

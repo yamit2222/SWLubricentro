@@ -103,54 +103,89 @@ const ExcelImport = ({ open, onClose, onImportSuccess }) => {
     try {
       const result = await importarProductosExcel(file);
 
-      if (result.status === 'success') {
-        const { exitosos, fallidos, errores } = result.data;
+      // Verificar si la respuesta es exitosa (status 200 o success)
+      if (result.status === 'success' || (result.data && typeof result.data === 'object')) {
+        const data = result.data || result;
+        const { exitosos, fallidos, errores } = data;
         
-        if (fallidos > 0) {
-          // Mostrar errores detallados
-          let errorMessage = `✅ Se importaron ${exitosos} productos correctamente.\\n`;
-          errorMessage += `❌ ${fallidos} productos no se pudieron importar:\\n\\n`;
+        if (fallidos > 0 && exitosos > 0) {
+          // Importación parcial - algunos exitosos, algunos fallidos
+          const duplicados = errores.filter(error => 
+            error.errores.some(err => err.includes('ya existe') || err.includes('código'))
+          ).length;
           
-          errores.forEach((error, index) => {
-            if (index < 3) { // Mostrar solo los primeros 3 errores para que se vea mejor
-              errorMessage += `📍 Fila ${error.fila}:\\n`;
-              error.errores.forEach(err => {
-                errorMessage += `   • ${err}\\n`;
-              });
-              errorMessage += `\\n`;
-            }
-          });
+          const otrosErrores = fallidos - duplicados;
           
-          if (errores.length > 3) {
-            errorMessage += `... y ${errores.length - 3} errores más. Revisa los logs de la consola.`;
+          let message = `Se agregaron ${exitosos} productos correctamente.`;
+          if (duplicados > 0) {
+            message += `\n${duplicados} productos ya existían.`;
+          }
+          if (otrosErrores > 0) {
+            message += `\n${otrosErrores} productos tuvieron errores de validación.`;
           }
 
-          console.group('🔍 Detalles de errores de importación:');
-          errores.forEach(error => {
-            console.log(`❌ Fila ${error.fila}:`, error.errores);
-            console.log('📝 Datos originales:', error.datos);
-            if (error.datosLimpios) {
-              console.log('🔧 Datos procesados:', error.datosLimpios);
-            }
-            console.log('---');
-          });
-          console.groupEnd();
-
-          showWarningAlert('Importación parcial', errorMessage);
-        } else {
-          showSuccessAlert('¡Éxito!', `Se importaron ${exitosos} productos correctamente`);
+          showWarningAlert('Importación completada', message);
+        } else if (exitosos > 0) {
+          // Todos exitosos
+          showSuccessAlert('Importación exitosa', `Se agregaron ${exitosos} productos correctamente`);
         }
 
-        if (onImportSuccess) {
-          onImportSuccess();
+        // Siempre cerrar y recargar si hubo al menos un producto exitoso
+        if (exitosos > 0) {
+          if (onImportSuccess) {
+            onImportSuccess();
+          }
+          onClose();
         }
-        onClose();
       } else {
         showErrorAlert('Error', result.message || 'Error al importar productos');
       }
     } catch (error) {
       console.error('Error uploading file:', error);
-      showErrorAlert('Error', 'Error de conexión al importar productos');
+      
+      // Si el error tiene respuesta del servidor (400, 500, etc)
+      if (error.response && error.response.data) {
+        const errorData = error.response.data;
+        
+        // Si hay datos de importación en el error (productos fallidos)
+        if (errorData.data && errorData.data.exitosos !== undefined) {
+          const { exitosos, fallidos, errores } = errorData.data;
+          
+          if (exitosos > 0) {
+            // Algunos productos se importaron exitosamente a pesar del error
+            const duplicados = errores.filter(error => 
+              error.errores && error.errores.some(err => err.includes('ya existe') || err.includes('código'))
+            ).length;
+            
+            const otrosErrores = fallidos - duplicados;
+            
+            let message = `Se agregaron ${exitosos} productos correctamente.`;
+            if (duplicados > 0) {
+              message += `\n${duplicados} productos ya existían.`;
+            }
+            if (otrosErrores > 0) {
+              message += `\n${otrosErrores} productos tuvieron errores de validación.`;
+            }
+            
+            showWarningAlert('Importación completada', message);
+            
+            // Recargar y cerrar si hubo productos exitosos
+            if (onImportSuccess) {
+              onImportSuccess();
+            }
+            onClose();
+          } else {
+            // Ningún producto se importó
+            showErrorAlert('Error', errorData.message || 'No se pudo importar ningún producto');
+          }
+        } else {
+          // Error genérico del servidor
+          showErrorAlert('Error', errorData.message || 'Error del servidor al importar productos');
+        }
+      } else {
+        // Error de conexión
+        showErrorAlert('Error', 'Error de conexión al importar productos');
+      }
     } finally {
       setIsUploading(false);
       // Limpiar el input

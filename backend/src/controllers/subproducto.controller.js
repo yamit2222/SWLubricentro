@@ -29,8 +29,12 @@ export const subproductoController = {
 
   async obtenerSubproductos(req, res) {
     try {
-      const subproductos = await subproductoService.obtenerSubproductos();
-      handleSuccess(res, 200, "Subproductos obtenidos correctamente", subproductos);
+      const { pagina = 1, limite = 10 } = req.query;
+      const resultado = await subproductoService.obtenerSubproductos(
+        parseInt(pagina), 
+        parseInt(limite)
+      );
+      handleSuccess(res, 200, "Subproductos obtenidos correctamente", resultado);
     } catch (error) {
       handleErrorServer(res, 500, error.message);
     }

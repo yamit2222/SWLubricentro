@@ -26,8 +26,17 @@ const Pedidos = () => {
     const fetchProductos = async () => {
       try {
         const response = await import("../services/producto.service");
-        const productosResp = await response.getProductos();
-        setProductos(Array.isArray(productosResp.data) ? productosResp.data : productosResp);
+        const productosResp = await response.getAllProductos();
+        // Manejar la nueva estructura de respuesta con paginación
+        if (productosResp.data && productosResp.data.productos) {
+          setProductos(productosResp.data.productos);
+        } else if (Array.isArray(productosResp.data)) {
+          setProductos(productosResp.data);
+        } else if (Array.isArray(productosResp)) {
+          setProductos(productosResp);
+        } else {
+          setProductos([]);
+        }
       } catch (err) {
         setProductos([]);
       }

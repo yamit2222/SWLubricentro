@@ -7,9 +7,22 @@ export const subproductoService = {
     return nuevo;
   },
 
-  async obtenerSubproductos() {
-    const subproductos = await SubProducto.findAll();
-    return subproductos;
+  async obtenerSubproductos(pagina = 1, limite = 10) {
+    const offset = (pagina - 1) * limite;
+    
+    const { count, rows: subproductos } = await SubProducto.findAndCountAll({
+      limit: parseInt(limite),
+      offset: offset,
+      order: [['id', 'DESC']] // Mostrar los más recientes primero
+    });
+
+    return {
+      subproductos,
+      totalSubproductos: count,
+      totalPaginas: Math.ceil(count / limite),
+      paginaActual: parseInt(pagina),
+      limite: parseInt(limite)
+    };
   },
 
   async obtenerSubproductoPorId(id) {
@@ -87,7 +100,7 @@ export const subproductoService = {
         if (subproductoExistente) {
           errores.push({
             fila,
-            errores: [`Ya existe un subproducto con el código ${subproductoLimpio.codigosubP}`],
+            errores: [`El código ${subproductoLimpio.codigosubP} ya existe en la base de datos`],
             datos: subproducto,
             datosLimpios: subproductoLimpio
           });

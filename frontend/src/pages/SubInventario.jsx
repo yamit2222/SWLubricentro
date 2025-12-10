@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/inventario.css";
-import { getSubProductos } from "../services/subproducto.service";
+import { getAllSubProductos } from "../services/subproducto.service";
 import { Box, Typography, Container, Paper } from "@mui/material";
 import WarehouseRoundedIcon from '@mui/icons-material/WarehouseRounded';
 
@@ -11,8 +11,17 @@ const SubInventario = () => {
   useEffect(() => {
     const fetchSubProductos = async () => {
       try {
-        const response = await getSubProductos();
-        setSubProductos(Array.isArray(response.data) ? response.data : response);
+        const response = await getAllSubProductos();
+        // Manejar la nueva estructura de respuesta con paginación
+        if (response.data && response.data.subproductos) {
+          setSubProductos(response.data.subproductos);
+        } else if (Array.isArray(response.data)) {
+          setSubProductos(response.data);
+        } else if (Array.isArray(response)) {
+          setSubProductos(response);
+        } else {
+          setSubProductos([]);
+        }
       } catch (error) {
         setSubProductos([]);
       }
