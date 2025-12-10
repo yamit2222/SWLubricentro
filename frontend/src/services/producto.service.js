@@ -42,3 +42,20 @@ export const deleteProducto = async (id) => {
     throw error.response?.data || error.message;
   }
 };
+
+export const importarProductosExcel = async (file) => {
+  try {
+    const formData = new FormData();
+    formData.append('excel', file);
+
+    const response = await axios.post('/productos/importar-excel', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};

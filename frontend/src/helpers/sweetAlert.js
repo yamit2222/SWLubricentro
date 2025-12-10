@@ -28,6 +28,14 @@ export const showErrorAlert = (titleMessage, message) => {
   );
 };
 
+export const showWarningAlert = (titleMessage, message) => {
+  Swal.fire(
+    titleMessage,
+    message,
+    'warning'
+  );
+};
+
 export const showConfirmAlert = async (title, text) => {
   const result = await Swal.fire({
     title: title,

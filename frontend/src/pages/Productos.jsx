@@ -24,6 +24,7 @@ import ViewListIcon from '@mui/icons-material/ViewList';
 import { getProductos, deleteProducto } from '../services/producto.service';
 import Search from '../components/Search';
 import ProductoForm from '../components/ProductoForm';
+import ExcelImport from '../components/ExcelImport';
 import Swal from 'sweetalert2';
 import '@styles/colors.css';
 import Popup from '../components/Popup';
@@ -107,6 +108,7 @@ const Productos = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState('list'); // 'grid' o 'list'
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   useEffect(() => {
     loadProductos();
@@ -249,6 +251,24 @@ const Productos = () => {
                   Lista
                 </Button>
                 <Button
+                  variant="outlined"
+                  color="primary"
+                  startIcon={<span>📊</span>}
+                  onClick={() => setIsImportModalOpen(true)}
+                  sx={{ 
+                    color: '#FFB800', 
+                    borderColor: '#FFB800', 
+                    borderRadius: 2, 
+                    fontWeight: 600,
+                    '&:hover': { 
+                      borderColor: '#FFB800', 
+                      bgcolor: 'rgba(255, 184, 0, 0.1)' 
+                    }
+                  }}
+                >
+                  Importar Excel
+                </Button>
+                <Button
                   variant="contained"
                   color="primary"
                   startIcon={<AddIcon />}
@@ -269,6 +289,8 @@ const Productos = () => {
               placeholder="Buscar por nombre, código o descripción..." 
               sx={{ mb: 3 }}
             />
+
+
 
             {viewMode === 'grid' ? (
               <Grid container spacing={3}>
@@ -418,6 +440,13 @@ const Productos = () => {
               </Box>
             </Popup>
           )}
+
+          {/* Modal para importar Excel */}
+          <ExcelImport 
+            open={isImportModalOpen}
+            onClose={() => setIsImportModalOpen(false)}
+            onImportSuccess={loadProductos}
+          />
         </Container>
       </ThemeProvider>
     </div>
