@@ -12,7 +12,9 @@ import {
   Button,
   Collapse,
   IconButton,
-  Badge
+  Badge,
+  ThemeProvider,
+  createTheme
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -20,6 +22,17 @@ import WarningIcon from '@mui/icons-material/Warning';
 import ErrorIcon from '@mui/icons-material/Error';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import { getAllStockBajo } from '../services/alerts.service';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#FFB800',
+    },
+    secondary: {
+      main: '#1A1A1A',
+    },
+  },
+});
 
 const StockAlerts = () => {
   const [alertas, setAlertas] = useState(null);
@@ -51,88 +64,214 @@ const StockAlerts = () => {
 
   if (loading || !alertas) {
     return (
-      <Paper sx={{ p: 2, mb: 2 }}>
-        <Typography variant="h6">Cargando alertas de stock...</Typography>
-      </Paper>
+      <ThemeProvider theme={theme}>
+        <Paper 
+          sx={{ 
+            p: 2.5, 
+            mb: 2,
+            maxWidth: '380px',
+            minWidth: '350px',
+            background: 'linear-gradient(135deg, rgba(255, 184, 0, 0.95) 0%, rgba(255, 160, 0, 0.95) 100%)',
+            color: 'white',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+            borderRadius: '8px',
+            textAlign: 'center',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 184, 0, 0.3)'
+          }}
+        >
+          <Typography variant="subtitle2" sx={{ fontSize: '12px' }}>
+            Cargando...
+          </Typography>
+        </Paper>
+      </ThemeProvider>
     );
   }
 
   if (alertas.total === 0) {
     return (
-      <Paper sx={{ p: 2, mb: 2, bgcolor: '#e8f5e8' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <InventoryIcon color="success" />
-          <Typography variant="h6" color="success.main">
-            Stock en buen estado
+      <ThemeProvider theme={theme}>
+        <Paper 
+          sx={{ 
+            p: 2.5, 
+            mb: 2,
+            maxWidth: '380px',
+            minWidth: '350px',
+            background: 'linear-gradient(135deg, rgba(76, 175, 80, 0.95) 0%, rgba(56, 142, 60, 0.95) 100%)',
+            color: 'white',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+            borderRadius: '8px',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(76, 175, 80, 0.3)'
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center', mb: 0.5 }}>
+            <InventoryIcon sx={{ fontSize: 16 }} />
+            <Typography variant="subtitle2" sx={{ fontWeight: 'bold', fontSize: '12px' }}>
+              Stock OK
+            </Typography>
+          </Box>
+          <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.9)', textAlign: 'center', display: 'block', fontSize: '10px' }}>
+            Sin alertas pendientes
           </Typography>
-        </Box>
-        <Typography variant="body2" color="text.secondary">
-          Todos los productos tienen stock suficiente
-        </Typography>
-      </Paper>
+        </Paper>
+      </ThemeProvider>
     );
   }
 
   return (
-    <Paper sx={{ mb: 2 }}>
+    <ThemeProvider theme={theme}>
+      <Paper 
+        sx={{ 
+          mb: 2,
+          maxWidth: '380px',
+          minWidth: '350px',
+          background: 'linear-gradient(135deg, rgba(255, 184, 0, 0.95) 0%, rgba(255, 160, 0, 0.95) 100%)',
+          color: 'white',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+          borderRadius: '8px',
+          overflow: 'hidden',
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(255, 184, 0, 0.3)'
+        }}
+      >
       <Alert 
         severity={alertas.criticos > 0 ? 'error' : 'warning'}
-        sx={{ borderRadius: 0 }}
+        sx={{ 
+          borderRadius: 0,
+          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          color: 'inherit',
+          padding: '8px 16px',
+          '& .MuiAlert-icon': {
+            color: 'white',
+            fontSize: '18px'
+          },
+          '& .MuiAlert-message': {
+            width: '100%',
+            padding: 0
+          }
+        }}
         action={
           <IconButton
             size="small"
             onClick={() => setExpanded(!expanded)}
+            sx={{ color: 'white', padding: '4px' }}
           >
-            {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            {expanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
           </IconButton>
         }
       >
-        <AlertTitle>
+        <AlertTitle sx={{ color: 'white', fontWeight: 'bold', fontSize: '16px', marginBottom: '6px' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            {alertas.criticos > 0 ? <ErrorIcon /> : <WarningIcon />}
+            {alertas.criticos > 0 ? <ErrorIcon fontSize="medium" /> : <WarningIcon fontSize="medium" />}
             Alertas de Stock
-            <Badge badgeContent={alertas.total} color="error" />
+            <Badge 
+              badgeContent={alertas.total}
+              sx={{
+                '& .MuiBadge-badge': {
+                  backgroundColor: '#ff1744',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  fontSize: '11px',
+                  minWidth: '18px',
+                  height: '18px'
+                }
+              }}
+            />
           </Box>
         </AlertTitle>
-        <Typography variant="body2">
-          {alertas.criticos > 0 && (
-            <>Stock crítico: {alertas.criticos} productos. </>
-          )}
-          Stock bajo: {alertas.total} productos requieren reposición
+        <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '13px', lineHeight: 1.4 }}>
+          {alertas.criticos > 0 && `${alertas.criticos} críticos • `}
+          {alertas.total} requieren atención
         </Typography>
       </Alert>
 
       <Collapse in={expanded}>
-        <Box sx={{ p: 2 }}>
+        <Box 
+          sx={{ 
+            p: 2.5,
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            color: '#1A1A1A',
+            maxHeight: '400px',
+            overflowY: 'auto'
+          }}
+        >
           {alertas.productos.length > 0 && (
             <Box sx={{ mb: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                <Typography 
+                  variant="subtitle1" 
+                  sx={{ 
+                    color: '#FFB800',
+                    fontWeight: 'bold',
+                    fontSize: '14px'
+                  }}
+                >
                   Productos ({alertas.productos.length})
                 </Typography>
                 {alertas.productos.length > LIMITE_MOSTRAR && (
                   <Button
                     size="small"
+                    variant="text"
                     onClick={() => setShowMore(prev => ({ ...prev, productos: !prev.productos }))}
-                    endIcon={showMore.productos ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                    endIcon={showMore.productos ? <ExpandLessIcon fontSize="inherit" /> : <ExpandMoreIcon fontSize="inherit" />}
+                    sx={{
+                      color: '#FFB800',
+                      fontSize: '10px',
+                      padding: '2px 4px',
+                      minWidth: 'auto',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 184, 0, 0.1)'
+                      }
+                    }}
                   >
-                    {showMore.productos ? 'Ver menos' : `Ver todos (${alertas.productos.length})`}
+                    {showMore.productos ? 'Menos' : `+${alertas.productos.length - LIMITE_MOSTRAR}`}
                   </Button>
                 )}
               </Box>
-              <List dense>
+              <List 
+                dense
+                sx={{
+                  backgroundColor: 'white',
+                  borderRadius: '4px',
+                  border: '1px solid #e0e0e0',
+                  padding: 0,
+                  '& .MuiListItem-root': {
+                    padding: '4px 8px',
+                    minHeight: '32px',
+                    borderBottom: '1px solid #f5f5f5',
+                    '&:last-child': {
+                      borderBottom: 'none'
+                    }
+                  }
+                }}
+              >
                 {(showMore.productos ? alertas.productos : alertas.productos.slice(0, LIMITE_MOSTRAR))
                   .map((producto) => (
                   <ListItem key={`producto-${producto.id}`}>
                     <ListItemText
-                      primary={producto.nombre}
-                      secondary={`Código: ${producto.codigoP} | Categoría: ${producto.categoria}`}
+                      primary={
+                        <Typography variant="body2" sx={{ fontSize: '12px', fontWeight: 'bold', display: 'block' }}>
+                          {producto.nombre.length > 20 ? `${producto.nombre.substring(0, 20)}...` : producto.nombre}
+                        </Typography>
+                      }
+                      secondary={
+                        <Typography variant="caption" sx={{ fontSize: '11px', color: 'text.secondary' }}>
+                          {producto.codigoP}
+                        </Typography>
+                      }
                     />
                     <Chip
-                      label={`Stock: ${producto.stock}`}
+                      label={producto.stock}
                       color={producto.nivel === 'critico' ? 'error' : 'warning'}
                       size="small"
-                      icon={producto.nivel === 'critico' ? <ErrorIcon /> : <WarningIcon />}
+                      sx={{ 
+                        height: '20px',
+                        fontSize: '9px',
+                        '& .MuiChip-label': { 
+                          padding: '0 4px' 
+                        }
+                      }}
                     />
                   </ListItem>
                 ))}
@@ -143,32 +282,79 @@ const StockAlerts = () => {
           {alertas.subproductos.length > 0 && (
             <Box>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                <Typography 
+                  variant="subtitle1" 
+                  sx={{ 
+                    color: '#FFB800',
+                    fontWeight: 'bold',
+                    fontSize: '14px'
+                  }}
+                >
                   Subproductos ({alertas.subproductos.length})
                 </Typography>
                 {alertas.subproductos.length > LIMITE_MOSTRAR && (
                   <Button
                     size="small"
+                    variant="text"
                     onClick={() => setShowMore(prev => ({ ...prev, subproductos: !prev.subproductos }))}
-                    endIcon={showMore.subproductos ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                    endIcon={showMore.subproductos ? <ExpandLessIcon fontSize="inherit" /> : <ExpandMoreIcon fontSize="inherit" />}
+                    sx={{
+                      color: '#FFB800',
+                      fontSize: '10px',
+                      padding: '2px 4px',
+                      minWidth: 'auto',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 184, 0, 0.1)'
+                      }
+                    }}
                   >
-                    {showMore.subproductos ? 'Ver menos' : `Ver todos (${alertas.subproductos.length})`}
+                    {showMore.subproductos ? 'Menos' : `+${alertas.subproductos.length - LIMITE_MOSTRAR}`}
                   </Button>
                 )}
               </Box>
-              <List dense>
+              <List 
+                dense
+                sx={{
+                  backgroundColor: 'white',
+                  borderRadius: '4px',
+                  border: '1px solid #e0e0e0',
+                  padding: 0,
+                  '& .MuiListItem-root': {
+                    padding: '4px 8px',
+                    minHeight: '32px',
+                    borderBottom: '1px solid #f5f5f5',
+                    '&:last-child': {
+                      borderBottom: 'none'
+                    }
+                  }
+                }}
+              >
                 {(showMore.subproductos ? alertas.subproductos : alertas.subproductos.slice(0, LIMITE_MOSTRAR))
                   .map((subproducto) => (
                   <ListItem key={`subproducto-${subproducto.id}`}>
                     <ListItemText
-                      primary={subproducto.nombre}
-                      secondary={`Código: ${subproducto.codigosubP} | Categoría: ${subproducto.categoria}`}
+                      primary={
+                        <Typography variant="body2" sx={{ fontSize: '12px', fontWeight: 'bold', display: 'block' }}>
+                          {subproducto.nombre.length > 20 ? `${subproducto.nombre.substring(0, 20)}...` : subproducto.nombre}
+                        </Typography>
+                      }
+                      secondary={
+                        <Typography variant="caption" sx={{ fontSize: '11px', color: 'text.secondary' }}>
+                          {subproducto.codigosubP}
+                        </Typography>
+                      }
                     />
                     <Chip
-                      label={`Stock: ${subproducto.stock}`}
+                      label={subproducto.stock}
                       color={subproducto.nivel === 'critico' ? 'error' : 'warning'}
                       size="small"
-                      icon={subproducto.nivel === 'critico' ? <ErrorIcon /> : <WarningIcon />}
+                      sx={{ 
+                        height: '20px',
+                        fontSize: '9px',
+                        '& .MuiChip-label': { 
+                          padding: '0 4px' 
+                        }
+                      }}
                     />
                   </ListItem>
                 ))}
@@ -176,11 +362,20 @@ const StockAlerts = () => {
             </Box>
           )}
 
-          <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
+          <Box sx={{ mt: 1.5, display: 'flex', justifyContent: 'center' }}>
             <Button 
-              variant="outlined" 
-              size="small" 
+              variant="text"
+              size="small"
               onClick={loadStockAlerts}
+              sx={{
+                color: '#FFB800',
+                fontSize: '10px',
+                padding: '4px 8px',
+                minWidth: 'auto',
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 184, 0, 0.1)',
+                }
+              }}
             >
               Actualizar
             </Button>
@@ -188,6 +383,7 @@ const StockAlerts = () => {
         </Box>
       </Collapse>
     </Paper>
+    </ThemeProvider>
   );
 };
 

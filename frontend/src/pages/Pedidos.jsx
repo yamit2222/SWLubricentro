@@ -82,16 +82,24 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           '&.MuiChip-colorSuccess': {
-            backgroundColor: 'var(--color-exito)',
+            backgroundColor: '#10B981', // Verde esmeralda
             color: 'white',
           },
           '&.MuiChip-colorError': {
-            backgroundColor: 'var(--color-error)',
+            backgroundColor: '#EF4444', // Rojo coral
             color: 'white',
           },
           '&.MuiChip-colorWarning': {
-            backgroundColor: 'var(--color-advertencia)',
-            color: 'var(--negro-profundo)',
+            backgroundColor: '#F59E0B', // Naranja ámbar
+            color: 'white',
+          },
+          '&.MuiChip-colorInfo': {
+            backgroundColor: '#3B82F6', // Azul cielo
+            color: 'white',
+          },
+          '&.MuiChip-colorDefault': {
+            backgroundColor: '#6B7280', // Gris pizarra
+            color: 'white',
           },
         },
       },
@@ -218,10 +226,25 @@ const Pedidos = () => {
   };
 
   const getEstadoColor = (estado) => {
-    switch (estado) {
-      case 'vendido': return 'success';
-      case 'en proceso': return 'warning';
-      default: return 'default';
+    switch (estado?.toLowerCase()) {
+      case 'vendido':
+      case 'completado':
+      case 'entregado':
+        return 'success'; // Verde esmeralda
+      case 'en proceso':
+      case 'procesando':
+      case 'preparando':
+        return 'info'; // Azul cielo
+      case 'pendiente':
+      case 'esperando':
+      case 'revision':
+        return 'warning'; // Naranja ámbar
+      case 'cancelado':
+      case 'rechazado':
+      case 'anulado':
+        return 'error'; // Rojo coral
+      default:
+        return 'default'; // Gris pizarra
     }
   };
 
@@ -283,22 +306,6 @@ const Pedidos = () => {
                   sx={{ borderRadius: 2, bgcolor: viewMode === 'list' ? '#23272F' : undefined, color: viewMode === 'list' ? '#F3F4F6CC' : '#FFB800', border: viewMode === 'list' ? '2px solid #FFB800' : undefined }}
                 >
                   Lista
-                </Button>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  sx={{ 
-                    color: '#FFB800', 
-                    borderColor: '#FFB800', 
-                    borderRadius: 2, 
-                    fontWeight: 600,
-                    '&:hover': { 
-                      borderColor: '#FFB800', 
-                      bgcolor: 'rgba(255, 184, 0, 0.1)' 
-                    }
-                  }}
-                >
-                  Importar Excel
                 </Button>
                 <Button
                   variant="contained"
