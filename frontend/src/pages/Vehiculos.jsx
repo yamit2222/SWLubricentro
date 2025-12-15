@@ -24,7 +24,6 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import DirectionsCarRoundedIcon from '@mui/icons-material/DirectionsCarRounded';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import { vehiculoService } from '../services/vehiculo.service';
@@ -180,7 +179,7 @@ const Vehiculos = () => {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(120deg, #23272F 0%, #353945 40%, #4B4F58 70%, #FFB800 100%)', padding: 0, overflow: 'hidden' }}>
+    <div style={{ minHeight: '100vh', background: '-webkit-linear-gradient(90deg, #23272f,#353945,#4e4e4e)', background: 'linear-gradient(90deg, #23272f,#353945,#4e4e4e)', padding: 0, overflow: 'hidden' }}>
       <ThemeProvider theme={theme}>
         <Container maxWidth="lg" sx={{ mt: '12vh', mb: 4 }}>
           <Paper 
@@ -196,7 +195,6 @@ const Vehiculos = () => {
           >
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <DirectionsCarRoundedIcon sx={{ fontSize: 40, color: '#FFB800' }} />
                 <Typography variant="h4" component="h1" sx={{ color: '#FFB800', fontWeight: 800, letterSpacing: 1 }}>
                   Gestión de Vehículos
                 </Typography>

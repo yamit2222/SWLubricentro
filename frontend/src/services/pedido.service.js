@@ -1,8 +1,8 @@
 import axios from "./root.service.js";
 
-export const getPedidos = async () => {
+export const getPedidos = async (pagina = 1, limite = 10) => {
   try {
-    const response = await axios.get('/pedidos');
+    const response = await axios.get(`/pedidos?pagina=${pagina}&limite=${limite}`);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

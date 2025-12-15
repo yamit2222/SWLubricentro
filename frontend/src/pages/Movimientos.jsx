@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { getMovimientos, createMovimiento } from '../services/movimientoStock.service';
 import { getAllProductos } from '../services/producto.service';
 import { Box, Typography, Button, TextField, MenuItem, Select, InputLabel, FormControl, Paper } from '@mui/material';
-import ListAltRoundedIcon from '@mui/icons-material/ListAltRounded';
 
 const Movimientos = () => {
   const [movimientos, setMovimientos] = useState([]);
@@ -60,10 +59,9 @@ const Movimientos = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(120deg, #23272F 0%, #353945 40%, #4B4F58 70%, #FFB800 100%)', padding: 0, overflow: 'hidden' }}>
+    <div style={{ minHeight: '100vh', background: '-webkit-linear-gradient(90deg, #23272f,#353945,#4e4e4e)', background: 'linear-gradient(90deg, #23272f,#353945,#4e4e4e)', padding: 0, overflow: 'hidden' }}>
       <Box sx={{ maxWidth: 900, mx: 'auto', mt: 6 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2, justifyContent: 'center', textAlign: 'center' }}>
-          <ListAltRoundedIcon sx={{ fontSize: 40, color: '#FFB800' }} />
           <Typography variant="h4" sx={{ color: '#FFB800', fontWeight: 800, letterSpacing: 1, textAlign: 'center' }}>
             Movimientos de Stock
           </Typography>

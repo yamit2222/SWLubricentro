@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "../styles/inventario.css";
 import { getAllSubProductos } from "../services/subproducto.service";
 import { Box, Typography, Container, Paper } from "@mui/material";
-import WarehouseRoundedIcon from '@mui/icons-material/WarehouseRounded';
 
 const SubInventario = () => {
   const [subproductos, setSubProductos] = useState([]);
@@ -48,7 +47,7 @@ const SubInventario = () => {
   }));
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(120deg, #23272F 0%, #353945 40%, #4B4F58 70%, #FFB800 100%)', padding: 0, overflow: 'hidden' }}>
+    <div style={{ minHeight: '100vh', background: '-webkit-linear-gradient(90deg, #23272f,#353945,#4e4e4e)', background: 'linear-gradient(90deg, #23272f,#353945,#4e4e4e)', padding: 0, overflow: 'hidden' }}>
       <Container maxWidth="lg" sx={{ mt: '12vh', mb: 4 }}>
         <Paper 
           elevation={3} 
@@ -63,7 +62,6 @@ const SubInventario = () => {
         >
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, mb: 4 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <WarehouseRoundedIcon sx={{ fontSize: 40, color: '#FFB800' }} />
               <Typography variant="h4" component="h1" sx={{ color: '#FFB800', fontWeight: 800, letterSpacing: 1 }}>
                 SubInventario
               </Typography>
