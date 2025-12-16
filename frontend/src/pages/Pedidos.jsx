@@ -27,7 +27,6 @@ import Search from '../components/Search';
 import PedidoForm from '../components/PedidoForm';
 import Swal from 'sweetalert2';
 import '@styles/colors.css';
-import Popup from '../components/Popup';
 
 const theme = createTheme({
   palette: {
@@ -498,17 +497,12 @@ const Pedidos = () => {
           </Paper>
           
           {/* Modal para crear/editar pedido */}
-          <Popup
+          <PedidoForm
             open={isFormOpen}
             onClose={handleFormClose}
-            title={selectedPedido ? 'Editar Pedido' : 'Crear Pedido'}
-          >
-            <PedidoForm
-              pedido={selectedPedido}
-              onSuccess={handleFormSuccess}
-              onClose={handleFormClose}
-            />
-          </Popup>
+            pedido={selectedPedido}
+            onSuccess={handleFormSuccess}
+          />
         </Container>
       </ThemeProvider>
     </div>
