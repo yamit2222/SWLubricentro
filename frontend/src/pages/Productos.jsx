@@ -84,16 +84,16 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           '&.MuiChip-colorSuccess': {
-            backgroundColor: 'var(--color-exito)',
+            backgroundColor: '#10B981', // Verde esmeralda para stock bueno
             color: 'white',
           },
           '&.MuiChip-colorError': {
-            backgroundColor: 'var(--color-error)',
+            backgroundColor: '#EF4444', // Rojo coral para stock crítico
             color: 'white',
           },
           '&.MuiChip-colorWarning': {
-            backgroundColor: 'var(--color-advertencia)',
-            color: 'var(--negro-profundo)',
+            backgroundColor: '#F59E0B', // Naranja ámbar para stock bajo
+            color: 'white',
           },
         },
       },
@@ -389,7 +389,17 @@ const Productos = () => {
                           <td style={{ padding: 8 }}>{producto.categoria}</td>
                           <td style={{ padding: 8, maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{producto.descripcion}</td>
                           <td style={{ padding: 8 }}>${producto.precio?.toLocaleString() ?? '0'}</td>
-                          <td style={{ padding: 8 }}>{producto.stock ?? 0}</td>
+                          <td style={{ padding: 8 }}>
+                            <Chip
+                              label={producto.stock ?? 0}
+                              color={getStockColor(producto.stock)}
+                              size="small"
+                              sx={{ 
+                                fontWeight: 'bold',
+                                minWidth: '50px'
+                              }}
+                            />
+                          </td>
                           <td style={{ padding: 8 }}>
                             <Tooltip title="Editar">
                               <IconButton

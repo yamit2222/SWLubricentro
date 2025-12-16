@@ -90,9 +90,9 @@ const SubInventario = () => {
           <div className="inventario-multi" style={{ display: "flex", gap: 32, flexWrap: "wrap", justifyContent: "flex-start", alignItems: "flex-start", paddingLeft: 0, overflowX: "visible" }}>
             {subproductosPorCategoria.map((catObj) => (
               <div className="inventario-card" key={catObj.nombre} style={{ minWidth: 400, maxWidth: 500, boxShadow: "0 2px 12px #0004", borderRadius: 16, padding: 28, background: "#2C303A", flex: "1 1 500px", marginRight: 24, border: "1px solid #444", height: "100%" }}>
-                <div style={{ fontWeight: "bold", fontSize: 22, marginBottom: 16, letterSpacing: 1, color: '#F3F4F6' }}>{catObj.nombre}</div>
+                <div style={{ fontWeight: "bold", fontSize: 22, marginBottom: 16, letterSpacing: 1, color: '#FFB800' }}>{catObj.nombre}</div>
                 <details open>
-                  <summary style={{ fontWeight: 600, color: '#FFB800', fontSize: 18, cursor: 'pointer', marginBottom: 12 }}>Ver subproductos</summary>
+                  <summary style={{ fontWeight: 600, color: '#F3F4F6', fontSize: 18, cursor: 'pointer', marginBottom: 12 }}>Ver subproductos</summary>
                   <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
                     {catObj.items.length === 0 ? (
                       <li style={{ color: "#888", fontStyle: "italic", padding: "4px 0 4px 12px" }}>Sin subproductos</li>

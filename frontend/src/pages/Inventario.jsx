@@ -118,7 +118,7 @@ const Inventario = () => {
           <div className="inventario-multi" style={{ display: "flex", gap: 32, flexWrap: "wrap" }}>
             {CATEGORIAS.map(({ key, label }) => (
               <div key={key} className="inventario-card" style={{ minWidth: 320, boxShadow: "0 2px 12px #0004", borderRadius: 16, padding: 20, background: "#2C303A", flex: "1 1 340px", marginBottom: 24, border: "1px solid #444" }}>
-                <div style={{ fontWeight: "bold", fontSize: 20, marginBottom: 12, letterSpacing: 1, color: '#F3F4F6' }}>{label}</div>
+                <div style={{ fontWeight: "bold", fontSize: 20, marginBottom: 12, letterSpacing: 1, color: '#FFB800' }}>{label}</div>
                 {getSubcategorias(key).map((sub) => (
                   <div key={sub} style={{ marginBottom: 10, borderBottom: "1px solid #444" }}>
                     <button
