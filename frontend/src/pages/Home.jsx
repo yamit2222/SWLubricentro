@@ -251,7 +251,7 @@ const Home = () => {
             }}>
               <CardContent sx={{ pb: '16px !important', px: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                  <Avatar sx={{ bgcolor: '#6366F1', mr: 1.5, width: 32, height: 32 }}>
+                  <Avatar sx={{ bgcolor: '#0F172A', mr: 1.5, width: 32, height: 32 }}>
                     <Inventory sx={{ fontSize: '1.2rem' }} />
                   </Avatar>
                   <Typography variant="subtitle1" sx={{ color: '#334155', fontWeight: 600, fontSize: '0.9rem' }}>
@@ -508,7 +508,7 @@ const Home = () => {
                 }}>
                 <CardContent sx={{ pb: '16px !important' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <Avatar sx={{ bgcolor: '#6366F1', mr: 2, width: 36, height: 36 }}>
+                    <Avatar sx={{ bgcolor: '#0F172A', mr: 2, width: 36, height: 36 }}>
                       <CalendarToday sx={{ fontSize: '1.2rem' }} />
                     </Avatar>
                     <Typography variant="h6" sx={{ color: '#334155', fontWeight: 600 }}>

@@ -26,6 +26,21 @@ import Swal from 'sweetalert2';
 const PedidoForm = ({ open, onClose, pedido, onSuccess }) => {
   const [productos, setProductos] = useState([]);
 
+  const handleClose = () => {
+    // Limpiar el formulario solo si no estamos editando un pedido existente
+    if (!pedido) {
+      formik.resetForm({
+        values: {
+          comentario: '',
+          productoId: '',
+          cantidad: 1,
+          estado: 'en proceso'
+        }
+      });
+    }
+    onClose();
+  };
+
   const formik = useFormik({
     initialValues: {
       comentario: pedido?.comentario || '',
@@ -33,61 +48,8 @@ const PedidoForm = ({ open, onClose, pedido, onSuccess }) => {
       cantidad: pedido?.cantidad || 1,
       estado: pedido?.estado || 'en proceso'
     },
-    validate: (values) => {
-      const errors = {};
-      
-      if (!values.comentario || values.comentario.trim() === '') {
-        errors.comentario = 'El comentario es requerido';
-      }
-      
-      if (!values.productoId) {
-        errors.productoId = 'Debe seleccionar un producto con stock disponible';
-      }
-      
-      if (!values.cantidad || values.cantidad < 1) {
-        errors.cantidad = 'La cantidad debe ser mayor a 0';
-      }
-      
-      if (!values.estado) {
-        errors.estado = 'Debe seleccionar un estado';
-      }
-      
-      return errors;
-    },
     onSubmit: async (values) => {
       try {
-        // Validaciones adicionales antes de enviar
-        if (!values.productoId) {
-          Swal.fire({
-            icon: 'warning',
-            title: 'Producto Requerido',
-            text: 'Por favor selecciona un producto con stock disponible antes de continuar',
-            confirmButtonColor: '#FFB800'
-          });
-          return;
-        }
-
-        if (!values.comentario || values.comentario.trim() === '') {
-          Swal.fire({
-            icon: 'warning',
-            title: 'Campo Requerido',
-            text: 'El comentario es obligatorio para crear un pedido',
-            confirmButtonColor: '#FFB800'
-          });
-          return;
-        }
-
-        const selectedProduct = productos.find(p => p.id === parseInt(values.productoId));
-        if (selectedProduct && values.cantidad > selectedProduct.stock) {
-          Swal.fire({
-            icon: 'warning',
-            title: 'Stock Insuficiente',
-            text: `Solo hay ${selectedProduct.stock} unidades disponibles de "${selectedProduct.nombre}". Por favor ajusta la cantidad.`,
-            confirmButtonColor: '#FFB800'
-          });
-          return;
-        }
-
         const payload = {
           ...values,
           productoId: parseInt(values.productoId),
@@ -114,65 +76,19 @@ const PedidoForm = ({ open, onClose, pedido, onSuccess }) => {
           });
         }
         onSuccess();
-        handleClose();
+        onClose();
       } catch (error) {
-        console.error('Error completo:', error);
-        
-        // Manejo detallado de errores
+        // Si el backend devuelve errores de validación por campo
         if (error?.details && typeof error.details === 'object') {
-          // Errores de validación por campo
           formik.setErrors(error.details);
-          
-          // Mostrar el primer error encontrado
-          const firstError = Object.values(error.details)[0];
-          Swal.fire({
-            icon: 'error',
-            title: 'Error de Validación',
-            text: firstError || 'Por favor corrige los errores en el formulario',
-            confirmButtonColor: '#FFB800'
-          });
-        } else if (error?.message) {
-          // Errores con mensaje específico
-          let errorMessage = error.message;
-          let errorTitle = 'Error';
-
-          // Personalizar mensajes según el tipo de error
-          if (error.message.includes('required') || error.message.includes('requerido')) {
-            errorTitle = 'Campos Requeridos';
-            errorMessage = 'Por favor complete todos los campos obligatorios';
-          } else if (error.message.includes('stock') || error.message === "Stock insuficiente") {
-            errorTitle = 'Stock Insuficiente';
-            errorMessage = "No hay suficiente stock para este pedido";
-          } else if (error.message.includes('network') || error.message.includes('fetch')) {
-            errorTitle = 'Error de Conexión';
-            errorMessage = 'No se pudo conectar con el servidor. Verifica tu conexión a internet';
-          } else if (error.message.includes('unauthorized') || error.message.includes('401')) {
-            errorTitle = 'Error de Autenticación';
-            errorMessage = 'Tu sesión ha expirado. Por favor inicia sesión nuevamente';
-          }
-
-          Swal.fire({
-            icon: 'error',
-            title: errorTitle,
-            text: errorMessage,
-            confirmButtonColor: '#FFB800'
-          });
         } else {
-          // Error genérico sin información específica
+          const errorMessage = error.message === "Stock insuficiente" 
+            ? "No hay suficiente stock para este pedido" 
+            : (error.message || "Hubo un error al procesar la solicitud");
           Swal.fire({
             icon: 'error',
-            title: 'Error Inesperado',
-            html: `
-              <p>Ocurrió un error inesperado al procesar el pedido.</p>
-              <p><strong>Posibles causas:</strong></p>
-              <ul style="text-align: left; display: inline-block;">
-                <li>Campos requeridos faltantes</li>
-                <li>Producto sin stock disponible</li>
-                <li>Error de conexión con el servidor</li>
-              </ul>
-              <p>Por favor verifica los datos e intenta nuevamente.</p>
-            `,
-            confirmButtonColor: '#FFB800'
+            title: 'Error',
+            text: errorMessage
           });
         }
       }
@@ -183,13 +99,8 @@ const PedidoForm = ({ open, onClose, pedido, onSuccess }) => {
   useEffect(() => {
     if (open) {
       loadProductos();
-    } else {
-      // Limpiar el formulario cuando se cierra el modal (solo para pedidos nuevos)
-      if (!pedido) {
-        formik.resetForm();
-      }
     }
-  }, [open, pedido]);
+  }, [open]);
 
   const loadProductos = async () => {
     try {
@@ -216,17 +127,6 @@ const PedidoForm = ({ open, onClose, pedido, onSuccess }) => {
   };
 
   const selectedProducto = productos.find(p => p.id === parseInt(formik.values.productoId));
-
-  const handleClose = () => {
-    // Limpiar campos específicos al cerrar (solo para pedidos nuevos)
-    if (!pedido) {
-      formik.setFieldValue('comentario', '');
-      formik.setFieldValue('productoId', '');
-      formik.setFieldValue('cantidad', 1);
-      formik.setFieldValue('estado', 'en proceso');
-    }
-    onClose();
-  };
 
   return (
     <Dialog 
@@ -276,7 +176,6 @@ const PedidoForm = ({ open, onClose, pedido, onSuccess }) => {
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                required
                 id="comentario"
                 name="comentario"
                 label="Comentario"
@@ -289,7 +188,7 @@ const PedidoForm = ({ open, onClose, pedido, onSuccess }) => {
                 InputProps={{ sx: { bgcolor: '#2C303A', color: '#F3F4F6', borderRadius: 2 } }}
                 InputLabelProps={{ sx: { color: '#FFB800' } }}
                 error={Boolean(formik.errors.comentario)}
-                helperText={formik.errors.comentario || 'Describe el pedido o servicio requerido'}
+                helperText={formik.errors.comentario}
               />
             </Grid>
 
@@ -297,17 +196,31 @@ const PedidoForm = ({ open, onClose, pedido, onSuccess }) => {
               <Box sx={{ width: '100%', minWidth: '400px' }}>
                 <Autocomplete
                   fullWidth
-                  options={productos.filter(producto => producto.stock > 0)}
+                  options={productos}
                   getOptionLabel={(option) => `${option.nombre} (Stock: ${option.stock})`}
+
                   value={selectedProducto || null}
                   onChange={(event, newValue) => {
-                    formik.setFieldValue('productoId', newValue ? newValue.id : '');
+                    if (newValue) {
+                      if (newValue.stock <= 0) {
+                        Swal.fire({
+                          icon: 'warning',
+                          title: 'Sin Stock',
+                          text: `El producto "${newValue.nombre}" no tiene stock disponible.`,
+                          confirmButtonColor: '#FFB800'
+                        });
+                        // No establecer el producto si no hay stock
+                        formik.setFieldValue('productoId', '');
+                      } else {
+                        formik.setFieldValue('productoId', newValue.id);
+                      }
+                    } else {
+                      formik.setFieldValue('productoId', '');
+                    }
                   }}
-                  noOptionsText="No hay productos con stock disponible"
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      required
                       id="productoId"
                       name="productoId"
                       label="Buscar Producto"
@@ -352,7 +265,7 @@ const PedidoForm = ({ open, onClose, pedido, onSuccess }) => {
                         } 
                       }}
                       error={Boolean(formik.errors.productoId)}
-                      helperText={formik.errors.productoId || (productos.filter(p => p.stock > 0).length === 0 ? 'No hay productos con stock disponible' : 'Selecciona un producto de la lista')}
+                      helperText={formik.errors.productoId}
                     />
                   )}
                   sx={{
@@ -416,7 +329,6 @@ const PedidoForm = ({ open, onClose, pedido, onSuccess }) => {
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                required
                 id="cantidad"
                 name="cantidad"
                 label="Cantidad"
