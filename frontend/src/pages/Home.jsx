@@ -196,27 +196,31 @@ const Home = () => {
         {/* Título principal */}
         <Box sx={{ 
           textAlign: 'center', 
-          mb: 3,
+          mb: 5,
           mx: 'auto',
           maxWidth: { xs: '100%', md: '1200px' },
-          mr: { md: '420px' }
+          mt: { xs: 8, md: 12 }
         }}>
           <Typography variant="h1" sx={{ 
-            color: '#FFB800', 
-            fontWeight: 800, 
-            letterSpacing: 1,
-            mb: 0.5,
-            fontSize: { xs: '2.2rem', sm: '2.8rem', md: '3.5rem' },
-            textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+            color: '#E2E8F0', 
+            fontWeight: 600, 
+            letterSpacing: '2px',
+            mb: 1.5,
+            fontSize: { xs: '2.8rem', sm: '3.5rem', md: '4.2rem' },
+            textShadow: '1px 1px 2px rgba(0,0,0,0.4)',
+            fontFamily: '"Inter", "Roboto", sans-serif',
+            lineHeight: 1.1
           }}>
-            Bienvenido a "El Socio"
+            Lubricentro "El Socio"
           </Typography>
-          <Typography variant="h5" sx={{ 
-            color: '#F3F4F6', 
-            fontWeight: 400,
-            fontSize: { xs: '0.9rem', md: '1.1rem' }
+          <Typography variant="h6" sx={{ 
+            color: '#94A3B8', 
+            fontWeight: 300,
+            fontSize: { xs: '0.8rem', md: '1.0rem' },
+            letterSpacing: '1px',
+            textTransform: 'uppercase'
           }}>
-            Los Ángeles, Chile • Dashboard de Control
+            Los Ángeles, Chile • Sistema de Gestión
           </Typography>
         </Box>
 
@@ -227,9 +231,9 @@ const Home = () => {
           px: { xs: 2, md: 0 }
         }}>
           {/* Grid de estadísticas principales */}
-          <Grid container spacing={{ xs: 2, md: 2 }} sx={{ mb: { xs: 2, md: 3 } }}>
+          <Grid container spacing={{ xs: 2, md: 2 }} sx={{ mb: { xs: 2, md: 3 }, justifyContent: 'center' }}>
           {/* Card de Inventario Total */}
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={5} md={4}>
             <Card sx={{
               background: 'rgba(35,39,47,0.6)',
               border: '1px solid #000000',
@@ -245,16 +249,16 @@ const Home = () => {
                 transform: 'translateY(-2px)'
               }
             }}>
-              <CardContent sx={{ pb: '16px !important' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
-                  <Avatar sx={{ bgcolor: '#6366F1', mr: 2, width: 40, height: 40 }}>
-                    <Inventory />
+              <CardContent sx={{ pb: '16px !important', px: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                  <Avatar sx={{ bgcolor: '#6366F1', mr: 1.5, width: 32, height: 32 }}>
+                    <Inventory sx={{ fontSize: '1.2rem' }} />
                   </Avatar>
-                  <Typography variant="h6" sx={{ color: '#334155', fontWeight: 600 }}>
+                  <Typography variant="subtitle1" sx={{ color: '#334155', fontWeight: 600, fontSize: '0.9rem' }}>
                     Inventario Total
                   </Typography>
                 </Box>
-                <Typography variant="h3" sx={{ color: '#FFB800', fontWeight: 'bold', mb: 0.5 }}>
+                <Typography variant="h4" sx={{ color: '#FFB800', fontWeight: 'bold', mb: 0.5, fontSize: '1.8rem' }}>
                   {loading ? '...' : stats.totalProductos + stats.totalSubProductos}
                 </Typography>
                 <Typography variant="body2" sx={{ color: '#B0B3B8' }}>
@@ -265,7 +269,7 @@ const Home = () => {
           </Grid>
 
           {/* Card de Pedidos */}
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={5} md={4}>
             <Card sx={{
               background: 'rgba(35,39,47,0.6)',
               border: '1px solid #000000',
@@ -281,16 +285,16 @@ const Home = () => {
                 transform: 'translateY(-2px)'
               }
             }}>
-              <CardContent sx={{ pb: '16px !important' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
-                  <Avatar sx={{ bgcolor: '#0F172A', mr: 2, width: 40, height: 40 }}>
-                    <ShoppingCart />
+              <CardContent sx={{ pb: '16px !important', px: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                  <Avatar sx={{ bgcolor: '#0F172A', mr: 1.5, width: 32, height: 32 }}>
+                    <ShoppingCart sx={{ fontSize: '1.2rem' }} />
                   </Avatar>
-                  <Typography variant="h6" sx={{ color: '#334155', fontWeight: 600 }}>
+                  <Typography variant="subtitle1" sx={{ color: '#334155', fontWeight: 600, fontSize: '0.9rem' }}>
                     Pedidos Totales
                   </Typography>
                 </Box>
-                <Typography variant="h3" sx={{ color: '#FFB800', fontWeight: 'bold', mb: 0.5 }}>
+                <Typography variant="h4" sx={{ color: '#FFB800', fontWeight: 'bold', mb: 0.5, fontSize: '1.8rem' }}>
                   {loading ? '...' : stats.totalPedidos}
                 </Typography>
                 <Typography variant="body2" sx={{ color: '#B0B3B8' }}>
@@ -302,16 +306,33 @@ const Home = () => {
           </Grid>
 
           {/* Sección de análisis detallado */}
-          <Typography variant="h5" sx={{ 
-            color: '#475569', 
-            fontWeight: 600, 
-            mb: 3, 
+          <Box sx={{
+            mb: 3,
             mt: 4,
-            textAlign: 'center',
-            textShadow: '1px 1px 2px rgba(255,255,255,0.1)'
+            textAlign: 'left'
           }}>
-            Estado del Inventario
-          </Typography>
+            <Typography variant="h5" sx={{ 
+              color: '#FFB800', 
+              fontWeight: 700, 
+              mb: 1,
+              textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+              letterSpacing: '0.5px',
+              fontSize: { xs: '1.4rem', sm: '1.6rem', md: '1.8rem' },
+              borderBottom: '3px solid #FFB800',
+              paddingBottom: '8px',
+              display: 'block',
+              width: '95%'
+            }}>
+              Estado del Inventario
+            </Typography>
+            <Typography variant="body1" sx={{ 
+              color: '#E2E8F0', 
+              fontWeight: 400,
+              opacity: 0.9
+            }}>
+              Monitoreo en tiempo real del stock disponible
+            </Typography>
+          </Box>
         
           <Grid container spacing={{ xs: 2, md: 2 }} sx={{ mb: 3 }}>
               <Grid item xs={12}>
@@ -439,16 +460,33 @@ const Home = () => {
           </Grid>
 
           {/* Sección de Reportes */}
-          <Typography variant="h5" sx={{ 
-            color: '#475569', 
-            fontWeight: 600, 
-            mb: 3, 
+          <Box sx={{
+            mb: 3,
             mt: 4,
-            textAlign: 'center',
-            textShadow: '1px 1px 2px rgba(255,255,255,0.1)'
+            textAlign: 'left'
           }}>
-            Reportes y Análisis
-          </Typography>
+            <Typography variant="h5" sx={{ 
+              color: '#FFB800', 
+              fontWeight: 700, 
+              mb: 1,
+              textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+              letterSpacing: '0.5px',
+              fontSize: { xs: '1.4rem', sm: '1.6rem', md: '1.8rem' },
+              borderBottom: '3px solid #FFB800',
+              paddingBottom: '8px',
+              display: 'block',
+              width: '95%'
+            }}>
+              Reportes y Análisis
+            </Typography>
+            <Typography variant="body1" sx={{ 
+              color: '#E2E8F0', 
+              fontWeight: 400,
+              opacity: 0.9
+            }}>
+              Estadísticas detalladas de ventas y rendimiento
+            </Typography>
+          </Box>
         
           <Grid container spacing={{ xs: 2, md: 2 }}>
               {/* Reporte Diario */}
