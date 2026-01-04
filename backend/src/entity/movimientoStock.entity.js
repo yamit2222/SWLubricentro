@@ -45,7 +45,50 @@ export const MovimientoStock = sequelize.define("MovimientoStock", {
     allowNull: false
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  // Configuración de índices para mejorar rendimiento
+  indexes: [
+    // Índice para consultas por tipo de movimiento (entradas vs salidas)
+    {
+      name: 'idx_movimiento_tipo',
+      fields: ['tipo']
+    },
+    // Índice para consultas por usuario (quien hizo el movimiento)
+    {
+      name: 'idx_movimiento_usuario',
+      fields: ['usuarioId']
+    },
+    // Índice para consultas por itemId (movimientos de un producto específico)
+    {
+      name: 'idx_movimiento_item',
+      fields: ['itemId']
+    },
+    // Índice para consultas por itemType (producto vs subproducto)
+    {
+      name: 'idx_movimiento_item_type',
+      fields: ['itemType']
+    },
+    // Índice para consultas por fecha (reportes por período)
+    {
+      name: 'idx_movimiento_fecha',
+      fields: ['fecha']
+    },
+    // Índice compuesto para consultas itemId + itemType (polimórfico)
+    {
+      name: 'idx_movimiento_item_completo',
+      fields: ['itemId', 'itemType']
+    },
+    // Índice compuesto para reportes tipo + fecha
+    {
+      name: 'idx_movimiento_tipo_fecha',
+      fields: ['tipo', 'fecha']
+    },
+    // Índice compuesto para consultas usuario + fecha
+    {
+      name: 'idx_movimiento_usuario_fecha',
+      fields: ['usuarioId', 'fecha']
+    }
+  ]
 });
 
 // Relaciones polimórficas

@@ -269,12 +269,11 @@ const Movimientos = () => {
       doc.text(`Total de movimientos: ${movimientosMes.length}`, 20, 60);
       doc.text(`Entradas: ${entradas.length} movimientos (${totalEntradas} unidades)`, 20, 68);
       doc.text(`Salidas: ${salidas.length} movimientos (${totalSalidas} unidades)`, 20, 76);
-      doc.text(`Balance neto: ${totalEntradas - totalSalidas} unidades`, 20, 84);
       
       // Fecha de generación
       doc.setFontSize(10);
       const fechaHoy = new Date();
-      doc.text(`Generado el: ${fechaHoy.toLocaleDateString('es-ES')} a las ${fechaHoy.toLocaleTimeString('es-ES')}`, 20, 92);
+      doc.text(`Generado el: ${fechaHoy.toLocaleDateString('es-ES')} a las ${fechaHoy.toLocaleTimeString('es-ES')}`, 20, 84);
       
       // Tabla de movimientos
       const columns = ['Fecha', 'Producto', 'Tipo', 'Cantidad', 'Usuario', 'Observacion'];
@@ -290,7 +289,7 @@ const Movimientos = () => {
       ]);
       
       autoTable(doc, {
-        startY: 100,
+        startY: 92,
         head: [columns],
         body: rows,
         theme: 'grid',

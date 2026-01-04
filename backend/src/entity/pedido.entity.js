@@ -51,6 +51,44 @@ export const Pedido = sequelize.define("Pedido", {
   }
 }, {
   timestamps: true,
+  // Configuración de índices para mejorar rendimiento
+  indexes: [
+    // Índice para consultas por usuario (mis pedidos)
+    {
+      name: 'idx_pedido_usuario',
+      fields: ['usuarioId']
+    },
+    // Índice para consultas por estado (pedidos pendientes)
+    {
+      name: 'idx_pedido_estado',
+      fields: ['estado']
+    },
+    // Índice para consultas por fecha (pedidos por día/período)
+    {
+      name: 'idx_pedido_fecha',
+      fields: ['fecha']
+    },
+    // Índice para consultas por producto (historial de ventas del producto)
+    {
+      name: 'idx_pedido_producto',
+      fields: ['productoId']
+    },
+    // Índice para consultas por subproducto
+    {
+      name: 'idx_pedido_subproducto',
+      fields: ['subproductoId']
+    },
+    // Índice compuesto para consultas usuario + estado
+    {
+      name: 'idx_pedido_usuario_estado',
+      fields: ['usuarioId', 'estado']
+    },
+    // Índice compuesto para consultas fecha + estado (reportes)
+    {
+      name: 'idx_pedido_fecha_estado',
+      fields: ['fecha', 'estado']
+    }
+  ],
   validate: {
     // Validar que solo uno de los campos esté presente
     soloUnItem() {
