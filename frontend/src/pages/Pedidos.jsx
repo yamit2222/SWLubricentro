@@ -14,7 +14,11 @@ import {
   Chip,
   CircularProgress,
   Pagination,
-  Stack
+  Stack,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
@@ -22,10 +26,13 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import ViewListIcon from '@mui/icons-material/ViewList';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { getPedidos, createPedido, updatePedido, deletePedido } from "../services/pedido.service";
 import Search from '../components/Search';
 import PedidoForm from '../components/PedidoForm';
 import Swal from 'sweetalert2';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import '@styles/colors.css';
 
 const theme = createTheme({
@@ -114,6 +121,10 @@ const Pedidos = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState('list'); // 'grid' o 'list'
+  
+  // Estados para filtros de fecha
+  const [mesSeleccionado, setMesSeleccionado] = useState(new Date().getMonth() + 1);
+  const [añoSeleccionado, setAñoSeleccionado] = useState(new Date().getFullYear());
   
   // Estados de paginación
   const [paginaActual, setPaginaActual] = useState(1);
@@ -224,6 +235,144 @@ const Pedidos = () => {
     setFilteredPedidos(filtered);
   };
 
+  // Función para generar PDF de pedidos
+  const generarPedidosPDF = async () => {
+    try {
+      const pedidosMesCompletos = getPedidosPorMes();
+      
+      // Filtrar para excluir pedidos completados y cancelados
+      const pedidosMes = pedidosMesCompletos.filter(p => 
+        p.estado !== 'completado' && p.estado !== 'cancelado'
+      );
+      
+      if (pedidosMes.length === 0) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Sin datos',
+          text: `No hay pedidos activos registrados para ${mesSeleccionado}/${añoSeleccionado}`,
+          confirmButtonColor: '#FFB800'
+        });
+        return;
+      }
+
+      const doc = new jsPDF();
+      
+      // Configurar fuentes y colores
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(20);
+      doc.setTextColor(25, 39, 47);
+      
+      // Título
+      doc.text('REPORTE DE PEDIDOS ACTIVOS', doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
+      
+      // Subtítulo con mes y año
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'normal');
+      const mesesNombres = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+      const nombreMes = mesesNombres[mesSeleccionado - 1];
+      doc.text(`${nombreMes} ${añoSeleccionado}`, doc.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
+      
+      // Línea decorativa
+      doc.setLineWidth(0.5);
+      doc.setDrawColor(255, 184, 0);
+      doc.line(20, 35, 190, 35);
+      
+      // Resumen estadístico
+      const estadosPedidos = {
+        'en proceso': pedidosMes.filter(p => p.estado === 'en proceso').length,
+        'vendido': pedidosMes.filter(p => p.estado === 'vendido').length
+      };
+      
+      const totalCantidad = pedidosMes.reduce((sum, p) => sum + (parseInt(p.cantidad) || 0), 0);
+      
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text('RESUMEN ESTADÍSTICO:', 20, 50);
+      
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Total de pedidos activos: ${pedidosMes.length}`, 20, 60);
+      doc.text(`En proceso: ${estadosPedidos['en proceso']}`, 20, 68);
+      doc.text(`Vendidos: ${estadosPedidos['vendido']}`, 20, 76);
+      doc.text(`Total unidades pedidas: ${totalCantidad}`, 20, 84);
+      
+      // Fecha de generación
+      doc.setFontSize(10);
+      const fechaHoy = new Date();
+      doc.text(`Generado el: ${fechaHoy.toLocaleDateString('es-ES')} a las ${fechaHoy.toLocaleTimeString('es-ES')}`, 20, 92);
+      
+      // Tabla de pedidos
+      const columns = ['Fecha', 'Producto', 'Cantidad', 'Estado', 'Usuario', 'Comentario'];
+      const rows = pedidosMes.map(pedido => [
+        new Date(pedido.createdAt).toLocaleDateString('es-ES'),
+        pedido.Producto?.nombre || pedido.SubProducto?.nombre || 'N/A',
+        pedido.cantidad?.toString() || '0',
+        pedido.estado || 'N/A',
+        pedido.Usuario?.nombreCompleto || 'N/A',
+        pedido.comentario || '-'
+      ]);
+      
+      autoTable(doc, {
+        startY: 95,
+        head: [columns],
+        body: rows,
+        theme: 'grid',
+        styles: {
+          fontSize: 9,
+          cellPadding: 3,
+        },
+        headStyles: {
+          fillColor: [255, 184, 0],
+          textColor: [25, 39, 47],
+          fontStyle: 'bold'
+        },
+        alternateRowStyles: {
+          fillColor: [249, 249, 249]
+        },
+        columnStyles: {
+          0: { cellWidth: 25 },
+          1: { cellWidth: 45 },
+          2: { cellWidth: 15 },
+          3: { cellWidth: 20 },
+          4: { cellWidth: 35 },
+          5: { cellWidth: 45 }
+        }
+      });
+      
+      // Pie de página
+      const pageCount = doc.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'normal');
+        doc.text(
+          `SWLubricentro - Reporte de Pedidos - Página ${i} de ${pageCount}`,
+          doc.internal.pageSize.getWidth() / 2, 285, { align: 'center' }
+        );
+      }
+      
+      // Descargar el PDF
+      const nombreArchivo = `reporte-pedidos-${mesSeleccionado.toString().padStart(2, '0')}-${añoSeleccionado}.pdf`;
+      doc.save(nombreArchivo);
+      
+      Swal.fire({
+        icon: 'success',
+        title: 'Reporte generado!',
+        text: 'El archivo PDF se ha descargado correctamente',
+        showConfirmButton: false,
+        timer: 2000
+      });
+      
+    } catch (error) {
+      console.error('Error al generar PDF:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Hubo un problema al generar el PDF. Inténtalo de nuevo.',
+        confirmButtonColor: '#FFB800'
+      });
+    }
+  };
+
   const getEstadoColor = (estado) => {
     switch (estado?.toLowerCase()) {
       case 'vendido':
@@ -246,6 +395,34 @@ const Pedidos = () => {
         return 'default'; // Gris pizarra
     }
   };
+
+  // Función para filtrar pedidos por mes y año
+  const getPedidosPorMes = () => {
+    return filteredPedidos.filter(pedido => {
+      const fecha = new Date(pedido.createdAt);
+      return fecha.getMonth() + 1 === mesSeleccionado && fecha.getFullYear() === añoSeleccionado;
+    });
+  };
+
+  // Generar opciones de meses
+  const meses = [
+    { valor: 1, nombre: 'Enero' },
+    { valor: 2, nombre: 'Febrero' },
+    { valor: 3, nombre: 'Marzo' },
+    { valor: 4, nombre: 'Abril' },
+    { valor: 5, nombre: 'Mayo' },
+    { valor: 6, nombre: 'Junio' },
+    { valor: 7, nombre: 'Julio' },
+    { valor: 8, nombre: 'Agosto' },
+    { valor: 9, nombre: 'Septiembre' },
+    { valor: 10, nombre: 'Octubre' },
+    { valor: 11, nombre: 'Noviembre' },
+    { valor: 12, nombre: 'Diciembre' }
+  ];
+
+  // Generar opciones de años (los últimos 5 años)
+  const añoActual = new Date().getFullYear();
+  const años = Array.from({ length: 5 }, (_, i) => añoActual - i);
 
   if (loading) {
     return (
@@ -270,6 +447,92 @@ const Pedidos = () => {
     <div style={{ minHeight: '100vh', background: '-webkit-linear-gradient(90deg, #23272f,#353945,#4e4e4e)', background: 'linear-gradient(90deg, #23272f,#353945,#4e4e4e)', padding: 0, overflow: 'hidden' }}>
       <ThemeProvider theme={theme}>
         <Container maxWidth="lg" sx={{ mt: '12vh', mb: 4 }}>
+          {/* Primera Sección: Título y Filtros */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2, justifyContent: 'center', textAlign: 'center' }}>
+            <Typography variant="h4" sx={{ color: '#FFB800', fontWeight: 800, letterSpacing: 1, textAlign: 'center' }}>
+              Gestión de Pedidos
+            </Typography>
+          </Box>
+          
+          {/* Sección de filtros y exportación PDF */}
+          <Paper sx={{ p: 2, mb: 2, bgcolor: '#23272F', color: '#F3F4F6', borderRadius: 3 }}>
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12} sm={4}>
+                <FormControl fullWidth size="small" sx={{ bgcolor: '#2C303A', borderRadius: 2 }}>
+                  <InputLabel sx={{ color: '#FFB800' }}>Mes</InputLabel>
+                  <Select
+                    value={mesSeleccionado}
+                    label="Mes"
+                    onChange={(e) => setMesSeleccionado(e.target.value)}
+                    sx={{ bgcolor: '#2C303A', color: '#F3F4F6', '& .MuiSelect-select': { color: '#F3F4F6' } }}
+                    MenuProps={{
+                      PaperProps: {
+                        sx: {
+                          bgcolor: '#23272F',
+                          color: '#F3F4F6',
+                        },
+                      },
+                    }}
+                  >
+                    {meses.map(mes => (
+                      <MenuItem key={mes.valor} value={mes.valor} sx={{ bgcolor: '#23272F', color: '#F3F4F6' }}>
+                        {mes.nombre}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <FormControl fullWidth size="small" sx={{ bgcolor: '#2C303A', borderRadius: 2 }}>
+                  <InputLabel sx={{ color: '#FFB800' }}>Año</InputLabel>
+                  <Select
+                    value={añoSeleccionado}
+                    label="Año"
+                    onChange={(e) => setAñoSeleccionado(e.target.value)}
+                    sx={{ bgcolor: '#2C303A', color: '#F3F4F6', '& .MuiSelect-select': { color: '#F3F4F6' } }}
+                    MenuProps={{
+                      PaperProps: {
+                        sx: {
+                          bgcolor: '#23272F',
+                          color: '#F3F4F6',
+                        },
+                      },
+                    }}
+                  >
+                    {años.map(año => (
+                      <MenuItem key={año} value={año} sx={{ bgcolor: '#23272F', color: '#F3F4F6' }}>
+                        {año}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={4} sx={{ display: 'flex', justifyContent: 'center' }}>
+                <Button
+                  variant="contained"
+                  startIcon={<PictureAsPdfIcon />}
+                  onClick={generarPedidosPDF}
+                  sx={{
+                    bgcolor: '#D32F2F',
+                    color: 'white',
+                    borderRadius: 2,
+                    fontWeight: 700,
+                    px: 3,
+                    '&:hover': {
+                      bgcolor: '#B71C1C'
+                    }
+                  }}
+                >
+                  Generar PDF
+                </Button>
+              </Grid>
+            </Grid>
+            <Typography variant="body2" sx={{ color: '#FFB800', mt: 1, textAlign: 'center' }}>
+              Pedidos del mes seleccionado: {getPedidosPorMes().length}
+            </Typography>
+          </Paper>
+
+          {/* Segunda Sección: Gestión de Pedidos */}
           <Paper 
             elevation={3} 
             sx={{ 
@@ -282,11 +545,6 @@ const Pedidos = () => {
             }}
           >
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Typography variant="h4" component="h1" sx={{ color: '#FFB800', fontWeight: 800, letterSpacing: 1 }}>
-                  Gestión de Pedidos
-                </Typography>
-              </Box>
               <Box sx={{ display: 'flex', gap: 2 }}>
                 <Button
                   variant={viewMode === 'grid' ? 'contained' : 'outlined'}
@@ -306,17 +564,17 @@ const Pedidos = () => {
                 >
                   Lista
                 </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<AddIcon />}
-                  onClick={handleCreate}
-                  size="large"
-                  sx={{ bgcolor: '#FFB800', color: '#23272F', borderRadius: 2, fontWeight: 700, boxShadow: 2 }}
-                >
-                  Nuevo Pedido
-                </Button>
               </Box>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<AddIcon />}
+                onClick={handleCreate}
+                size="large"
+                sx={{ bgcolor: '#FFB800', color: '#23272F', borderRadius: 2, fontWeight: 700, boxShadow: 2 }}
+              >
+                Nuevo Pedido
+              </Button>
             </Box>
 
             <Search 

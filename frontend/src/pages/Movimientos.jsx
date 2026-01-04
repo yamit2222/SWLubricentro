@@ -384,7 +384,7 @@ const Movimientos = () => {
         </Box>
         
         {/* Sección de filtros y exportación PDF */}
-        <Paper sx={{ p: 2, mb: 2, bgcolor: '#23272F', color: '#F3F4F6', borderRadius: 3 }}>
+        <Paper sx={{ p: 2, mb: 2, bgcolor: '#23272F', color: '#F3F4F6', borderRadius: 3, boxShadow: '0 4px 24px rgba(0,0,0,0.18)' }}>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} sm={4}>
               <FormControl fullWidth size="small" sx={{ bgcolor: '#2C303A', borderRadius: 2 }}>
@@ -450,6 +450,7 @@ const Movimientos = () => {
                   borderRadius: 2,
                   fontWeight: 700,
                   px: 3,
+                  border: 'none',
                   '&:hover': {
                     bgcolor: '#B71C1C'
                   }
@@ -463,7 +464,7 @@ const Movimientos = () => {
             Movimientos del mes seleccionado: {getMovimientosPorMes().length}
           </Typography>
         </Paper>
-        <Paper sx={{ p: 2, mb: 4, bgcolor: '#23272F', color: '#F3F4F6', borderRadius: 3 }}>
+        <Paper sx={{ p: 2, mb: 4, bgcolor: '#23272F', color: '#F3F4F6', borderRadius: 3, border: '2px solid #FFB800', boxShadow: '0 4px 24px rgba(0,0,0,0.18)' }}>
           <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', background: '#23272F', color: '#F3F4F6', borderRadius: 8, padding: 8 }}>
             <Box sx={{ minWidth: 300 }}>
               <Autocomplete
@@ -666,7 +667,7 @@ const Movimientos = () => {
             </Button>
           </form>
         </Paper>
-        <Paper sx={{ mt: 2, bgcolor: '#23272F', color: '#F3F4F6', borderRadius: 2 }}>
+        <Paper sx={{ mt: 2, bgcolor: '#23272F', color: '#F3F4F6', borderRadius: 2, border: '2px solid #FFB800', boxShadow: '0 4px 24px rgba(0,0,0,0.18)' }}>
           <Box sx={{ width: '100%', overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', color: '#F3F4F6' }}>
               <thead>
