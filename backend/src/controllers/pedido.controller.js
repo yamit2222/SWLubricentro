@@ -52,6 +52,9 @@ export const pedidoController = {
 
   async actualizarPedido(req, res) {
     try {
+      // IMPORTANTE: Este endpoint (PUT) debe usarse solo para cambios de producto/cantidad
+      // Para cambios ÚNICAMENTE de estado, usar PATCH /:id/estado
+      
       // Adapter temporal: convertir formato antiguo a nuevo para actualizaciones
       let requestData = { ...req.body };
       if (requestData.itemId && requestData.itemType) {
@@ -73,7 +76,7 @@ export const pedidoController = {
       
       const { id } = req.params;
       const pedido = await pedidoService.actualizarPedido(id, value, req.user.id);
-      handleSuccess(res, 200, "Estado del pedido actualizado", pedido);
+      handleSuccess(res, 200, "Pedido actualizado", pedido);
     } catch (error) {
       const statusCode = error.statusCode || 500;
       if (statusCode >= 400 && statusCode < 500) {
@@ -85,13 +88,16 @@ export const pedidoController = {
 
   async actualizarEstadoPedido(req, res) {
     try {
+      // IMPORTANTE: Este endpoint (PATCH) debe usarse ÚNICAMENTE para cambios de estado
+      // No afecta stock a menos que se cancele/reactive un pedido
+      
       const { error, value } = pedidoValidation.actualizarEstadoPedido.validate(req.body);
       if (error) {
         return handleErrorClient(res, 400, error.details[0].message);
       }
       
       const { id } = req.params;
-      const pedido = await pedidoService.actualizarEstadoPedido(id, value);
+      const pedido = await pedidoService.actualizarEstadoPedido(id, value, req.user.id);
       handleSuccess(res, 200, "Estado del pedido actualizado", pedido);
     } catch (error) {
       const statusCode = error.statusCode || 500;

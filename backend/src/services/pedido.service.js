@@ -82,10 +82,7 @@ export const pedidoService = {
         throw error;
       }
 
-      // Actualizar stock
-      await item.update({ stock: item.stock - cantidad }, { transaction });
-
-      // Registrar movimiento de stock (salida por pedido)
+      // Registrar movimiento de stock (salida por pedido) - esto también actualiza el stock
       await movimientoStockService.registrarMovimiento({
         itemId,
         itemType,
@@ -153,8 +150,20 @@ export const pedidoService = {
         throw error;
       }
 
+      // Si SOLO se está actualizando el estado, usar el método específico
+      const soloEstado = Object.keys(dataPedido).length === 1 && dataPedido.estado !== undefined;
+      if (soloEstado) {
+        await pedido.update({ estado: dataPedido.estado }, { transaction });
+        await transaction.commit();
+        return pedido;
+      }
+
       // Si se está actualizando el item o la cantidad, manejar el stock
-      if ((dataPedido.productoId || dataPedido.subproductoId) && dataPedido.cantidad) {
+      const haycambiosEnStock = (dataPedido.productoId && dataPedido.productoId !== pedido.productoId) ||
+                                (dataPedido.subproductoId && dataPedido.subproductoId !== pedido.subproductoId) ||
+                                (dataPedido.cantidad && dataPedido.cantidad !== pedido.cantidad);
+      
+      if (haycambiosEnStock && (dataPedido.productoId || dataPedido.subproductoId) && dataPedido.cantidad) {
         const nuevoProductoId = dataPedido.productoId;
         const nuevoSubproductoId = dataPedido.subproductoId;
         
@@ -201,11 +210,7 @@ export const pedidoService = {
           }
           
           if (itemAnterior) {
-            await itemAnterior.update({ 
-              stock: itemAnterior.stock + pedido.cantidad 
-            }, { transaction });
-            
-            // Registrar movimiento de entrada (restauración)
+            // Registrar movimiento de entrada (restauración) - esto también actualiza el stock
             await movimientoStockService.registrarMovimiento({
               itemId: itemAnteriorId,
               itemType: itemAnteriorType,
@@ -223,12 +228,7 @@ export const pedidoService = {
             throw error;
           }
           
-          // Descontar del nuevo item
-          await nuevoItem.update({ 
-            stock: nuevoItem.stock - dataPedido.cantidad 
-          }, { transaction });
-          
-          // Registrar movimiento de salida (nuevo item)
+          // Registrar movimiento de salida (nuevo item) - esto también actualiza el stock
           await movimientoStockService.registrarMovimiento({
             itemId: nuevoItemId,
             itemType: nuevoItemType,
@@ -249,11 +249,7 @@ export const pedidoService = {
                 throw error;
               }
               
-              await nuevoItem.update({ 
-                stock: nuevoItem.stock - diferenciaCantidad 
-              }, { transaction });
-              
-              // Registrar movimiento de salida (aumento cantidad)
+              // Registrar movimiento de salida (aumento cantidad) - esto también actualiza el stock
               await movimientoStockService.registrarMovimiento({
                 itemId: nuevoItemId,
                 itemType: nuevoItemType,
@@ -263,12 +259,7 @@ export const pedidoService = {
                 usuarioId
               }, transaction);
             } else {
-              // Disminuyó la cantidad - devolver stock
-              await nuevoItem.update({ 
-                stock: nuevoItem.stock + Math.abs(diferenciaCantidad)
-              }, { transaction });
-              
-              // Registrar movimiento de entrada (disminución cantidad)
+              // Disminuyó la cantidad - devolver stock mediante movimiento de entrada
               await movimientoStockService.registrarMovimiento({
                 itemId: nuevoItemId,
                 itemType: nuevoItemType,
@@ -292,7 +283,7 @@ export const pedidoService = {
     }
   },
 
-  async actualizarEstadoPedido(id, { estado }) {
+  async actualizarEstadoPedido(id, { estado }, usuarioId = null) {
     const transaction = await sequelize.transaction();
     
     try {
@@ -301,6 +292,67 @@ export const pedidoService = {
         const error = new Error("Pedido no encontrado");
         error.statusCode = 404;
         throw error;
+      }
+
+      const estadoAnterior = pedido.estado;
+      
+      // Si se cancela un pedido que no estaba cancelado, restaurar stock
+      if (estado === 'cancelado' && estadoAnterior !== 'cancelado') {
+        let item, itemId, itemType;
+        if (pedido.productoId) {
+          item = await Producto.findByPk(pedido.productoId, { transaction });
+          itemId = pedido.productoId;
+          itemType = 'producto';
+        } else if (pedido.subproductoId) {
+          item = await SubProducto.findByPk(pedido.subproductoId, { transaction });
+          itemId = pedido.subproductoId;
+          itemType = 'subproducto';
+        }
+        
+        if (item) {
+          // Registrar movimiento de entrada (restauración por cancelación) - esto también actualiza el stock
+          await movimientoStockService.registrarMovimiento({
+            itemId,
+            itemType,
+            tipo: 'entrada',
+            cantidad: pedido.cantidad,
+            observacion: `Cancelación pedido: ${pedido.comentario}`,
+            usuarioId: usuarioId || 1 // Usuario del sistema si no se especifica
+          }, transaction);
+        }
+      }
+      
+      // Si se reactiva un pedido cancelado, volver a descontar stock
+      if (estadoAnterior === 'cancelado' && estado !== 'cancelado') {
+        let item, itemId, itemType;
+        if (pedido.productoId) {
+          item = await Producto.findByPk(pedido.productoId, { transaction });
+          itemId = pedido.productoId;
+          itemType = 'producto';
+        } else if (pedido.subproductoId) {
+          item = await SubProducto.findByPk(pedido.subproductoId, { transaction });
+          itemId = pedido.subproductoId;
+          itemType = 'subproducto';
+        }
+        
+        if (item) {
+          // Verificar stock disponible
+          if (item.stock < pedido.cantidad) {
+            const error = new Error("Stock insuficiente para reactivar el pedido");
+            error.statusCode = 400;
+            throw error;
+          }
+          
+          // Registrar movimiento de salida (reactivación) - esto también actualiza el stock
+          await movimientoStockService.registrarMovimiento({
+            itemId,
+            itemType,
+            tipo: 'salida',
+            cantidad: pedido.cantidad,
+            observacion: `Reactivación pedido: ${pedido.comentario}`,
+            usuarioId: usuarioId || 1 // Usuario del sistema si no se especifica
+          }, transaction);
+        }
       }
 
       await pedido.update({ estado }, { transaction });
@@ -337,9 +389,7 @@ export const pedidoService = {
       }
       
       if (item) {
-        await item.update({ stock: item.stock + pedido.cantidad }, { transaction });
-        
-        // Registrar movimiento de entrada (restauración por eliminación)
+        // Registrar movimiento de entrada (restauración por eliminación) - esto también actualiza el stock
         await movimientoStockService.registrarMovimiento({
           itemId,
           itemType,
