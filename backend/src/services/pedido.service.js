@@ -1,15 +1,34 @@
 import { Pedido } from "../entity/pedido.entity.js";
 import { Producto } from "../entity/producto.entity.js";
+import { SubProducto } from "../entity/subproducto.entity.js";
+import User from "../entity/user.entity.js";
 import { Op } from "sequelize";
 import { sequelize } from "../config/configDb.js";
+import { movimientoStockService } from "./movimientoStock.service.js";
 
 export const pedidoService = {
   async obtenerPedidos() {
     const pedidos = await Pedido.findAll({
-      include: [{
-        model: Producto,
-        attributes: ['id', 'nombre', 'precio', 'stock']
-      }],
+      include: [
+        {
+          model: Producto,
+          as: 'Producto',
+          attributes: ['id', 'nombre', 'precio', 'stock'],
+          required: false
+        },
+        {
+          model: SubProducto,
+          as: 'SubProducto', 
+          attributes: ['id', 'nombre', 'precio', 'stock'],
+          required: false
+        },
+        {
+          model: User,
+          as: 'Usuario',
+          attributes: ['id', 'nombreCompleto', 'email'],
+          required: true
+        }
+      ],
       order: [["createdAt", "DESC"]]
     });
     
@@ -20,36 +39,73 @@ export const pedidoService = {
     const transaction = await sequelize.transaction();
     
     try {
-      const { comentario, productoId, cantidad, estado } = dataPedido;
+      const { comentario, productoId, subproductoId, cantidad, estado, usuarioId } = dataPedido;
       
-      if (!comentario || !productoId || !cantidad) {
-        const error = new Error("Todos los campos son obligatorios");
+      if (!comentario || !cantidad || !usuarioId) {
+        const error = new Error("Campos obligatorios: comentario, cantidad, usuarioId");
         error.statusCode = 400;
         throw error;
       }
 
-      const prod = await Producto.findByPk(productoId, { transaction });
-      if (!prod) {
-        const error = new Error("Producto no encontrado");
-        error.statusCode = 404;
+      // Validar que solo uno de los IDs esté presente
+      if ((!productoId && !subproductoId) || (productoId && subproductoId)) {
+        const error = new Error("Debe especificar exactamente un producto o un subproducto");
+        error.statusCode = 400;
         throw error;
       }
 
-      if (prod.stock < cantidad) {
+      // Buscar el item según el ID proporcionado
+      let item, itemId, itemType;
+      if (productoId) {
+        item = await Producto.findByPk(productoId, { transaction });
+        if (!item) {
+          const error = new Error("Producto no encontrado");
+          error.statusCode = 404;
+          throw error;
+        }
+        itemId = productoId;
+        itemType = 'producto';
+      } else {
+        item = await SubProducto.findByPk(subproductoId, { transaction });
+        if (!item) {
+          const error = new Error("SubProducto no encontrado");
+          error.statusCode = 404;
+          throw error;
+        }
+        itemId = subproductoId;
+        itemType = 'subproducto';
+      }
+
+      if (item.stock < cantidad) {
         const error = new Error("Stock insuficiente");
         error.statusCode = 400;
         throw error;
       }
 
-      await prod.update({ stock: prod.stock - cantidad }, { transaction });
+      // Actualizar stock
+      await item.update({ stock: item.stock - cantidad }, { transaction });
 
-      const hora = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+      // Registrar movimiento de stock (salida por pedido)
+      await movimientoStockService.registrarMovimiento({
+        itemId,
+        itemType,
+        tipo: 'salida',
+        cantidad,
+        observacion: `Pedido: ${comentario}`,
+        usuarioId
+      }, transaction);
+
+      const fecha = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+      const hora = new Date().toTimeString().split(' ')[0]; // HH:mm:ss
       const pedido = await Pedido.create({ 
-        comentario, 
-        productoId, 
+        comentario,
+        productoId: productoId || null,
+        subproductoId: subproductoId || null,
         cantidad, 
+        fecha,
         hora, 
-        estado: estado || 'en proceso' 
+        estado: estado || 'en proceso',
+        usuarioId
       }, { transaction });
 
       await transaction.commit();
@@ -62,10 +118,20 @@ export const pedidoService = {
 
   async obtenerPedidoPorId(id) {
     const pedido = await Pedido.findByPk(id, {
-      include: [{
-        model: Producto,
-        attributes: ['id', 'nombre', 'precio', 'stock']
-      }]
+      include: [
+        {
+          model: Producto,
+          as: 'Producto',
+          attributes: ['id', 'nombre', 'precio', 'stock'],
+          required: false
+        },
+        {
+          model: SubProducto,
+          as: 'SubProducto',
+          attributes: ['id', 'nombre', 'precio', 'stock'],
+          required: false
+        }
+      ]
     });
     
     if (!pedido) {
@@ -76,7 +142,157 @@ export const pedidoService = {
     
     return pedido;
   },
-  async actualizarPedido(id, { estado }) {
+  async actualizarPedido(id, dataPedido, usuarioId) {
+    const transaction = await sequelize.transaction();
+    
+    try {
+      const pedido = await Pedido.findByPk(id, { transaction });
+      if (!pedido) {
+        const error = new Error("Pedido no encontrado");
+        error.statusCode = 404;
+        throw error;
+      }
+
+      // Si se está actualizando el item o la cantidad, manejar el stock
+      if ((dataPedido.productoId || dataPedido.subproductoId) && dataPedido.cantidad) {
+        const nuevoProductoId = dataPedido.productoId;
+        const nuevoSubproductoId = dataPedido.subproductoId;
+        
+        // Validar que solo uno esté presente
+        if ((!nuevoProductoId && !nuevoSubproductoId) || (nuevoProductoId && nuevoSubproductoId)) {
+          const error = new Error("Debe especificar exactamente un producto o un subproducto");
+          error.statusCode = 400;
+          throw error;
+        }
+
+        // Buscar nuevo item
+        let nuevoItem, nuevoItemId, nuevoItemType;
+        if (nuevoProductoId) {
+          nuevoItem = await Producto.findByPk(nuevoProductoId, { transaction });
+          if (!nuevoItem) {
+            const error = new Error("Producto no encontrado");
+            error.statusCode = 404;
+            throw error;
+          }
+          nuevoItemId = nuevoProductoId;
+          nuevoItemType = 'producto';
+        } else {
+          nuevoItem = await SubProducto.findByPk(nuevoSubproductoId, { transaction });
+          if (!nuevoItem) {
+            const error = new Error("SubProducto no encontrado");
+            error.statusCode = 404;
+            throw error;
+          }
+          nuevoItemId = nuevoSubproductoId;
+          nuevoItemType = 'subproducto';
+        }
+
+        // Si cambió el item, restaurar stock del item anterior
+        if (pedido.productoId !== nuevoProductoId || pedido.subproductoId !== nuevoSubproductoId) {
+          let itemAnterior, itemAnteriorId, itemAnteriorType;
+          if (pedido.productoId) {
+            itemAnterior = await Producto.findByPk(pedido.productoId, { transaction });
+            itemAnteriorId = pedido.productoId;
+            itemAnteriorType = 'producto';
+          } else {
+            itemAnterior = await SubProducto.findByPk(pedido.subproductoId, { transaction });
+            itemAnteriorId = pedido.subproductoId;
+            itemAnteriorType = 'subproducto';
+          }
+          
+          if (itemAnterior) {
+            await itemAnterior.update({ 
+              stock: itemAnterior.stock + pedido.cantidad 
+            }, { transaction });
+            
+            // Registrar movimiento de entrada (restauración)
+            await movimientoStockService.registrarMovimiento({
+              itemId: itemAnteriorId,
+              itemType: itemAnteriorType,
+              tipo: 'entrada',
+              cantidad: pedido.cantidad,
+              observacion: `Actualización pedido: Restauración por cambio de item`,
+              usuarioId
+            }, transaction);
+          }
+          
+          // Verificar stock del nuevo item
+          if (nuevoItem.stock < dataPedido.cantidad) {
+            const error = new Error("Stock insuficiente");
+            error.statusCode = 400;
+            throw error;
+          }
+          
+          // Descontar del nuevo item
+          await nuevoItem.update({ 
+            stock: nuevoItem.stock - dataPedido.cantidad 
+          }, { transaction });
+          
+          // Registrar movimiento de salida (nuevo item)
+          await movimientoStockService.registrarMovimiento({
+            itemId: nuevoItemId,
+            itemType: nuevoItemType,
+            tipo: 'salida',
+            cantidad: dataPedido.cantidad,
+            observacion: `Actualización pedido: ${dataPedido.comentario}`,
+            usuarioId
+          }, transaction);
+        } else {
+          // Mismo item, verificar si cambió la cantidad
+          const diferenciaCantidad = dataPedido.cantidad - pedido.cantidad;
+          if (diferenciaCantidad !== 0) {
+            if (diferenciaCantidad > 0) {
+              // Aumentó la cantidad - verificar stock
+              if (nuevoItem.stock < diferenciaCantidad) {
+                const error = new Error("Stock insuficiente");
+                error.statusCode = 400;
+                throw error;
+              }
+              
+              await nuevoItem.update({ 
+                stock: nuevoItem.stock - diferenciaCantidad 
+              }, { transaction });
+              
+              // Registrar movimiento de salida (aumento cantidad)
+              await movimientoStockService.registrarMovimiento({
+                itemId: nuevoItemId,
+                itemType: nuevoItemType,
+                tipo: 'salida',
+                cantidad: diferenciaCantidad,
+                observacion: `Actualización pedido: Aumento cantidad`,
+                usuarioId
+              }, transaction);
+            } else {
+              // Disminuyó la cantidad - devolver stock
+              await nuevoItem.update({ 
+                stock: nuevoItem.stock + Math.abs(diferenciaCantidad)
+              }, { transaction });
+              
+              // Registrar movimiento de entrada (disminución cantidad)
+              await movimientoStockService.registrarMovimiento({
+                itemId: nuevoItemId,
+                itemType: nuevoItemType,
+                tipo: 'entrada',
+                cantidad: Math.abs(diferenciaCantidad),
+                observacion: `Actualización pedido: Disminución cantidad`,
+                usuarioId
+              }, transaction);
+            }
+          }
+        }
+      }
+
+      await pedido.update(dataPedido, { transaction });
+
+      await transaction.commit();
+      return pedido;
+    } catch (err) {
+      await transaction.rollback();
+      throw err;
+    }
+  },
+
+  async actualizarEstadoPedido(id, { estado }) {
     const transaction = await sequelize.transaction();
     
     try {
@@ -97,7 +313,7 @@ export const pedidoService = {
     }
   },
 
-  async eliminarPedido(id) {
+  async eliminarPedido(id, usuarioId) {
     const transaction = await sequelize.transaction();
     
     try {
@@ -108,9 +324,30 @@ export const pedidoService = {
         throw error;
       }
 
-      const prod = await Producto.findByPk(pedido.productoId, { transaction });
-      if (prod) {
-        await prod.update({ stock: prod.stock + pedido.cantidad }, { transaction });
+      // Restaurar stock según el tipo de item
+      let item, itemId, itemType;
+      if (pedido.productoId) {
+        item = await Producto.findByPk(pedido.productoId, { transaction });
+        itemId = pedido.productoId;
+        itemType = 'producto';
+      } else if (pedido.subproductoId) {
+        item = await SubProducto.findByPk(pedido.subproductoId, { transaction });
+        itemId = pedido.subproductoId;
+        itemType = 'subproducto';
+      }
+      
+      if (item) {
+        await item.update({ stock: item.stock + pedido.cantidad }, { transaction });
+        
+        // Registrar movimiento de entrada (restauración por eliminación)
+        await movimientoStockService.registrarMovimiento({
+          itemId,
+          itemType,
+          tipo: 'entrada',
+          cantidad: pedido.cantidad,
+          observacion: `Eliminación pedido: ${pedido.comentario}`,
+          usuarioId
+        }, transaction);
       }
 
       await pedido.destroy({ transaction });

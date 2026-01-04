@@ -243,7 +243,7 @@ const SubProductos = () => {
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 <Typography variant="h4" component="h1" sx={{ color: '#FFB800', fontWeight: 800, letterSpacing: 1 }}>
-                  Gestión de SubProductos
+                  Gestión de ProductoPequeño
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', gap: 2 }}>
@@ -300,7 +300,7 @@ const SubProductos = () => {
 
             <Search 
               onSearch={handleSearch} 
-              placeholder="Buscar por nombre, código o descripción..." 
+              placeholder="Buscar producto pequeño por nombre, código o descripción..." 
               sx={{ mb: 3 }}
             />          {viewMode === 'grid' ? (
               <Grid container spacing={3}>
@@ -309,14 +309,22 @@ const SubProductos = () => {
                   <Grid item xs={12}>
                     <Box sx={{ textAlign: 'center', mt: 4 }}>
                       <Typography variant="h6" color="text.secondary">
-                        No hay subproductos disponibles
+                        No hay producto pequeño disponible
                       </Typography>
                     </Box>
                   </Grid>
                 ) : (
                   filteredSubProductos.map((subproducto) => (
                     <Grid item xs={12} sm={6} md={4} key={subproducto.id}>
-                      <Card elevation={2} sx={{ cursor: 'pointer' }} onClick={() => setSelectedsubProducto(subproducto)}>
+                      <Card elevation={2} sx={{ 
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          transform: 'translateY(-4px)',
+                          boxShadow: '0 8px 24px rgba(255, 184, 0, 0.15)',
+                          bgcolor: 'rgba(255, 184, 0, 0.05)'
+                        }
+                      }} onClick={() => setSelectedsubProducto(subproducto)}>
                         <CardContent>
                           <Typography variant="h6" component="div" gutterBottom noWrap>
                             {subproducto.nombre}
@@ -397,7 +405,13 @@ const SubProductos = () => {
                     </thead>
                     <tbody>
                       {filteredSubProductos.map((subproducto) => (
-                        <tr key={subproducto.id} style={{ borderBottom: '1px solid #353945' }}>
+                        <tr key={subproducto.id} style={{ 
+                          borderBottom: '1px solid #353945', 
+                          cursor: 'pointer',
+                          transition: 'background-color 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 184, 0, 0.1)'}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                           <td style={{ padding: 8 }}>{subproducto.nombre}</td>
                           <td style={{ padding: 8 }}>{subproducto.marca}</td>
                           <td style={{ padding: 8, maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{subproducto.descripcion}</td>

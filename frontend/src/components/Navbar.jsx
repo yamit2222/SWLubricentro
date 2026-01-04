@@ -67,7 +67,7 @@ const Navbar = () => {
                                     className={({ isActive }) => isActive ? 'active' : ''}
                                 >
                                     <StorageRoundedIcon style={{marginRight: '1rem'}} />
-                                    SubProductos
+                                    ProductoPequeño
                                 </NavLink>
                             </li>
                             <li>
@@ -87,7 +87,7 @@ const Navbar = () => {
                                     className={({ isActive }) => isActive ? 'active' : ''}
                                 >
                                     <WarehouseRoundedIcon style={{marginRight: '1rem'}} />
-                                    SubInventario
+                                    InventarioPequeño
                                 </NavLink>
                             </li> 
                             <li>    

@@ -10,7 +10,7 @@ export default function Popup({ show, setShow, data, action }) {
         action(formData);
     };
 
-    const patternRut = new RegExp(/^(?:(?:[1-9]\d{0}|[1-2]\d{1})(\.\d{3}){2}|[1-9]\d{6}|[1-2]\d{7}|29\.999\.999|29999999)-[\dkK]$/);
+
     return (
         <div>
             { show && (
@@ -45,19 +45,6 @@ export default function Popup({ show, setShow, data, action }) {
                                 required: true,
                                 minLength: 15,
                                 maxLength: 30,
-                            },
-                            {
-                                label: "Rut",
-                                name: "rut",
-                                defaultValue: userData.rut || "",
-                                placeholder: '20.960.456-6',
-                                fieldType: 'input',
-                                type: "text",
-                                minLength: 9,
-                                maxLength: 12,
-                                pattern: patternRut,
-                                patternMessage: "Debe ser xx.xxx.xxx-x o xxxxxxxx-x",
-                                required: true,
                             },
                             {
                                 label: "Rol",

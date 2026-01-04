@@ -354,17 +354,29 @@ const Pedidos = () => {
                         <th style={{ padding: 8, textAlign: 'left' }}>Producto</th>
                         <th style={{ padding: 8, textAlign: 'left' }}>Cantidad</th>
                         <th style={{ padding: 8, textAlign: 'left' }}>Fecha</th>
+                        <th style={{ padding: 8, textAlign: 'left' }}>Usuario</th>
                         <th style={{ padding: 8, textAlign: 'left' }}>Estado</th>
                         <th style={{ padding: 8, textAlign: 'left' }}>Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredPedidos.map((pedido) => (
-                        <tr key={pedido.id} style={{ borderBottom: '1px solid #353945', cursor: 'pointer' }} onClick={() => handleEdit(pedido)}>
+                        <tr key={pedido.id} style={{ 
+                          borderBottom: '1px solid #353945', 
+                          cursor: 'pointer',
+                          transition: 'background-color 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 184, 0, 0.1)'}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        onClick={() => handleEdit(pedido)}>
                           <td style={{ padding: 8, maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{pedido.comentario || 'Sin comentario'}</td>
-                          <td style={{ padding: 8 }}>{pedido.Producto?.nombre || 'Producto no encontrado'}</td>
+                          <td style={{ padding: 8 }}>
+                            {pedido.Producto?.nombre || pedido.SubProducto?.nombre || 'Producto no encontrado'}
+                            {pedido.SubProducto && ' (Producto Pequeño)'}
+                          </td>
                           <td style={{ padding: 8 }}>{pedido.cantidad}</td>
                           <td style={{ padding: 8 }}>{pedido.createdAt ? new Date(pedido.createdAt).toLocaleDateString() : pedido.hora || 'Sin fecha'}</td>
+                          <td style={{ padding: 8 }}>{pedido.Usuario?.nombreCompleto || 'N/A'}</td>
                           <td style={{ padding: 8 }}>
                             <Chip
                               label={pedido.estado || 'en proceso'}

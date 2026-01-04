@@ -285,7 +285,15 @@ const Vehiculos = () => {
                 ) : (
                   filteredVehiculos.map((vehiculo) => (
                     <Grid item xs={12} sm={6} md={4} key={vehiculo.id}>
-                      <Card elevation={2}>
+                      <Card elevation={2} sx={{
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          transform: 'translateY(-4px)',
+                          boxShadow: '0 8px 24px rgba(255, 184, 0, 0.15)',
+                          bgcolor: 'rgba(255, 184, 0, 0.05)'
+                        }
+                      }}>
                         <CardContent>
                           <Typography variant="h6" component="div" gutterBottom>
                             {vehiculo.Marca} {vehiculo.Modelo}
@@ -365,7 +373,13 @@ const Vehiculos = () => {
                         </tr>
                       ) : (
                         filteredVehiculos.map((vehiculo) => (
-                          <tr key={vehiculo.id} style={{ borderBottom: '1px solid #353945', cursor: 'pointer' }}>
+                          <tr key={vehiculo.id} style={{ 
+                            borderBottom: '1px solid #353945', 
+                            cursor: 'pointer',
+                            transition: 'background-color 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 184, 0, 0.1)'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                             <td style={{ padding: 8 }}>{vehiculo.Marca}</td>
                             <td style={{ padding: 8 }}>{vehiculo.Modelo}</td>
                             <td style={{ padding: 8 }}>{vehiculo.Año}</td>

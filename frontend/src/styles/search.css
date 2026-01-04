@@ -20,3 +20,14 @@
     border-color: var(--amarillo-potente);
     box-shadow: 0 0 0 2px var(--amarillo-potente-30);
 }
+
+/* Estilos para el tema oscuro */
+input[style*="#2C303A"]::placeholder {
+    color: #9CA3AF;
+    opacity: 0.8;
+}
+
+input[style*="#2C303A"]:focus {
+    border-color: #FFB800 !important;
+    box-shadow: 0 0 0 2px rgba(255, 184, 0, 0.3) !important;
+}

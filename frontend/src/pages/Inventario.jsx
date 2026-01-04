@@ -154,7 +154,7 @@ const Inventario = () => {
                           grouped[key][sub].map((prod) => (
                             <li key={prod.id} style={{ padding: "6px 0 6px 12px", borderRadius: 6, marginBottom: 2, background: "#23272F", boxShadow: "0 1px 4px #0002", display: "flex", justifyContent: "space-between", alignItems: "center", color: '#F3F4F6' }}>
                               <span style={{ fontWeight: 500 }}>{prod.nombre}</span>
-                              <span style={{ fontSize: "0.95em", color: "#B0B3B8" }}>Stock: {prod.stock}</span>
+                              <span style={{ fontSize: "0.95em", color: "#B0B3B8", marginRight: "12px" }}>Stock: {prod.stock}</span>
                             </li>
                           ))
                         )}

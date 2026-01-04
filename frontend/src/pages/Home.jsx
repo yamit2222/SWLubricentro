@@ -23,6 +23,7 @@ import StockAlerts from '../components/StockAlerts';
 import { getAllProductos } from '../services/producto.service';
 import { getAllSubProductos } from '../services/subproducto.service';
 import { getPedidos } from '../services/pedido.service';
+import { getMovimientos } from '../services/movimientoStock.service';
 
 const Home = () => {
   const [stats, setStats] = useState({
@@ -52,96 +53,117 @@ const Home = () => {
     try {
       setLoading(true);
       
-      // Cargar productos
-      const productosRes = await getAllProductos();
+      // Ejecutar todas las consultas en paralelo para optimizar rendimiento
+      const [productosRes, subProductosRes, pedidosRes, movimientosRes] = await Promise.all([
+        getAllProductos(),
+        getAllSubProductos(), 
+        getPedidos(1, 200), // Aumentamos límite para mejor análisis
+        getMovimientos()
+      ]);
+      
+      // Procesar respuestas de manera eficiente
       const productos = Array.isArray(productosRes.data) ? productosRes.data : 
                        (productosRes.data?.productos || []);
-      
-      // Cargar subproductos
-      const subProductosRes = await getAllSubProductos();
       const subProductos = Array.isArray(subProductosRes.data) ? subProductosRes.data : 
                           (subProductosRes.data?.subproductos || []);
-      
-      // Cargar pedidos
-      const pedidosRes = await getPedidos(1, 100);
       const pedidos = Array.isArray(pedidosRes.data) ? pedidosRes.data : 
                      (pedidosRes.data?.pedidos || []);
+      const movimientos = Array.isArray(movimientosRes.data) ? movimientosRes.data : 
+                         (movimientosRes.data?.movimientos || []);
 
-      // Calcular estadísticas
-      const allItems = [...productos, ...subProductos];
-      const stockBajo = allItems.filter(item => (item.stock || 0) <= 10 && (item.stock || 0) > 5).length;
-      const stockCritico = allItems.filter(item => (item.stock || 0) <= 5).length;
+      // Crear mapa de productos para búsquedas O(1) en lugar de O(n)
+      const productosMap = new Map();
+      [...productos, ...subProductos].forEach(p => productosMap.set(p.id, p));
       
+      // Calcular estadísticas de stock en una sola pasada
+      let stockBajo = 0, stockCritico = 0;
+      productosMap.forEach(item => {
+        const stock = item.stock || 0;
+        if (stock <= 5) stockCritico++;
+        else if (stock <= 10) stockBajo++;
+      });
+      
+      // Definir fechas una vez
       const hoy = new Date();
-      const inicioSemana = new Date(hoy);
-      inicioSemana.setDate(hoy.getDate() - 7);
-      
-      const inicioMes = new Date(hoy);
-      inicioMes.setDate(1); // Primer día del mes actual
+      const hoySting = hoy.toDateString();
+      const inicioSemana = new Date(hoy.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
 
-      // Calcular reportes diarios
-      const pedidosHoy = pedidos.filter(pedido => {
+      // Procesar pedidos y movimientos en una sola iteración
+      const stats = {
+        pedidosHoy: 0,
+        pedidosCompletadosHoy: 0,
+        ventasHoy: 0,
+        pedidosSemana: 0,
+        ventasSemana: 0,
+        ventasPorProducto: new Map(),
+        movimientosHoy: 0
+      };
+
+      // Procesar pedidos eficientemente
+      pedidos.forEach(pedido => {
         const fechaPedido = new Date(pedido.createdAt || pedido.fecha);
-        return fechaPedido.toDateString() === hoy.toDateString();
-      });
-
-      const pedidosCompletadosHoy = pedidosHoy.filter(p => 
-        p.estado === 'vendido' || p.estado === 'completado'
-      ).length;
-
-      const ventasHoy = pedidosHoy
-        .filter(p => p.estado === 'vendido' || p.estado === 'completado')
-        .reduce((total, pedido) => {
-          const producto = productos.find(p => p.id === pedido.productoId) ||
-                          subProductos.find(p => p.id === pedido.productoId);
-          return total + ((producto?.precio || 0) * (pedido.cantidad || 1));
-        }, 0);
-
-      // Calcular reportes semanales
-      const pedidosSemana = pedidos.filter(pedido => {
-        const fechaPedido = new Date(pedido.createdAt || pedido.fecha);
-        return fechaPedido >= inicioSemana;
-      });
-
-      const ventasSemana = pedidosSemana
-        .filter(p => p.estado === 'vendido' || p.estado === 'completado')
-        .reduce((total, pedido) => {
-          const producto = productos.find(p => p.id === pedido.productoId) ||
-                          subProductos.find(p => p.id === pedido.productoId);
-          return total + ((producto?.precio || 0) * (pedido.cantidad || 1));
-        }, 0);
-
-      // Productos más vendidos del mes (cálculo real)
-      const pedidosMes = pedidos.filter(pedido => {
-        const fechaPedido = new Date(pedido.createdAt || pedido.fecha);
-        return fechaPedido >= inicioMes && (pedido.estado === 'vendido' || pedido.estado === 'completado');
-      });
-
-      // Agrupar ventas por producto
-      const ventasPorProducto = {};
-      pedidosMes.forEach(pedido => {
-        const producto = productos.find(p => p.id === pedido.productoId) ||
-                        subProductos.find(p => p.id === pedido.productoId);
-        if (producto) {
-          const key = producto.id;
-          if (!ventasPorProducto[key]) {
-            ventasPorProducto[key] = {
-              nombre: producto.nombre,
-              ventas: 0,
-              categoria: productos.find(p => p.id === pedido.productoId) ? 'Producto' : 'SubProducto'
-            };
+        const esHoy = fechaPedido.toDateString() === hoySting;
+        const esSemana = fechaPedido >= inicioSemana;
+        const esMes = fechaPedido >= inicioMes;
+        const esCompletado = pedido.estado === 'vendido' || pedido.estado === 'completado';
+        
+        if (esHoy) {
+          stats.pedidosHoy++;
+          if (esCompletado) {
+            stats.pedidosCompletadosHoy++;
+            const producto = productosMap.get(pedido.productoId);
+            if (producto) {
+              stats.ventasHoy += (producto.precio || 0) * (pedido.cantidad || 1);
+            }
           }
-          ventasPorProducto[key].ventas += (pedido.cantidad || 1);
+        }
+        
+        if (esSemana) {
+          stats.pedidosSemana++;
+          if (esCompletado) {
+            const producto = productosMap.get(pedido.productoId);
+            if (producto) {
+              stats.ventasSemana += (producto.precio || 0) * (pedido.cantidad || 1);
+            }
+          }
+        }
+        
+        // Productos más vendidos del mes
+        if (esMes && esCompletado) {
+          const producto = productosMap.get(pedido.productoId);
+          if (producto) {
+            const key = producto.id;
+            const existing = stats.ventasPorProducto.get(key);
+            if (existing) {
+              existing.ventas += pedido.cantidad || 1;
+            } else {
+              stats.ventasPorProducto.set(key, {
+                nombre: producto.nombre,
+                ventas: pedido.cantidad || 1,
+                categoria: productos.find(p => p.id === pedido.productoId) ? 'Producto' : 'ProductoPequeño'
+              });
+            }
+          }
+        }
+      });
+
+      // Procesar movimientos eficientemente
+      movimientos.forEach(movimiento => {
+        const fechaMovimiento = new Date(movimiento.createdAt || movimiento.fecha);
+        if (fechaMovimiento.toDateString() === hoySting) {
+          stats.movimientosHoy++;
         }
       });
 
       // Obtener top 3 productos más vendidos del mes
-      const productosMasVendidos = Object.values(ventasPorProducto)
+      const productosMasVendidos = Array.from(stats.ventasPorProducto.values())
         .sort((a, b) => b.ventas - a.ventas)
         .slice(0, 3);
 
       // Si no hay ventas del mes, mostrar productos aleatorios como fallback
       if (productosMasVendidos.length === 0) {
+        const allItems = [...productos, ...subProductos];
         const fallbackProductos = allItems
           .sort(() => Math.random() - 0.5)
           .slice(0, 3)
@@ -159,12 +181,12 @@ const Home = () => {
         totalPedidos: pedidos.length,
         stockBajo,
         stockCritico,
-        pedidosHoy: pedidosHoy.length,
-        ventasHoy,
-        pedidosCompletadosHoy,
-        movimientosStockHoy: Math.floor(Math.random() * 15) + 5, // Simulado
-        ventasSemana,
-        pedidosSemana: pedidosSemana.length,
+        pedidosHoy: stats.pedidosHoy,
+        ventasHoy: stats.ventasHoy,
+        pedidosCompletadosHoy: stats.pedidosCompletadosHoy,
+        movimientosStockHoy: stats.movimientosHoy, // Real - basado en movimientos de hoy
+        ventasSemana: stats.ventasSemana,
+        pedidosSemana: stats.pedidosSemana,
         productosMasVendidos,
         tendenciaStock: stockCritico > 5 ? 'descendente' : stockBajo > 10 ? 'estable' : 'ascendente'
       });
@@ -254,7 +276,7 @@ const Home = () => {
                   <Avatar sx={{ bgcolor: '#0F172A', mr: 1.5, width: 32, height: 32 }}>
                     <Inventory sx={{ fontSize: '1.2rem' }} />
                   </Avatar>
-                  <Typography variant="subtitle1" sx={{ color: '#334155', fontWeight: 600, fontSize: '0.9rem' }}>
+                  <Typography variant="subtitle1" sx={{ color: '#94A3B8', fontWeight: 600, fontSize: '0.9rem' }}>
                     Inventario Total
                   </Typography>
                 </Box>
@@ -262,7 +284,7 @@ const Home = () => {
                   {loading ? '...' : stats.totalProductos + stats.totalSubProductos}
                 </Typography>
                 <Typography variant="body2" sx={{ color: '#B0B3B8' }}>
-                  {stats.totalProductos} productos • {stats.totalSubProductos} subproductos
+                  {stats.totalProductos} productos • {stats.totalSubProductos} producto pequeño
                 </Typography>
               </CardContent>
             </Card>
@@ -290,7 +312,7 @@ const Home = () => {
                   <Avatar sx={{ bgcolor: '#0F172A', mr: 1.5, width: 32, height: 32 }}>
                     <ShoppingCart sx={{ fontSize: '1.2rem' }} />
                   </Avatar>
-                  <Typography variant="subtitle1" sx={{ color: '#334155', fontWeight: 600, fontSize: '0.9rem' }}>
+                  <Typography variant="subtitle1" sx={{ color: '#94A3B8', fontWeight: 600, fontSize: '0.9rem' }}>
                     Pedidos Totales
                   </Typography>
                 </Box>
@@ -326,9 +348,8 @@ const Home = () => {
               Estado del Inventario
             </Typography>
             <Typography variant="body1" sx={{ 
-              color: '#E2E8F0', 
-              fontWeight: 400,
-              opacity: 0.9
+              color: '#F8FAFC', 
+              fontWeight: 400
             }}>
               Monitoreo en tiempo real del stock disponible
             </Typography>
@@ -480,9 +501,8 @@ const Home = () => {
               Reportes y Análisis
             </Typography>
             <Typography variant="body1" sx={{ 
-              color: '#E2E8F0', 
-              fontWeight: 400,
-              opacity: 0.9
+              color: '#F8FAFC', 
+              fontWeight: 400
             }}>
               Estadísticas detalladas de ventas y rendimiento
             </Typography>
@@ -511,7 +531,7 @@ const Home = () => {
                     <Avatar sx={{ bgcolor: '#0F172A', mr: 2, width: 36, height: 36 }}>
                       <CalendarToday sx={{ fontSize: '1.2rem' }} />
                     </Avatar>
-                    <Typography variant="h6" sx={{ color: '#334155', fontWeight: 600 }}>
+                    <Typography variant="h6" sx={{ color: '#94A3B8', fontWeight: 600 }}>
                       Reporte Diario
                     </Typography>
                   </Box>
@@ -625,7 +645,7 @@ const Home = () => {
                     <Avatar sx={{ bgcolor: '#0F172A', mr: 2, width: 36, height: 36 }}>
                       <DateRange sx={{ fontSize: '1.2rem' }} />
                     </Avatar>
-                    <Typography variant="h6" sx={{ color: '#334155', fontWeight: 600 }}>
+                    <Typography variant="h6" sx={{ color: '#94A3B8', fontWeight: 600 }}>
                       Reporte Semanal
                     </Typography>
                   </Box>
@@ -684,7 +704,7 @@ const Home = () => {
                   </Grid>
 
                   <Box sx={{ mt: 2 }}>
-                    <Typography variant="subtitle2" sx={{ color: '#475569', mb: 2, fontWeight: 600 }}>
+                    <Typography variant="subtitle2" sx={{ color: '#CBD5E1', mb: 2, fontWeight: 600 }}>
                       Productos Más Vendidos
                     </Typography>
                     {stats.productosMasVendidos.slice(0, 3).map((producto, index) => (
@@ -706,7 +726,7 @@ const Home = () => {
                         <Chip 
                           label={`${producto.ventas} uds`}
                           size="small"
-                          sx={{ bgcolor: '#E2E8F0', color: '#334155', fontWeight: 600 }}
+                          sx={{ bgcolor: '#475569', color: '#F1F5F9', fontWeight: 600 }}
                         />
                       </Box>
                     ))}

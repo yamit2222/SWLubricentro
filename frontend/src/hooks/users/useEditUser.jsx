@@ -16,7 +16,7 @@ const useEditUser = (setUsers) => {
     const handleUpdate = async (updatedUserData) => {
         if (updatedUserData) {
             try {
-            const updatedUser = await updateUser(updatedUserData, dataUser[0].rut);
+            const updatedUser = await updateUser(updatedUserData, dataUser[0].email);
             showSuccessAlert('¡Actualizado!','El usuario ha sido actualizado correctamente.');
             setIsPopupOpen(false);
             const formattedUser = formatPostUpdate(updatedUser);

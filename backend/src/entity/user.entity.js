@@ -12,11 +12,6 @@ const User = sequelize.define("User", {
     type: DataTypes.STRING(255),
     allowNull: false,
   },
-  rut: {
-    type: DataTypes.STRING(12),
-    allowNull: false,
-    unique: true,
-  },
   email: {
     type: DataTypes.STRING(255),
     allowNull: false,
@@ -34,11 +29,6 @@ const User = sequelize.define("User", {
   tableName: "users",
   timestamps: true,
   indexes: [
-    {
-      name: "IDX_USER_RUT",
-      unique: true,
-      fields: ["rut"],
-    },
     {
       name: "IDX_USER_EMAIL",
       unique: true,

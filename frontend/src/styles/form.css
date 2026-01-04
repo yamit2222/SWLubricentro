@@ -193,9 +193,7 @@ input[type='email'] {
 	background-image: url('../assets/MentionIcon.svg');
 }
 
-input[name='rut'] {
-	background-image: url('../assets/IdentityCardIcon.svg');
-}
+
 
 input[name='nombreCompleto'] {
 	background-image: url('../assets/PersonIcon.svg');

@@ -9,7 +9,6 @@ const useUsers = () => {
             const response = await getUsers();
             const formattedData = response.map(user => ({
                 nombreCompleto: user.nombreCompleto,
-                rut: user.rut,
                 email: user.email,
                 rol: user.rol,
                 createdAt: user.createdAt
@@ -27,9 +26,9 @@ const useUsers = () => {
 
     const dataLogged = (formattedData) => {
         try {
-            const { rut } = JSON.parse(sessionStorage.getItem('usuario'));
+            const { email } = JSON.parse(sessionStorage.getItem('usuario'));
             for(let i = 0; i < formattedData.length ; i++) {
-                if(formattedData[i].rut === rut) {
+                if(formattedData[i].email === email) {
                     formattedData.splice(i, 1);
                     break;
                 }

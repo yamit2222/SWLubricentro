@@ -317,7 +317,15 @@ const Productos = () => {
                 ) : (
                   filteredProductos.map((producto) => (
                     <Grid item xs={12} sm={6} md={4} key={producto.id}>
-                      <Card elevation={2} sx={{ cursor: 'pointer' }} onClick={() => setSelectedProducto(producto)}>
+                      <Card elevation={2} sx={{ 
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          transform: 'translateY(-4px)',
+                          boxShadow: '0 8px 24px rgba(255, 184, 0, 0.15)',
+                          bgcolor: 'rgba(255, 184, 0, 0.05)'
+                        }
+                      }} onClick={() => setSelectedProducto(producto)}>
                         <CardContent>
                           <Typography variant="h6" component="div" gutterBottom noWrap>
                             {producto.nombre}
@@ -384,7 +392,14 @@ const Productos = () => {
                     </thead>
                     <tbody>
                       {filteredProductos.map((producto) => (
-                        <tr key={producto.id} style={{ borderBottom: '1px solid #353945', cursor: 'pointer' }} onClick={() => setSelectedProducto(producto)}>
+                        <tr key={producto.id} style={{ 
+                          borderBottom: '1px solid #353945', 
+                          cursor: 'pointer',
+                          transition: 'background-color 0.2s ease'
+                        }} 
+                        onMouseEnter={(e) => e.target.parentElement.style.backgroundColor = 'rgba(255, 184, 0, 0.1)'}
+                        onMouseLeave={(e) => e.target.parentElement.style.backgroundColor = 'transparent'}
+                        onClick={() => setSelectedProducto(producto)}>
                           <td style={{ padding: 8 }}>{producto.nombre}</td>
                           <td style={{ padding: 8 }}>{producto.categoria}</td>
                           <td style={{ padding: 8, maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{producto.descripcion}</td>

@@ -36,6 +36,15 @@ export const updatePedido = async (id, pedidoData) => {
   }
 };
 
+export const updatePedidoEstado = async (id, estado) => {
+  try {
+    const response = await axios.patch(`/pedidos/${id}/estado`, { estado });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
 export const deletePedido = async (id) => {
   try {
     const response = await axios.delete(`/pedidos/${id}`);

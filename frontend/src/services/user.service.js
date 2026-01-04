@@ -11,9 +11,9 @@ export async function getUsers() {
     }
 }
 
-export async function updateUser(data, rut) {
+export async function updateUser(data, email) {
     try {
-        const response = await axios.patch(`/user/detail/?rut=${rut}`, data);
+        const response = await axios.patch(`/user/detail/?email=${email}`, data);
         console.log(response);
         return response.data.data;
     } catch (error) {
@@ -22,9 +22,9 @@ export async function updateUser(data, rut) {
     }
 }
 
-export async function deleteUser(rut) {
+export async function deleteUser(email) {
     try {
-        const response = await axios.delete(`/user/detail/?rut=${rut}`);
+        const response = await axios.delete(`/user/detail/?email=${email}`);
         return response.data;
     } catch (error) {
         return error.response.data;

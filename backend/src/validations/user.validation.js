@@ -33,24 +33,13 @@ export const userQueryValidation = Joi.object({
         "El correo electrónico debe tener como máximo 35 caracteres.",
     })
     .custom(domainEmailValidator, "Validación dominio email"),
-    rut: Joi.string()
-    .min(9)
-    .max(12)
-    .pattern(/^(?:(?:[1-9]\d{0}|[1-2]\d{1})(\.\d{3}){2}|[1-9]\d{6}|[1-2]\d{7}|29\.999\.999|29999999)-[\dkK]$/)
-    .messages({
-      "string.empty": "El rut no puede estar vacío.",
-      "string.base": "El rut debe ser de tipo string.",
-      "string.min": "El rut debe tener como mínimo 9 caracteres.",
-      "string.max": "El rut debe tener como máximo 12 caracteres.",
-      "string.pattern.base": "Formato rut inválido, debe ser xx.xxx.xxx-x o xxxxxxxx-x.",
-    }),
 })
-  .or("id", "email", "rut")
+  .or("id", "email")
   .unknown(false)
   .messages({
     "object.unknown": "No se permiten propiedades adicionales.",
     "object.missing":
-      "Debes proporcionar al menos un parámetro: id, email o rut.",
+      "Debes proporcionar al menos un parámetro: id o email.",
   });
 
 export const userBodyValidation = Joi.object({
@@ -105,17 +94,6 @@ export const userBodyValidation = Joi.object({
       "string.pattern.base":
         "La nueva contraseña solo puede contener letras y números.",
     }),
-  rut: Joi.string()
-    .min(9)
-    .max(12)
-    .pattern(/^(?:(?:[1-9]\d{0}|[1-2]\d{1})(\.\d{3}){2}|[1-9]\d{6}|[1-2]\d{7}|29\.999\.999|29999999)-[\dkK]$/)
-    .messages({
-      "string.empty": "El rut no puede estar vacío.",
-      "string.base": "El rut debe ser de tipo string.",
-      "string.min": "El rut debe tener como mínimo 9 caracteres.",
-      "string.max": "El rut debe tener como máximo 12 caracteres.",
-      "string.pattern.base": "Formato rut inválido, debe ser xx.xxx.xxx-x o xxxxxxxx-x.",
-    }),
   rol: Joi.string()
     .min(4)
     .max(15)
@@ -130,12 +108,11 @@ export const userBodyValidation = Joi.object({
     "email",
     "password",
     "newPassword",
-    "rut",
     "rol"
   )
   .unknown(false)
   .messages({
     "object.unknown": "No se permiten propiedades adicionales.",
     "object.missing":
-      "Debes proporcionar al menos un campo: nombreCompleto, email, password, newPassword, rut o rol.",
+      "Debes proporcionar al menos un campo: nombreCompleto, email, password, newPassword o rol.",
   });

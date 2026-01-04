@@ -4,13 +4,12 @@ import { comparePassword, encryptPassword } from "../helpers/bcrypt.helper.js";
 import { Op } from "sequelize";
 
 export async function getUserService(query) {
-  const { rut, id, email } = query;
+  const { id, email } = query;
 
   const userFound = await User.findOne({
     where: {
       [Op.or]: [
         id ? { id: id } : null,
-        rut ? { rut: rut } : null,
         email ? { email: email } : null,
       ].filter(Boolean)
     },
@@ -41,13 +40,12 @@ export async function getUsersService() {
 }
 
 export async function updateUserService(query, body) {
-  const { id, rut, email } = query;
+  const { id, email } = query;
 
   const userFound = await User.findOne({
     where: {
       [Op.or]: [
         id ? { id: id } : null,
-        rut ? { rut: rut } : null,
         email ? { email: email } : null,
       ].filter(Boolean)
     },
@@ -61,16 +59,13 @@ export async function updateUserService(query, body) {
 
   const existingUser = await User.findOne({
     where: {
-      [Op.or]: [
-        { rut: body.rut },
-        { email: body.email }
-      ],
+      email: body.email,
       id: { [Op.ne]: userFound.id }
     },
   });
 
   if (existingUser) {
-    const error = new Error("Ya existe un usuario con el mismo rut o email");
+    const error = new Error("Ya existe un usuario con el mismo email");
     error.statusCode = 400;
     throw error;
   }
@@ -90,7 +85,6 @@ export async function updateUserService(query, body) {
 
   const dataUserUpdate = {
     nombreCompleto: body.nombreCompleto,
-    rut: body.rut,
     email: body.email,
     rol: body.rol,
   };
@@ -106,13 +100,12 @@ export async function updateUserService(query, body) {
 }
 
 export async function deleteUserService(query) {
-  const { id, rut, email } = query;
+  const { id, email } = query;
 
   const userFound = await User.findOne({
     where: {
       [Op.or]: [
         id ? { id: id } : null,
-        rut ? { rut: rut } : null,
         email ? { email: email } : null,
       ].filter(Boolean)
     },
