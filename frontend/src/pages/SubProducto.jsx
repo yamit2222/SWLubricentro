@@ -243,7 +243,7 @@ const SubProductos = () => {
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 <Typography variant="h4" component="h1" sx={{ color: '#FFB800', fontWeight: 800, letterSpacing: 1 }}>
-                  Gestión de ProductoPequeño
+                  Gestión de Productos Pequeños
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', gap: 2 }}>
@@ -309,7 +309,7 @@ const SubProductos = () => {
                   <Grid item xs={12}>
                     <Box sx={{ textAlign: 'center', mt: 4 }}>
                       <Typography variant="h6" color="text.secondary">
-                        No hay producto pequeño disponible
+                        No hay productos pequeños disponibles
                       </Typography>
                     </Box>
                   </Grid>
@@ -509,7 +509,7 @@ const SubProductos = () => {
             >
               <Stack spacing={2} alignItems="center">
                 <Typography variant="body2" sx={{ color: '#FFB800' }}>
-                  Mostrando {subproductos.length} de {totalSubproductos} subproductos
+                  Mostrando {subproductos.length} de {totalSubproductos} productos pequeños
                 </Typography>
                 <Pagination 
                   count={totalPaginas} 
