@@ -49,11 +49,11 @@ export async function connectDB() {
   try {
     await sequelize.authenticate();
     console.log("Conexión exitosa a la base de datos!");
-    
-    
+
+
     await sequelize.sync();
     console.log("Modelos sincronizados con la base de datos");
-    
+
     return sequelize;
   } catch (error) {
     console.error("Error al conectar con la base de datos");
@@ -61,5 +61,4 @@ export async function connectDB() {
       console.error("Detalles del error:", error.message);
     }
     process.exit(1);
-  }
-}
+  }}
