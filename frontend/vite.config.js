@@ -8,7 +8,16 @@ const dirname = path.dirname(filename);
 
 export default defineConfig({
   plugins: [react()],
-  preview: {port:80, host:true},
+  preview: {port:1657, host:true},
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://146.83.198.35:80',
+        changeOrigin: true,
+        secure: false
+      }
+    }
+  },
   resolve: {
     alias: {
       '@components': path.resolve(dirname, './src/components'),
@@ -22,3 +31,4 @@ export default defineConfig({
     }
   }
 });
+;
