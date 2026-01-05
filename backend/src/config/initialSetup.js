@@ -15,9 +15,9 @@ async function createUsers() {
 
     await Promise.all([
       User.create({
-        nombreCompleto: "Yamit Soto Gallardo",
-        email: "theboss@gmail.cl",
-        password: await encryptPassword("boss1234"),
+        nombreCompleto: "Martin Soto Gallardo",
+        email: "martin@gmail.cl",
+        password: await encryptPassword("martin1234"),
         rol: "administrador",
       }),
     ]);
