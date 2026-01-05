@@ -5,9 +5,9 @@ require('dotenv').config({ path: './config/.env' });
 const sequelize = new Sequelize(
   process.env.DATABASE || 'ysoto_bd',
   process.env.DB_USERNAME || 'ysoto',
-  process.env.PASSWORD || 'ysoto2025',
+  process.env.PASSWORD || 'yamit2025',
   {
-    host: process.env.HOST || 'localhost',
+    host: process.env.DB_HOST || 'mysqltrans.face.ubiobio.cl',
     port: process.env.DB_PORT || 3306,
     dialect: 'mysql',
     logging: process.env.NODE_ENV === 'development' ? console.log : false,
