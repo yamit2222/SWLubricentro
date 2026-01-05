@@ -4,18 +4,20 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
-const _dirname = path.dirname(_filename);
+const __dirname = path.dirname(__filename);
 
 export default defineConfig({
   plugins: [react()],
+  preview: {port:1657, host:true},
   server: {
     allowedHosts: true,
     host: true,
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://146.83.198.35/:1657',
+        target: 'http://146.83.198.35:80',
         changeOrigin: true,
+        secure: false
       }
     }
   },
@@ -32,3 +34,4 @@ export default defineConfig({
     }
   }
 });
+
