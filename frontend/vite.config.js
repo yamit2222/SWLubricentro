@@ -8,7 +8,7 @@ const dirname = path.dirname(filename);
 
 export default defineConfig({
   plugins: [react()],
-  preview: {port:1657, host:true},
+  preview: {port:80, host:true},
   resolve: {
     alias: {
       '@components': path.resolve(dirname, './src/components'),
