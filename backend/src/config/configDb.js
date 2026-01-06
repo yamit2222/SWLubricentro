@@ -50,15 +50,18 @@ export async function connectDB() {
     await sequelize.authenticate();
     console.log("Conexión exitosa a la base de datos!");
 
-
-    await sequelize.sync();
+    // Sincronizar modelos con manejo mejorado
+    await sequelize.sync({ alter: NODE_ENV === 'development' });
     console.log("Modelos sincronizados con la base de datos");
 
     return sequelize;
   } catch (error) {
     console.error("Error al conectar con la base de datos");
+    console.error("Detalles del error:", error.message);
     if (NODE_ENV === 'development') {
-      console.error("Detalles del error:", error.message);
+      console.error("Stack completo:", error.stack);
     }
-    process.exit(1);
-  }}
+    // Lanzar error en lugar de process.exit para mejor manejo
+    throw error;
+  }
+}

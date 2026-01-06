@@ -374,7 +374,7 @@ const Movimientos = () => {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '-webkit-linear-gradient(90deg, #23272f,#353945,#4e4e4e)', background: 'linear-gradient(90deg, #23272f,#353945,#4e4e4e)', padding: 0, overflow: 'hidden' }}>
+      <div style={{ minHeight: '100vh', backgroundImage: 'linear-gradient(90deg, #23272f,#353945,#4e4e4e)', padding: 0, overflow: 'hidden' }}>
       <Box sx={{ maxWidth: 900, mx: 'auto', mt: 6 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2, justifyContent: 'center', textAlign: 'center' }}>
           <Typography variant="h4" sx={{ color: '#FFB800', fontWeight: 800, letterSpacing: 1, textAlign: 'center' }}>

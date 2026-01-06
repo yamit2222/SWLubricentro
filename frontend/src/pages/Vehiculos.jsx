@@ -179,7 +179,7 @@ const Vehiculos = () => {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '-webkit-linear-gradient(90deg, #23272f,#353945,#4e4e4e)', background: 'linear-gradient(90deg, #23272f,#353945,#4e4e4e)', padding: 0, overflow: 'hidden' }}>
+      <div style={{ minHeight: '100vh', backgroundImage: 'linear-gradient(90deg, #23272f,#353945,#4e4e4e)', padding: 0, overflow: 'hidden' }}>
       <ThemeProvider theme={theme}>
         <Container maxWidth="lg" sx={{ mt: '12vh', mb: 4 }}>
           <Paper 
