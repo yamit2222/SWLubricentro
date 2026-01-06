@@ -3,31 +3,21 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const _dirname = path.dirname(_filename);
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
 
 export default defineConfig({
   plugins: [react()],
-  server: {
-    allowedHosts: true,
-    host: true,
-    port: 5173,
-    proxy: {
-      '/api': {
-        target: 'http://146.83.198.35:1658',
-        changeOrigin: true,
-      }
-    }
-  },
+  preview: {port:1658, host:true},
   resolve: {
     alias: {
-      '@components': path.resolve(__dirname, './src/components'),
-      '@hooks': path.resolve(__dirname, './src/hooks'),
-      '@context': path.resolve(__dirname, './src/context'),
-      '@pages': path.resolve(__dirname, './src/pages'),
-      '@services': path.resolve(__dirname, './src/services'),
-      '@styles': path.resolve(__dirname, './src/styles'),
-      '@assets': path.resolve(__dirname, './src/assets'),
+      '@components': path.resolve(dirname, './src/components'),
+      '@hooks': path.resolve(dirname, './src/hooks'),
+      '@context': path.resolve(dirname, './src/context'),
+      '@pages': path.resolve(dirname, './src/pages'),
+      '@services': path.resolve(dirname, './src/services'),
+      '@styles': path.resolve(dirname, './src/styles'),
+      '@assets': path.resolve(dirname, './src/assets'),
       '@helpers': path.resolve(__dirname, './src/helpers')
     }
   }
